@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Picount-BE.iml" filepath="$PROJECT_DIR$/.idea/Picount-BE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/piccount-BE/piccount-BE.iml" filepath="$PROJECT_DIR$/piccount-BE/piccount-BE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/piccount-BE.main.iml" filepath="$PROJECT_DIR$/.idea/modules/piccount-BE.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/piccount-BE.test.iml" filepath="$PROJECT_DIR$/.idea/modules/piccount-BE.test.iml" />
     </modules>
   </component>
 </project>
