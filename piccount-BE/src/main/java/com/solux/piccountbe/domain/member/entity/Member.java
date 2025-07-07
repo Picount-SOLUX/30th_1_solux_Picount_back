@@ -3,6 +3,8 @@ package com.solux.piccountbe.domain.member.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.solux.piccountbe.domain.budget.entity.Budget;
+import com.solux.piccountbe.domain.category.entity.Category;
 import com.solux.piccountbe.global.Timestamped;
 
 import jakarta.persistence.CascadeType;
@@ -67,5 +69,12 @@ public class Member extends Timestamped {
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Token> tokens = new ArrayList<>();
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+	private List<Category> categories = new ArrayList<>();
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+	private List<Budget> budgets = new ArrayList<>();
+
 
 }
