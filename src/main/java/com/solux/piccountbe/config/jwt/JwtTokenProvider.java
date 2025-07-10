@@ -3,7 +3,6 @@ package com.solux.piccountbe.config.jwt;
 import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -35,19 +34,21 @@ public class JwtTokenProvider {
 	private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
 	public String makeToken(Member member, Long expired) {
-		Key key = hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 		return Jwts.builder()
 			.setSubject(member.getEmail())
 			.claim("memberId", member.getMemberId())
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + expired))
-			.signWith(key, signatureAlgorithm)
+			.signWith(hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), signatureAlgorithm)
 			.compact();
 	}
 
 	public boolean validToken(String token) {
 		try {
-			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+			Jwts.parserBuilder()
+				.setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
+				.build()
+				.parseClaimsJws(token);
 			return true;
 		} catch (SecurityException | MalformedJwtException | SignatureException e) {
 			throw new CustomException(ErrorCode.INVALID_TOKEN);
@@ -62,12 +63,13 @@ public class JwtTokenProvider {
 
 	public String getEmail(String token) {
 		Claims claims = getClaims(token);
-		return claims.get("email", String.class);
+		return claims.getSubject();
 	}
 
 	private Claims getClaims(String token) {
-		return Jwts.parser()
-			.setSigningKey(jwtSecret)
+		return Jwts.parserBuilder()
+			.setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
+			.build()
 			.parseClaimsJws(token)
 			.getBody();
 	}

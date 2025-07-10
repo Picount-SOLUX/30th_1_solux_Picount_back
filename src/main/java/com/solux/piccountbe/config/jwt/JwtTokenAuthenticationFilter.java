@@ -14,6 +14,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.solux.piccountbe.config.security.SecurityProperties;
 import com.solux.piccountbe.config.security.UserDetailsServiceImpl;
+import com.solux.piccountbe.global.exception.CustomException;
+import com.solux.piccountbe.global.exception.ErrorCode;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -41,50 +43,40 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 		String path = request.getRequestURI();
 		List<String> whitelist = securityProperties.getWhitelist();
 
-		// 인증불필요 엔드포인트
+		log.info("* 인증 불필요 엔드포인트 확인");
 		for (String whitelink : whitelist) {
 			if (whitelink.equals(path)) {
 				filterChain.doFilter(request, response);
 				return;
 			}
 		}
+		String accessToken = resolveToken(request);
+		log.info("* [JwtTokenAuthFilter] accessToken : " + accessToken);
 
-		//"BEARER " 파싱
-		String bearer = getTokenFromRequest(request);
-		String token = getAccessToken(bearer);
-
-		// 토큰이 없거나 유효하지 않음
-		if (token == null || !jwtTokenProvider.validToken(token)) {
+		log.info("* 토큰이 없거나 유효하지 않은지 확인");
+		if (accessToken == null || !jwtTokenProvider.validToken(accessToken)) {
 			filterChain.doFilter(request, response);
 			return;
 		}
 
-		String email = jwtTokenProvider.getEmail(token);
+		log.info("* 토큰에서 이메일 확인");
+		String email = jwtTokenProvider.getEmail(accessToken);
 		UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(email);
-		// 이메일 해당되는 사용자 찾기
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-		// SecurityContext에 인증객체 저장
+		log.info("* 인증객체 저장");
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		filterChain.doFilter(request, response);
 	}
 
-	// request 헤더에서 토큰값 추출
-	private String getTokenFromRequest(HttpServletRequest request) {
-		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+	private String resolveToken(HttpServletRequest request) {
+		String header = request.getHeader(AUTHORIZATION_HEADER);
 
-		boolean tokenFound = StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_PREFIX);
+		boolean tokenFound = StringUtils.hasText(header) && header.startsWith(TOKEN_PREFIX);
 		if (tokenFound) {
-			return bearerToken.substring(TOKEN_PREFIX.length());
+			return header.substring(TOKEN_PREFIX.length());
 		}
-		return null;
-	}
-
-	private String getAccessToken(String authHeader) {
-		if (authHeader != null && authHeader.startsWith(TOKEN_PREFIX)) {
-			return authHeader.substring(TOKEN_PREFIX.length());
-		}
-		return null;
+		throw new CustomException(ErrorCode.HEADER_NOT_FOUND);
 	}
 }
