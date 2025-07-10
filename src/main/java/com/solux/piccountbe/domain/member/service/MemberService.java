@@ -92,6 +92,11 @@ public class MemberService {
 		return loginResponseDto;
 	}
 
+	public Member findByFriendCode(String friendCode) {
+		return memberRepository.findByFriendCode(friendCode)
+			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+	}
+
 	private String generateRandomCode() {
 		StringBuilder sb = new StringBuilder(CODE_LEN);
 		for (int i = 0; i < CODE_LEN; i++) {
