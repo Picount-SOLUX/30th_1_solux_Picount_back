@@ -4,17 +4,22 @@ import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.time.Duration;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.solux.piccountbe.domain.member.entity.Member;
+import com.solux.piccountbe.global.exception.CustomException;
+import com.solux.piccountbe.global.exception.ErrorCode;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,32 +28,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtTokenProvider {
 
-	// 환경변수 설정 필요
+	// TODO: .env 환경변수 설정 필요
 	@Value("${jwt.secret}")
 	private String jwtSecret;
 
-	@Value("${jwt.access-expired}")
-	private Long jwtAccessExpired;
-
-	@Value("${jwt.refresh-expired}")
-	private Long jwtRefreshExpired;
-
 	private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-	public String generateToken(Member member, Duration expiredAt) {
-		Date now = new Date();
-		return makeToken(new Date(now.getTime() + expiredAt.toMillis()), member);
-	}
-
-	public String makeToken(Date expiry, Member member) {
+	public String makeToken(Member member, Long expired) {
 		Key key = hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
 		return Jwts.builder()
-			// .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
 			.setSubject(member.getEmail())
 			.claim("memberId", member.getMemberId())
 			.setIssuedAt(new Date())
-			.setExpiration(expiry)
-			// .signWith(signatureAlgorithm, jwtSecret)
+			.setExpiration(new Date(System.currentTimeMillis() + expired))
 			.signWith(key, signatureAlgorithm)
 			.compact();
 	}
@@ -57,8 +49,14 @@ public class JwtTokenProvider {
 		try {
 			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
 			return true;
-		} catch (Exception e) { ////////////////
-			return false;
+		} catch (SecurityException | MalformedJwtException | SignatureException e) {
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
+		} catch (UnsupportedJwtException e) {
+			throw new CustomException(ErrorCode.NOT_SUPPORTED_TOKEN);
+		} catch (IllegalArgumentException e) {
+			throw new CustomException(ErrorCode.FALSE_TOKEN);
+		} catch (ExpiredJwtException e) {
+			throw new CustomException(ErrorCode.TOKEN_EXPIRATION);
 		}
 	}
 

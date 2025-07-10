@@ -25,8 +25,8 @@ spring:
 
 jwt:
     secret: ${JWT_SECRET_KEY}
-    access-expired: ${ACCESS_EXPIRE_TIME}
-    refresh-expired: ${REFRESH_EXPIRE_TIME}
+    access-expired: 1800000
+    refresh-expired: 1209600000
 
 security:
     whitelist:

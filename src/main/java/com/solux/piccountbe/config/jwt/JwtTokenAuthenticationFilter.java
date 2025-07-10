@@ -54,7 +54,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
 		// 토큰이 없거나 유효하지 않음
 		if (token == null || !jwtTokenProvider.validToken(token)) {
-
 			filterChain.doFilter(request, response);
 			return;
 		}

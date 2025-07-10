@@ -33,16 +33,10 @@ public class WebSecurityConfig {
 	//특정 http 요청에 대한 웹 기반 보안 구성
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.cors(AbstractHttpConfigurer::disable)
-			.csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
+		http.csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
 			.authorizeHttpRequests(auth -> //인증/인가 설정
 				auth.requestMatchers(securityProperties.getWhitelist().toArray(new String[0])).permitAll()
 					.anyRequest().authenticated()
-			)
-
-			// 로그아웃 설정
-			.logout(logout -> logout.logoutSuccessUrl("/members/login")
-				.invalidateHttpSession(true)
 			)
 			.sessionManagement(
 				session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

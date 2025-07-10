@@ -4,8 +4,17 @@ Content-Type: application/json
 
 {
   "email" : "email@naver.com",
-  "password" : "qwer1234",
+  "password" : "Qwerty1234!",
   "nickname" : "nickname",
-  "gender" : "FEMALE",
-  "age" : 33
+  "gender" : "MALE",
+  "age" : 23
+}
+
+### 로그인
+POST http://localhost:8080/api/members/login
+Content-Type: application/json
+
+{
+  "email" : "email@naver.com",
+  "password" : "Qwerty1234!"
 }
