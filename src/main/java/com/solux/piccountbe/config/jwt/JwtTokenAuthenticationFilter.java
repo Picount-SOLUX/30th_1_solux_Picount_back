@@ -41,9 +41,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 		String path = request.getRequestURI();
 		List<String> whitelist = securityProperties.getWhitelist();
 
-		String authHeader = request.getHeader(AUTHORIZATION_HEADER);
-		String token = getAccessToken(authHeader);
-
 		// 인증불필요 엔드포인트
 		for (String whitelink : whitelist) {
 			if (whitelink.equals(path)) {
@@ -52,6 +49,10 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 			}
 		}
 
+		//"BEARER " 파싱
+		String bearer = getTokenFromRequest(request);
+		String token = getAccessToken(bearer);
+
 		// 토큰이 없거나 유효하지 않음
 		if (token == null || !jwtTokenProvider.validToken(token)) {
 			filterChain.doFilter(request, response);
@@ -59,7 +60,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		String email = jwtTokenProvider.getEmail(token);
-		UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(token);
+		UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(email);
 		// 이메일 해당되는 사용자 찾기
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
