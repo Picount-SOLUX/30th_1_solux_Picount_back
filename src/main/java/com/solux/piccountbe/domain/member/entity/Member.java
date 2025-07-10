@@ -16,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,13 +33,16 @@ public class Member extends Timestamped {
 	@Enumerated(value = EnumType.STRING)
 	private Provider provider;
 
+	@Column(nullable = false, unique = true)
+	private String email;
+
 	@Column
 	private String oauthId;
 
-	@Column
+	@Column(nullable = false)
 	private String password;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String nickname;
 
 	@Column
@@ -48,7 +52,7 @@ public class Member extends Timestamped {
 	@Column
 	private String purpose;
 
-	@Column
+	@Column(nullable = false)
 	private String profileImageUrl;
 
 	@Column
@@ -58,7 +62,7 @@ public class Member extends Timestamped {
 	@Enumerated(value = EnumType.STRING)
 	private Gender gender;
 
-	@Column
+	@Column(nullable = false, unique = true, length = 8)
 	private String friendCode;
 
 	@Column
@@ -76,5 +80,17 @@ public class Member extends Timestamped {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
 	private List<Budget> budgets = new ArrayList<>();
 
+	@Builder
+	public Member(Provider provider, String email, String password, String nickname, String profileImageUrl, Gender gender, String friendCode, Integer age, Boolean withdraw){
+		this.provider = provider;
+		this.email = email;
+		this.password = password;
+		this.nickname = nickname;
+		this.profileImageUrl = profileImageUrl;
+		this.gender = gender;
+		this.friendCode = friendCode;
+		this.age = age;
+		this.withdraw = withdraw;
+	}
 
 }

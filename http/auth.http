@@ -1,0 +1,11 @@
+### 회원가입
+POST http://localhost:8080/api/members/signup
+Content-Type: application/json
+
+{
+  "email" : "email@naver.com",
+  "password" : "qwer1234",
+  "nickname" : "nickname",
+  "gender" : "FEMALE",
+  "age" : 33
+}
