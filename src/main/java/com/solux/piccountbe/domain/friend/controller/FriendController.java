@@ -3,8 +3,10 @@ package com.solux.piccountbe.domain.friend.controller;
 import com.solux.piccountbe.domain.friend.dto.FriendRequestDto;
 import com.solux.piccountbe.domain.friend.service.FriendService;
 import com.solux.piccountbe.domain.member.entity.Member;
+import com.solux.piccountbe.config.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,14 +18,11 @@ public class FriendController {
 
     @PostMapping("/request")
     public ResponseEntity<String> requestFriend(
-            @RequestBody FriendRequestDto requestDto
-            // , @AuthenticationPrincipal Member loginMember
+            @RequestBody FriendRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        // TODO: 인증된 사용자 정보 받아오면 주석 해제
-        Member loginMember = null; // 임시 처리
-
+        Member loginMember = userDetails.getMember();
         friendService.requestFriend(loginMember, requestDto);
-
         return ResponseEntity.ok("친구 요청이 성공적으로 처리되었습니다.");
     }
 }
