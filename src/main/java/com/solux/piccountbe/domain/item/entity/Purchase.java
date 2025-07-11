@@ -34,4 +34,10 @@ public class Purchase {
 
 	@Column(nullable = false)
 	private LocalDateTime purchasedAt;
+
+	public Purchase(Member member, Item item, LocalDateTime purchasedAt) {
+		this.member = member;
+		this.item = item;
+		this.purchasedAt = purchasedAt;
+	}
 }

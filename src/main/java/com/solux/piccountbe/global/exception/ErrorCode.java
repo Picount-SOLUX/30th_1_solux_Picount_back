@@ -18,6 +18,9 @@ public enum ErrorCode {
 
     // 상점
     NO_ITEMS_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+    STICKER_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
+    ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+    NOT_ENOUGH_POINT(HttpStatus.BAD_REQUEST, "포인트가 부족합니다."),
 
     //Token
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 JWT 토큰입니다."),
