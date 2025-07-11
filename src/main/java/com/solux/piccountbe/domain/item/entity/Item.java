@@ -24,8 +24,14 @@ public class Item {
 
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
-	private Category category;
+	private ShopCategory category;
 
 	@Column(nullable = false)
 	private Integer price;
+
+	public Item(String name, ShopCategory category, Integer price) {
+		this.name = name;
+		this.category = category;
+		this.price = price;
+	}
 }
