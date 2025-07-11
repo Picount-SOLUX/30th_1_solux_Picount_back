@@ -29,8 +29,8 @@ public class WebSkinMockDataInitializer implements CommandLineRunner {
 
         itemRepository.saveAll(List.of(webSkin1, webSkin2));
 
-        Sticker s1 = new Sticker(webSkin1, "pink_skin.png", "pink_preview.png");
-        Sticker s2 = new Sticker(webSkin2, "blue_skin.png", "blue_preview.png");
+        Sticker s1 = new Sticker(webSkin1, null, "pink_preview.png");
+        Sticker s2 = new Sticker(webSkin2, null , "blue_preview.png");
 
         stickerRepository.saveAll(List.of(s1, s2));
     }

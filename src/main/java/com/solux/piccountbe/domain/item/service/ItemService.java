@@ -31,7 +31,7 @@ public class ItemService {
         return items.stream()
                 .map(item -> {
                     String imageUrl = stickerRepository.findByItem(item)
-                            .map(Sticker::getSkinImageUrl)
+                            .map(Sticker::getPreviewImageUrl)
                             .orElse(null);
                     return new ItemResponseDto(
                             item.getItemId(),
@@ -55,7 +55,7 @@ public class ItemService {
         return items.stream()
                 .map(item -> {
                     String imageUrl = stickerRepository.findByItem(item)
-                            .map(Sticker::getSkinImageUrl)
+                            .map(Sticker::getPreviewImageUrl)
                             .orElse(null);
                     return new ItemResponseDto(
                             item.getItemId(),
@@ -79,7 +79,7 @@ public class ItemService {
         return items.stream()
                 .map(item -> {
                     String imageUrl = stickerRepository.findByItem(item)
-                            .map(Sticker::getSkinImageUrl)  // 기존 stickerUrl 또는 skinImageUrl
+                            .map(Sticker::getPreviewImageUrl)  // 기존 stickerUrl 또는 skinImageUrl
                             .orElse(null);
                     return new ItemResponseDto(
                             item.getItemId(),
