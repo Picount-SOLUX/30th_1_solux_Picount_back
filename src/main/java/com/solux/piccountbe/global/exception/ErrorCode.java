@@ -16,6 +16,9 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패했습니다."),
 
+    // 상점
+    NO_ITEMS_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+
     //Token
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 JWT 토큰입니다."),
     TOKEN_EXPIRATION(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),

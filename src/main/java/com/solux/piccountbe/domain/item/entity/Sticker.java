@@ -25,11 +25,15 @@ public class Sticker {
 	private Item item;
 
 	@Column(nullable = false)
-	private String stickerUrl;
+	private String skinImageUrl;
 
-	public Sticker(Item item, String stickerUrl) {
+	@Column(nullable = false)
+	private String previewImageUrl;
+
+	public Sticker(Item item, String skinImageUrl, String previewImageUrl) {
 		this.item = item;
-		this.stickerUrl = stickerUrl;
+		this.skinImageUrl = skinImageUrl;
+		this.previewImageUrl = previewImageUrl;
 	}
 
 }
