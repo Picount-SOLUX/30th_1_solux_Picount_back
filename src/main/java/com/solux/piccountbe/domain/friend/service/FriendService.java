@@ -9,12 +9,15 @@ import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FriendService {
@@ -22,6 +25,7 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final MemberService memberService; // 멤버 서비스
 
+    // 친구 신청
     @Transactional
     public void requestFriend(Member loginMember, FriendRequestDto requestDto) {
 
@@ -32,6 +36,7 @@ public class FriendService {
         friendRepository.save(friend);
     }
 
+    // 마이페이지 친구 조회
     @Transactional(readOnly = true)
     public List<FriendResponseDto> getMyFriends(Member loginMember) {
         List<Friend> friends = friendRepository.findByMemberOrFriendMemberAndStatus(
@@ -48,5 +53,23 @@ public class FriendService {
                     other.getProfileImageUrl()
             );
         }).collect(Collectors.toList());
+    }
+
+    // 친구 삭제
+    @Transactional
+    public void deleteFriend(Member loginMember, Long friendId) throws AccessDeniedException {
+        Friend friend = friendRepository.findById(friendId)
+                .orElseThrow(() -> new IllegalArgumentException("친구 관계를 찾을 수 없습니다."));
+
+        log.info("로그인한 유저 ID: {}", loginMember.getMemberId());
+        log.info("Friend 관계 memberId: {}", friend.getMember().getMemberId());
+        log.info("Friend 관계 friendMemberId: {}", friend.getFriendMember().getMemberId());
+
+        if (!friend.getMember().getMemberId().equals(loginMember.getMemberId()) &&
+                !friend.getFriendMember().getMemberId().equals(loginMember.getMemberId())) {
+            throw new AccessDeniedException("해당 친구 관계에 접근할 수 없습니다.");
+        }
+
+        friendRepository.delete(friend);
     }
 }
