@@ -35,4 +35,11 @@ public class PointHistory extends Timestamped {
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private Reason reason;
+
+	public PointHistory(Member member, Long amount, Reason reason) {
+		this.member = member;
+		this.amount = amount;
+		this.reason = reason;
+	}
+
 }

@@ -1,17 +1,18 @@
 package com.solux.piccountbe.domain.item.controller;
 
 import com.solux.piccountbe.config.security.UserDetailsImpl;
-import com.solux.piccountbe.domain.item.dto.ItemResponseDto;
+import com.solux.piccountbe.domain.item.dto.request.PurchaseRequestDto;
+import com.solux.piccountbe.domain.item.dto.response.ItemResponseDto;
+import com.solux.piccountbe.domain.item.dto.response.PurchaseResponseDto;
 import com.solux.piccountbe.domain.item.service.ItemService;
+import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.global.Response;
 import com.solux.piccountbe.global.exception.CustomException;
 import com.solux.piccountbe.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +21,20 @@ import java.util.List;
 @RequestMapping("/api/items")
 public class ItemController {
     private final ItemService itemService;
+
+    // 상품 구매
+    @PostMapping("/purchases")
+    public ResponseEntity<Response<PurchaseResponseDto>> purchaseItem(
+            @RequestBody PurchaseRequestDto request,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        if (userDetails == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        Long memberId = userDetails.getMember().getMemberId();
+        PurchaseResponseDto response = itemService.purchaseItem(request.getItemId(), memberId);
+        return ResponseEntity.ok(Response.success("상품 구매 성공", response));
+    }
 
     // 달력 꾸미기 상품 조회
     @GetMapping("/calendar-skins")
