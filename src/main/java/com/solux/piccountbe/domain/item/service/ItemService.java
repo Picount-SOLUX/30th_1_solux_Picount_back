@@ -68,6 +68,30 @@ public class ItemService {
                 .toList();
     }
 
+    // 웹 스킨 꾸미기 상품 조회
+    public List<ItemResponseDto> getWebSkins() {
+        List<Item> items = itemRepository.findByCategory(ShopCategory.WEB_SKIN);
+
+        if (items.isEmpty()) {
+            throw new CustomException(ErrorCode.NO_ITEMS_FOUND);
+        }
+
+        return items.stream()
+                .map(item -> {
+                    String imageUrl = stickerRepository.findByItem(item)
+                            .map(Sticker::getSkinImageUrl)  // 기존 stickerUrl 또는 skinImageUrl
+                            .orElse(null);
+                    return new ItemResponseDto(
+                            item.getItemId(),
+                            item.getName(),
+                            item.getCategory(),
+                            item.getPrice(),
+                            imageUrl
+                    );
+                })
+                .toList();
+    }
+
 
 }
 

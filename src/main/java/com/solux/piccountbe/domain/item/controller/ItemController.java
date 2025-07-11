@@ -45,4 +45,16 @@ public class ItemController {
         return ResponseEntity.ok(Response.success("케이크 꾸미기 상품 목록 조회 성공", cakeSkins));
     }
 
+    // 웹스킨 꾸미기 상품 조회
+    @GetMapping("/web-skins")
+    public ResponseEntity<Response<List<ItemResponseDto>>> getWebSkins(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        if (userDetails == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        List<ItemResponseDto> webSkins = itemService.getWebSkins();
+        return ResponseEntity.ok(Response.success("웹 스킨 꾸미기 상품 목록 조회 성공", webSkins));
+    }
+
 }
