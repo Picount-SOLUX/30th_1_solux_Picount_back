@@ -1,6 +1,9 @@
 package com.solux.piccountbe.domain.item.entity;
 
-public enum Category {
+public enum ShopCategory {
+	CAKE_SKIN,
+	CALENDER_SKIN,
+	WEB_SKIN,
 	GRAPH_SKIN;
 
 	// private final String label;

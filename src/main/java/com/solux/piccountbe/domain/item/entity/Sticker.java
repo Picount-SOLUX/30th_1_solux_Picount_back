@@ -26,4 +26,10 @@ public class Sticker {
 
 	@Column(nullable = false)
 	private String stickerUrl;
+
+	public Sticker(Item item, String stickerUrl) {
+		this.item = item;
+		this.stickerUrl = stickerUrl;
+	}
+
 }
