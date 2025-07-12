@@ -2,7 +2,9 @@ package com.solux.piccountbe.domain.item.service;
 
 import com.solux.piccountbe.domain.item.dto.response.MyCakeDesignResponseDto;
 import com.solux.piccountbe.domain.item.dto.response.MyCalendarDesignResponseDto;
+import com.solux.piccountbe.domain.item.dto.response.MyPurchaseDto;
 import com.solux.piccountbe.domain.item.dto.response.MyWebSkinResponseDto;
+import com.solux.piccountbe.domain.item.entity.Item;
 import com.solux.piccountbe.domain.item.entity.Purchase;
 import com.solux.piccountbe.domain.item.entity.ShopCategory;
 import com.solux.piccountbe.domain.item.entity.Sticker;
@@ -22,6 +24,23 @@ import java.util.List;
 public class MyItemService {
     private final PurchaseRepository purchaseRepository;
     private final StickerRepository stickerRepository;
+
+    // 내 전체 구매 목록 조회
+    @Transactional
+    public List<MyPurchaseDto> getMyPurchases(Member member) {
+        List<Purchase> purchases = purchaseRepository.findByMember(member);
+
+        return purchases.stream()
+                .map(purchase -> {
+                    Item item = purchase.getItem();
+                    String previewUrl = stickerRepository.findByItem(item)
+                            .map(Sticker::getPreviewImageUrl)
+                            .orElse(null);
+                    return MyPurchaseDto.from(purchase, previewUrl);
+                })
+                .toList();
+    }
+
 
     // 내가 보유한 웹스킨 조회
     public List<MyWebSkinResponseDto> getMyWebSkins(Member member) {
