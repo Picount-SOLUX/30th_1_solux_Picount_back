@@ -3,6 +3,7 @@ package com.solux.piccountbe.domain.item.controller;
 import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.item.dto.response.MyCakeDesignResponseDto;
 import com.solux.piccountbe.domain.item.dto.response.MyCalendarDesignResponseDto;
+import com.solux.piccountbe.domain.item.dto.response.MyPurchaseDto;
 import com.solux.piccountbe.domain.item.dto.response.MyWebSkinResponseDto;
 import com.solux.piccountbe.domain.item.service.MyItemService;
 import com.solux.piccountbe.domain.member.entity.Member;
@@ -23,6 +24,19 @@ import java.util.List;
 @RequestMapping("/api/items")
 public class MyItemController {
     private final MyItemService myItemService;
+
+    // 내 전체 구매 목록 조회
+    @GetMapping("/purchases/me")
+    public ResponseEntity<Response<List<MyPurchaseDto>>> getMyPurchases(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        if (userDetails == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        Member member = userDetails.getMember();
+        List<MyPurchaseDto> purchases = myItemService.getMyPurchases(member);
+        return ResponseEntity.ok(Response.success("나의 구매 목록 조회 성공", purchases));
+    }
 
     // 내가 보유한 웹스킨 조회
     @GetMapping("/my-web-skins")
