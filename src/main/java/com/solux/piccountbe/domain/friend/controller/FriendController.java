@@ -2,6 +2,7 @@ package com.solux.piccountbe.domain.friend.controller;
 
 import com.solux.piccountbe.domain.friend.dto.FriendRequestDto;
 import com.solux.piccountbe.domain.friend.dto.FriendResponseDto;
+import com.solux.piccountbe.domain.friend.dto.FriendMainResponseDto;
 import com.solux.piccountbe.domain.friend.dto.FriendApiResponse;
 import com.solux.piccountbe.domain.friend.service.FriendService;
 import com.solux.piccountbe.domain.member.entity.Member;
@@ -60,4 +61,19 @@ public class FriendController {
         return ResponseEntity.ok(new FriendApiResponse(true, "친구 관계가 삭제되었습니다."));
     }
 
+    // 친구 조회 - 메인페이지
+    @GetMapping("/main")
+    public ResponseEntity<Map<String, Object>> getFriendsForMainPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        Member loginMember = userDetails.getMember();
+        List<FriendMainResponseDto> friendList = friendService.getFriendsForMain(loginMember);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "메인페이지 친구 목록을 성공적으로 조회했습니다.");
+        response.put("data", friendList);
+
+        return ResponseEntity.ok(response);
+    }
 }

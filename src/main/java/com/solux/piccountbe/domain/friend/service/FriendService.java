@@ -2,8 +2,10 @@ package com.solux.piccountbe.domain.friend.service;
 
 import com.solux.piccountbe.domain.friend.dto.FriendRequestDto;
 import com.solux.piccountbe.domain.friend.dto.FriendResponseDto;
+import com.solux.piccountbe.domain.friend.dto.FriendMainResponseDto ;
 import com.solux.piccountbe.domain.friend.entity.Friend;
 import com.solux.piccountbe.domain.friend.entity.Status;
+import com.solux.piccountbe.domain.member.repository.MemberRepository;
 import com.solux.piccountbe.domain.friend.repository.FriendRepository;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.MemberService;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class FriendService {
 
     private final FriendRepository friendRepository;
+    private final MemberRepository memberRepository;
     private final MemberService memberService; // 멤버 서비스
 
     // 친구 신청
@@ -72,4 +75,28 @@ public class FriendService {
 
         friendRepository.delete(friend);
     }
+
+    // 메인페이지 친구 조회
+    @Transactional(readOnly = true)
+    public List<FriendMainResponseDto> getFriendsForMain(Member loginMember) {
+        List<Friend> friends = friendRepository.findByMemberOrFriendMemberAndStatus(
+                loginMember, loginMember, Status.APPROVAL
+        );
+
+        return friends.stream()
+                .map(friend -> {
+                    Member other = friend.getMember().getMemberId().equals(loginMember.getMemberId())
+                            ? friend.getFriendMember()
+                            : friend.getMember();
+
+                    return new FriendMainResponseDto(
+                            other.getMemberId(),
+                            other.getNickname(),
+                            other.getProfileImageUrl(),
+                            other.getIntro() // 한줄소개
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
 }
