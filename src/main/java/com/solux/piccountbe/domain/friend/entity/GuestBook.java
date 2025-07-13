@@ -36,4 +36,12 @@ public class GuestBook extends Timestamped {
 
 	@Column(nullable = false)
 	private Boolean isDeleted;
+
+	public GuestBook(Member writer, Member owner, String content) {
+		this.writer = writer;
+		this.owner = owner;
+		this.content = content;
+		this.isDeleted = false;
+	}
+
 }

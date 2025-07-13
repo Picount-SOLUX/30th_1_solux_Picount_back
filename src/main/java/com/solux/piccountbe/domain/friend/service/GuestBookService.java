@@ -1,0 +1,43 @@
+package com.solux.piccountbe.domain.friend.service;
+
+import com.solux.piccountbe.domain.friend.dto.GuestBookRequestDto;
+import com.solux.piccountbe.domain.friend.dto.GuestBookSummaryDto;
+import com.solux.piccountbe.domain.friend.entity.GuestBook;
+import com.solux.piccountbe.domain.friend.repository.GuestBookRepository;
+import com.solux.piccountbe.domain.member.entity.Member;
+import com.solux.piccountbe.domain.member.service.MemberService;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+
+@Service
+@RequiredArgsConstructor
+public class GuestBookService {
+
+    private final GuestBookRepository guestBookRepository;
+    private final MemberService memberService;
+
+    // 방명록 작성
+    @Transactional
+    public void createGuestbook(Member writer, GuestBookRequestDto requestDto) {
+        Member owner = memberService.getMemberById(requestDto.getOwnerId());
+
+        GuestBook guestBook = new GuestBook(writer, owner, requestDto.getContent());
+        guestBookRepository.save(guestBook);
+    }
+
+    // 요약 조회
+    @Transactional(readOnly = true)
+    public Page<GuestBookSummaryDto> getGuestBooks(Member owner, Pageable pageable) {
+        return guestBookRepository.findByOwnerAndIsDeletedFalse(owner, pageable)
+                .map(gb -> new GuestBookSummaryDto(
+                        gb.getGuestbookId(),
+                        gb.getWriter().getProfileImageUrl(),
+                        gb.getContent(),
+                        gb.getCreatedAt()
+                ));
+    }
+}
