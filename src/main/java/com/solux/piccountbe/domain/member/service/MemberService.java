@@ -58,6 +58,7 @@ public class MemberService {
 			friendCode = generateRandomCode();
 		} while (memberRepository.existsByFriendCode(friendCode));
 		boolean withDraw = false;
+		boolean isMainVisible = false;
 
 		Member member = Member.builder()
 			.provider(Provider.EAMIL)
@@ -69,6 +70,7 @@ public class MemberService {
 			.friendCode(friendCode)
 			.age(signupRequestDto.getAge())
 			.withdraw(withDraw)
+			.isMainVisible(isMainVisible)
 			.build();
 
 		memberRepository.save(member);
@@ -108,7 +110,7 @@ public class MemberService {
 	@Transactional
 	public Member getMemberById(Long memberId) {
 		return memberRepository.findById(memberId)
-				.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 	}
 
 }
