@@ -24,6 +24,16 @@ public class Sticker {
 	@JoinColumn(name = "item_id", nullable = false)
 	private Item item;
 
+	@Column(nullable = true)
+	private String skinImageUrl;
+
 	@Column(nullable = false)
-	private String stickerUrl;
+	private String previewImageUrl;
+
+	public Sticker(Item item, String skinImageUrl, String previewImageUrl) {
+		this.item = item;
+		this.skinImageUrl = skinImageUrl;
+		this.previewImageUrl = previewImageUrl;
+	}
+
 }

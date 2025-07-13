@@ -80,6 +80,9 @@ public class Member extends Timestamped {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
 	private List<Budget> budgets = new ArrayList<>();
 
+	@Column(nullable = false)
+	private Long point = 0L; // 기본값 0, long 타입
+
 	@Builder
 	public Member(Provider provider, String email, String password, String nickname, String profileImageUrl, Gender gender, String friendCode, Integer age, Boolean withdraw){
 		this.provider = provider;
@@ -91,6 +94,19 @@ public class Member extends Timestamped {
 		this.friendCode = friendCode;
 		this.age = age;
 		this.withdraw = withdraw;
+	}
+
+	// 포인트 차감 메서드
+	public void usePoint(Long amount) {
+		if (this.point < amount) {
+			throw new IllegalArgumentException("포인트가 부족합니다.");
+		}
+		this.point -= amount;
+	}
+
+	// 포인트 추가 메서드
+	public void addPoint(Long amount) {
+		this.point += amount;
 	}
 
 }
