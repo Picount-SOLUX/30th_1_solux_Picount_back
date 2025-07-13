@@ -2,6 +2,7 @@ package com.solux.piccountbe.domain.friend.service;
 
 import com.solux.piccountbe.domain.friend.dto.GuestBookRequestDto;
 import com.solux.piccountbe.domain.friend.dto.GuestBookSummaryDto;
+import com.solux.piccountbe.domain.friend.dto.GuestBookDetailDto;
 import com.solux.piccountbe.domain.friend.entity.GuestBook;
 import com.solux.piccountbe.domain.friend.repository.GuestBookRepository;
 import com.solux.piccountbe.domain.member.entity.Member;
@@ -31,7 +32,9 @@ public class GuestBookService {
 
     // 요약 조회
     @Transactional(readOnly = true)
-    public Page<GuestBookSummaryDto> getGuestBooks(Member owner, Pageable pageable) {
+    public Page<GuestBookSummaryDto> getGuestBooks(Member viewer, Long ownerId, Pageable pageable) {
+        Member owner = memberService.getMemberById(ownerId);
+
         return guestBookRepository.findByOwnerAndIsDeletedFalse(owner, pageable)
                 .map(gb -> new GuestBookSummaryDto(
                         gb.getGuestbookId(),
@@ -40,4 +43,20 @@ public class GuestBookService {
                         gb.getCreatedAt()
                 ));
     }
+
+    // 상세 조회
+    @Transactional(readOnly = true)
+    public Page<GuestBookDetailDto> getGuestbookDetails(Member viewer, Long ownerId, Pageable pageable) {
+        Member owner = memberService.getMemberById(ownerId);
+
+        return guestBookRepository.findByOwnerAndIsDeletedFalse(owner, pageable)
+                .map(gb -> new GuestBookDetailDto(
+                        gb.getGuestbookId(),
+                        gb.getWriter().getProfileImageUrl(),
+                        gb.getWriter().getNickname(),
+                        gb.getContent(),
+                        gb.getCreatedAt()
+                ));
+    }
+
 }

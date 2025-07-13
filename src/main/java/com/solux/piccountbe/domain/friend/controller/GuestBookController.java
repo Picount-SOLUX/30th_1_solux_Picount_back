@@ -2,6 +2,7 @@ package com.solux.piccountbe.domain.friend.controller;
 
 import com.solux.piccountbe.domain.friend.dto.GuestBookRequestDto;
 import com.solux.piccountbe.domain.friend.dto.GuestBookSummaryDto;
+import com.solux.piccountbe.domain.friend.dto.GuestBookDetailDto;
 import com.solux.piccountbe.domain.friend.service.GuestBookService;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.config.security.UserDetailsImpl;
@@ -17,7 +18,6 @@ import org.springframework.data.web.PageableDefault;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,10 +40,11 @@ public class GuestBookController {
     @GetMapping("/api/guestbook/summary")
     public ResponseEntity<Map<String, Object>> getGuestBookSummary(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long ownerId,
             @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Member loginMember = userDetails.getMember();
-        Page<GuestBookSummaryDto> pageResult = guestBookService.getGuestBooks(loginMember, pageable);
+        Page<GuestBookSummaryDto> pageResult = guestBookService.getGuestBooks(loginMember, ownerId, pageable);
 
         Map<String, Object> data = new HashMap<>();
         data.put("content", pageResult.getContent());
@@ -62,5 +63,29 @@ public class GuestBookController {
     }
 
     // 방명록 상세 조회
+    @GetMapping("/api/guestbook/details")
+    public ResponseEntity<Map<String, Object>> getGuestbookDetails(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long ownerId,
+            @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Member viewer = userDetails.getMember();
+        Page<GuestBookDetailDto> pageResult = guestBookService.getGuestbookDetails(viewer, ownerId, pageable);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("content", pageResult.getContent());
+        data.put("page", pageResult.getNumber());
+        data.put("size", pageResult.getSize());
+        data.put("totalElements", pageResult.getTotalElements());
+        data.put("totalPages", pageResult.getTotalPages());
+        data.put("hasNext", pageResult.hasNext());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "방명록 상세 조회 성공");
+        response.put("data", data);
+
+        return ResponseEntity.ok(response);
+    }
 
 }
