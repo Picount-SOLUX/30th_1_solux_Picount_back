@@ -48,17 +48,4 @@ public class TokenService {
 			);
 	}
 
-	@Transactional(readOnly = true)
-	public String createNewAccessToken(String refreshToken) {
-		//토큰 유효성 검사 실패
-		if (!jwtTokenProvider.validToken(refreshToken)) {
-			throw new CustomException(ErrorCode.INVALID_TOKEN);
-		}
-		Member member = tokenRepository.findByRefreshToken(refreshToken)
-			.orElseThrow(() -> new CustomException(ErrorCode.INVALID_TOKEN))
-			.getMember();
-
-		return jwtTokenProvider.makeAccessToken(member);
-	}
-
 }

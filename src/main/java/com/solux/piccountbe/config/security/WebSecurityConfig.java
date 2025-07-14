@@ -74,12 +74,11 @@ public class WebSecurityConfig {
 
 	// 인증 관리자 설정
 	@Bean
-	public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) throws Exception {
+	public AuthenticationManager authenticationManager(PasswordEncoder passwordEncoder) throws Exception {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 		authProvider.setUserDetailsService(userDetailsServiceImpl);
 		authProvider.setPasswordEncoder(passwordEncoder);
 		return new ProviderManager(authProvider);
-
 	}
 
 	@Bean

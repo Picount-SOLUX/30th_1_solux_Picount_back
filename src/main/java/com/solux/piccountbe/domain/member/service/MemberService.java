@@ -2,7 +2,6 @@ package com.solux.piccountbe.domain.member.service;
 
 import java.security.SecureRandom;
 
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
