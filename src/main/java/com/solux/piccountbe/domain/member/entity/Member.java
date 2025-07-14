@@ -58,15 +58,8 @@ public class Member extends Timestamped {
 	@Column
 	private String intro;
 
-	@Column
-	@Enumerated(value = EnumType.STRING)
-	private Gender gender;
-
 	@Column(nullable = false, unique = true, length = 8)
 	private String friendCode;
-
-	@Column
-	private Integer age;
 
 	@Column(nullable = false)
 	private Boolean withdraw;
@@ -87,7 +80,7 @@ public class Member extends Timestamped {
 	private Long point = 0L; // 기본값 0, long 타입
 
 	@Builder
-	public Member(Provider provider, String email, Long oauthId, String password, String nickname, String profileImageUrl, Gender gender, String friendCode, Integer age, Boolean withdraw,
+	public Member(Provider provider, String email, Long oauthId, String password, String nickname, String profileImageUrl, String friendCode, Boolean withdraw,
 		Boolean isMainVisible) {
 		this.provider = provider;
 		this.email = email;
@@ -95,9 +88,7 @@ public class Member extends Timestamped {
 		this.password = password;
 		this.nickname = nickname;
 		this.profileImageUrl = profileImageUrl;
-		this.gender = gender;
 		this.friendCode = friendCode;
-		this.age = age;
 		this.withdraw = withdraw;
 		this.isMainVisible = isMainVisible;
 	}

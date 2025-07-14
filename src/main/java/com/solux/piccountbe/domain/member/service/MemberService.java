@@ -59,9 +59,7 @@ public class MemberService {
 			.password(encodedPassword)
 			.nickname(signupRequestDto.getNickname())
 			.profileImageUrl(defaultImageUrl)
-			.gender(signupRequestDto.getGender())
 			.friendCode(friendCode)
-			.age(signupRequestDto.getAge())
 			.withdraw(withDraw)
 			.isMainVisible(isMainVisible)
 			.build();
