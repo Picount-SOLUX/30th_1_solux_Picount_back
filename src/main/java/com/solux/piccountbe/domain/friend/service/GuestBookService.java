@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class GuestBookService {
@@ -84,5 +86,13 @@ public class GuestBookService {
         guestBook.setDeleted(true);
     }
 
+    // 내가 남긴 방명록 전체 삭제
+    @Transactional
+    public void deleteAllMyGuestbooks(Long memberId) {
+        List<GuestBook> guestBooks = guestBookRepository.findAllByWriter_MemberIdAndIsDeletedFalse(memberId);
+        for (GuestBook gb : guestBooks) {
+            gb.setDeleted(true);
+        }
+    }
 
 }

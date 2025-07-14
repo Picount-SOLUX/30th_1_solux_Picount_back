@@ -8,8 +8,11 @@ import com.solux.piccountbe.domain.friend.entity.GuestBook;
 import com.solux.piccountbe.domain.member.entity.Member;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface GuestBookRepository extends JpaRepository<GuestBook, Long> {
     @Query("SELECT g FROM GuestBook g WHERE g.writer.id = :writerId AND g.isDeleted = false ORDER BY g.createdAt DESC")
     Page<GuestBook> findByWriterId(@Param("writerId") Long writerId, Pageable pageable);
+    List<GuestBook> findAllByWriter_MemberIdAndIsDeletedFalse(Long memberId);
     Page<GuestBook> findByOwnerAndIsDeletedFalse(Member owner, Pageable pageable);
 }

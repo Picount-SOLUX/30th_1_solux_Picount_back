@@ -109,4 +109,13 @@ public class GuestBookController {
         return ResponseEntity.ok().body(Map.of("message", "방명록이 삭제되었습니다."));
     }
 
+    // 내가 남긴 방명록 전체 삭제
+    @DeleteMapping("/api/guestbook/my")
+    public ResponseEntity<?> deleteAllMyGuestbooks(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        guestBookService.deleteAllMyGuestbooks(userDetails.getMember().getMemberId());
+        return ResponseEntity.ok().body(Map.of("message", "내가 남긴 방명록이 모두 삭제되었습니다."));
+    }
+
 }
