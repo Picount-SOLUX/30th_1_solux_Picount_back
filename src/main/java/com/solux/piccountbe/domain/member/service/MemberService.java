@@ -2,7 +2,7 @@ package com.solux.piccountbe.domain.member.service;
 
 import java.security.SecureRandom;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,12 +32,6 @@ public class MemberService {
 	private static final int CODE_LEN = 8;
 	private final SecureRandom random = new SecureRandom();
 	private final JwtTokenProvider jwtTokenProvider;
-
-	@Value("${jwt.access-expired}")
-	private Long jwtAccessExpired;
-
-	@Value("${jwt.refresh-expired}")
-	private Long jwtRefreshExpired;
 
 	@Transactional
 	public void signup(SignupRequestDto signupRequestDto) {
@@ -81,14 +75,18 @@ public class MemberService {
 		Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_EMAIL_NOT_FOUND));
 
+		if (member.getProvider().equals(Provider.KAKAO)) {
+			throw new CustomException(ErrorCode.MEMBER_OAUTH_MISMATCH);
+		}
+
 		if (!passwordEncoder.matches(loginRequestDto.getPassword(), member.getPassword())) {
 			throw new CustomException(ErrorCode.INVALID_PASSWORD);
 		}
 
-		String accessToken = jwtTokenProvider.makeToken(member, jwtAccessExpired);
-		String refreshToken = jwtTokenProvider.makeToken(member, jwtRefreshExpired);
+		String accessToken = jwtTokenProvider.makeAccessToken(member);
+		String refreshToken = jwtTokenProvider.makeRefreshToken(member);
 
-		tokenService.createOrUpdateRefreshToken(refreshToken, member, jwtRefreshExpired);
+		tokenService.createOrUpdateRefreshToken(refreshToken, member);
 
 		LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, refreshToken);
 		return loginResponseDto;
