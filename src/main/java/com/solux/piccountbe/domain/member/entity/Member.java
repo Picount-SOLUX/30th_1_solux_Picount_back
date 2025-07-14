@@ -37,9 +37,9 @@ public class Member extends Timestamped {
 	private String email;
 
 	@Column
-	private String oauthId;
+	private Long oauthId;
 
-	@Column(nullable = false)
+	@Column // oauth 경우 nullable
 	private String password;
 
 	@Column(nullable = false, unique = true)
@@ -87,9 +87,11 @@ public class Member extends Timestamped {
 	private Long point = 0L; // 기본값 0, long 타입
 
 	@Builder
-	public Member(Provider provider, String email, String password, String nickname, String profileImageUrl, Gender gender, String friendCode, Integer age, Boolean withdraw, Boolean isMainVisible) {
+	public Member(Provider provider, String email, Long oauthId, String password, String nickname, String profileImageUrl, Gender gender, String friendCode, Integer age, Boolean withdraw,
+		Boolean isMainVisible) {
 		this.provider = provider;
 		this.email = email;
+		this.oauthId = oauthId;
 		this.password = password;
 		this.nickname = nickname;
 		this.profileImageUrl = profileImageUrl;
@@ -98,6 +100,11 @@ public class Member extends Timestamped {
 		this.age = age;
 		this.withdraw = withdraw;
 		this.isMainVisible = isMainVisible;
+	}
+
+	public Member memberUpdate(String email) {
+		this.email = email;
+		return this;
 	}
 
 	// 포인트 차감 메서드

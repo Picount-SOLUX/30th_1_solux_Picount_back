@@ -14,8 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.solux.piccountbe.config.security.SecurityProperties;
 import com.solux.piccountbe.config.security.UserDetailsServiceImpl;
-import com.solux.piccountbe.global.exception.CustomException;
-import com.solux.piccountbe.global.exception.ErrorCode;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -43,7 +41,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 		String path = request.getRequestURI();
 		List<String> whitelist = securityProperties.getWhitelist();
 
-		log.info("* 인증 불필요 엔드포인트 확인");
+		// log.info("* 인증 불필요 엔드포인트 확인");
 		for (String whitelink : whitelist) {
 			if (whitelink.equals(path)) {
 				filterChain.doFilter(request, response);
@@ -51,20 +49,21 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 			}
 		}
 		String accessToken = resolveToken(request);
-		log.info("* [JwtTokenAuthFilter] accessToken : " + accessToken);
+		// log.info("* [JwtTokenAuthFilter] accessToken : " + accessToken);
 
-		log.info("* 토큰이 없거나 유효하지 않은지 확인");
+		// log.info("* 토큰이 없거나 유효하지 않은지 확인");
 		if (accessToken == null || !jwtTokenProvider.validToken(accessToken)) {
-			filterChain.doFilter(request, response);
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 없거나 유효하지 않습니다.");
 			return;
+
 		}
 
-		log.info("* 토큰에서 이메일 확인");
+		// log.info("* 토큰에서 이메일 확인");
 		String email = jwtTokenProvider.getEmail(accessToken);
 		UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(email);
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-		log.info("* 인증객체 저장");
+		// log.info("* 인증객체 저장");
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		filterChain.doFilter(request, response);
@@ -77,6 +76,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 		if (tokenFound) {
 			return header.substring(TOKEN_PREFIX.length());
 		}
-		throw new CustomException(ErrorCode.HEADER_NOT_FOUND);
+		return null;
 	}
 }
