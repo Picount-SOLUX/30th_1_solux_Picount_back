@@ -2,14 +2,19 @@ package com.solux.piccountbe.domain.member.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.member.dto.LoginRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginResponseDto;
+import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
 import com.solux.piccountbe.domain.member.dto.SignupRequestDto;
+import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.MemberService;
 import com.solux.piccountbe.global.Response;
 
@@ -33,6 +38,15 @@ public class MemberController {
 	public ResponseEntity<Response<LoginResponseDto>> login(@RequestBody LoginRequestDto req) {
 		LoginResponseDto res = memberService.login(req);
 		return ResponseEntity.status(HttpStatus.CREATED).body(Response.success("로그인 성공", res));
+	}
+
+	@GetMapping("/profile")
+	public ResponseEntity<Response<ProfileResponseDto>> getProfile(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Member member = userDetails.getMember();
+		ProfileResponseDto res = memberService.getProfile(member);
+		return ResponseEntity.ok(Response.success("마이프로필 조회 성공", res));
 	}
 
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.entity.Provider;
+import com.solux.piccountbe.domain.member.entity.UserGroupType;
 import com.solux.piccountbe.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 					.oauthId(kakaoId)
 					.nickname(kakaoNickname)
 					.profileImageUrl("images/default-member-profile.jpg") //임시 defaultImageUrl
+					.userGroupType(UserGroupType.STUDENT_UNIV) // 기본값
 					.withdraw(false)
 					.isMainVisible(false)
 					.friendCode("WRECKITR") // 임시설정

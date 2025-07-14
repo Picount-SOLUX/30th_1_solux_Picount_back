@@ -1,5 +1,8 @@
 package com.solux.piccountbe.domain.member.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum UserGroupType {
 	STUDENT_YOUTH("중고등학생"),
 	STUDENT_UNIV("대학생"),

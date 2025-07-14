@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import com.solux.piccountbe.config.jwt.JwtTokenProvider;
 import com.solux.piccountbe.domain.member.dto.LoginRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginResponseDto;
+import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
 import com.solux.piccountbe.domain.member.dto.SignupRequestDto;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.entity.Provider;
+import com.solux.piccountbe.domain.member.entity.UserGroupType;
 import com.solux.piccountbe.domain.member.repository.MemberRepository;
 import com.solux.piccountbe.global.exception.CustomException;
 import com.solux.piccountbe.global.exception.ErrorCode;
@@ -60,6 +62,7 @@ public class MemberService {
 			.nickname(signupRequestDto.getNickname())
 			.profileImageUrl(defaultImageUrl)
 			.friendCode(friendCode)
+			.userGroupType(UserGroupType.STUDENT_UNIV)
 			.withdraw(withDraw)
 			.isMainVisible(isMainVisible)
 			.build();
@@ -87,6 +90,20 @@ public class MemberService {
 
 		LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, refreshToken);
 		return loginResponseDto;
+	}
+
+	public ProfileResponseDto getProfile(Member member) {
+		ProfileResponseDto profileResponseDto = new ProfileResponseDto(
+			member.getMemberId(),
+			member.getEmail(),
+			member.getNickname(),
+			member.getUserGroupType(),
+			member.getUserGroupType().getLabel(),
+			member.getIntro() != null ? member.getIntro() : "",
+			member.getFriendCode(),
+			member.getProfileImageUrl()
+		);
+		return profileResponseDto;
 	}
 
 	public Member findByFriendCode(String friendCode) {

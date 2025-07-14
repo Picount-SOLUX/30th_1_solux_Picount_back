@@ -49,8 +49,6 @@ public class Member extends Timestamped {
 	@Enumerated(value = EnumType.STRING)
 	private UserGroupType userGroupType;
 
-	@Column
-	private String purpose;
 
 	@Column(nullable = false)
 	private String profileImageUrl;
@@ -81,7 +79,7 @@ public class Member extends Timestamped {
 
 	@Builder
 	public Member(Provider provider, String email, Long oauthId, String password, String nickname, String profileImageUrl, String friendCode, Boolean withdraw,
-		Boolean isMainVisible) {
+		Boolean isMainVisible, UserGroupType userGroupType) {
 		this.provider = provider;
 		this.email = email;
 		this.oauthId = oauthId;
@@ -91,6 +89,7 @@ public class Member extends Timestamped {
 		this.friendCode = friendCode;
 		this.withdraw = withdraw;
 		this.isMainVisible = isMainVisible;
+		this.userGroupType = userGroupType;
 	}
 
 	public Member memberUpdate(String email) {
