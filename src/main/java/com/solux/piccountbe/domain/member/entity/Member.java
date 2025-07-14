@@ -71,6 +71,9 @@ public class Member extends Timestamped {
 	@Column(nullable = false)
 	private Boolean withdraw;
 
+	@Column(nullable = false)
+	private Boolean isMainVisible;
+
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Token> tokens = new ArrayList<>();
 
@@ -84,7 +87,7 @@ public class Member extends Timestamped {
 	private Long point = 0L; // 기본값 0, long 타입
 
 	@Builder
-	public Member(Provider provider, String email, String password, String nickname, String profileImageUrl, Gender gender, String friendCode, Integer age, Boolean withdraw){
+	public Member(Provider provider, String email, String password, String nickname, String profileImageUrl, Gender gender, String friendCode, Integer age, Boolean withdraw, Boolean isMainVisible) {
 		this.provider = provider;
 		this.email = email;
 		this.password = password;
@@ -94,6 +97,7 @@ public class Member extends Timestamped {
 		this.friendCode = friendCode;
 		this.age = age;
 		this.withdraw = withdraw;
+		this.isMainVisible = isMainVisible;
 	}
 
 	// 포인트 차감 메서드
