@@ -27,11 +27,24 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtTokenProvider {
 
-	// TODO: .env 환경변수 설정 필요
+	@Value("${jwt.access-expired}")
+	private long jwtAccessExpired;
+
+	@Value("${jwt.refresh-expired}")
+	private long jwtRefreshExpired;
+
 	@Value("${jwt.secret}")
 	private String jwtSecret;
 
 	private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+	public String makeRefreshToken(Member member) {
+		return makeToken(member, jwtRefreshExpired);
+	}
+
+	public String makeAccessToken(Member member) {
+		return makeToken(member, jwtAccessExpired);
+	}
 
 	public String makeToken(Member member, Long expired) {
 		return Jwts.builder()

@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Configuration
-@ConfigurationProperties("security")
+@ConfigurationProperties("custom-security")
 public class SecurityProperties {
 	private List<String> whitelist;
 }

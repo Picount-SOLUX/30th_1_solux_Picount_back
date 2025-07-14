@@ -1,24 +1,48 @@
 spring:
-    application:
-        name: piccount-BE
-    config:
-        import: optional:file:.env[.properties]
+  application:
+    name: piccount-BE
+  config:
+    import: optional:file:.env[.properties]
 
-    datasource:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/piccount
-        username: ${MYSQL_USER}
-        password: ${MYSQL_PASSWORD}
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${OAUTH2_KAKAO_CLIENT_ID}
+            client-secret: ${OAUTH2_KAKAO_CLIENT_SECRET}
+            redirect-uri: http://localhost:8080/api/members/social/kakao
+            client-authentication-method: client_secret_post
+            client-name: Kakao
+            authorization-grant-type: authorization_code
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-info-authentication-method: header
+            user-name-attribute: id
 
-    jpa:
-        show-sql: true
-        hibernate:
-            ddl-auto: create
-        properties:
-            hibernate:
-                format_sql: true
-                highlight_sql: true
-                use_sql_comments: true
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/piccount
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
 
 #logging:
 #    level:
@@ -26,11 +50,18 @@ spring:
 #        org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 jwt:
-    secret: ${JWT_SECRET_KEY}
-    access-expired: 1800000
-    refresh-expired: 1209600000
+  secret: ${JWT_SECRET_KEY}
+  access-expired: 1800000
+  refresh-expired: 1209600000
 
-security:
-    whitelist:
-        - /api/members/signup
-        - /api/members/login
+custom-security:
+  whitelist:
+    - /api/members/signup
+    - /api/members/login
+    - /needtofix/login.html
+    - /login.html
+    - /login/oauth2/authorization/**
+    - /api/members/social/**
+
+callback-oauth:
+  frontend-redirect-uri: http://localhost:8080/login.html
