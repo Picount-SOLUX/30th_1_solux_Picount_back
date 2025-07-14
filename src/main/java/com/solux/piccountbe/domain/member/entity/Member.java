@@ -47,7 +47,7 @@ public class Member extends Timestamped {
 
 	@Column
 	@Enumerated(value = EnumType.STRING)
-	private Occupation occupation;
+	private UserGroupType userGroupType;
 
 	@Column
 	private String purpose;
