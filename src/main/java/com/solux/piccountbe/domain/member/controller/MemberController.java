@@ -1,4 +1,4 @@
-package com.solux.piccountbe.domain.member;
+package com.solux.piccountbe.domain.member.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class MemberController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<Response<LoginResponseDto>> signup(@RequestBody LoginRequestDto req) {
+	public ResponseEntity<Response<LoginResponseDto>> login(@RequestBody LoginRequestDto req) {
 		LoginResponseDto res = memberService.login(req);
 		return ResponseEntity.status(HttpStatus.CREATED).body(Response.success("로그인 성공", res));
 	}
