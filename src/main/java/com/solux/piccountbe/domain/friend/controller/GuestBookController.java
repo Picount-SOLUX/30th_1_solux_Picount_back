@@ -3,6 +3,7 @@ package com.solux.piccountbe.domain.friend.controller;
 import com.solux.piccountbe.domain.friend.dto.GuestBookRequestDto;
 import com.solux.piccountbe.domain.friend.dto.GuestBookSummaryDto;
 import com.solux.piccountbe.domain.friend.dto.GuestBookDetailDto;
+import com.solux.piccountbe.domain.friend.dto.GuestbookMyResponseDto;
 import com.solux.piccountbe.domain.friend.service.GuestBookService;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.config.security.UserDetailsImpl;
@@ -88,4 +89,13 @@ public class GuestBookController {
         return ResponseEntity.ok(response);
     }
 
+    // 내가 남긴 방명록 조회
+    @GetMapping("/api/guestbook/my")
+    public Page<GuestbookMyResponseDto> getMyGuestbooks(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PageableDefault(size = 3) Pageable pageable
+    ) {
+        Member loginMember = userDetails.getMember();
+        return guestBookService.getMyGuestbookPosts(loginMember.getMemberId(), pageable);
+    }
 }

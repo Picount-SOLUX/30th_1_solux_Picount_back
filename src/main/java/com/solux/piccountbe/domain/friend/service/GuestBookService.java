@@ -3,6 +3,7 @@ package com.solux.piccountbe.domain.friend.service;
 import com.solux.piccountbe.domain.friend.dto.GuestBookRequestDto;
 import com.solux.piccountbe.domain.friend.dto.GuestBookSummaryDto;
 import com.solux.piccountbe.domain.friend.dto.GuestBookDetailDto;
+import com.solux.piccountbe.domain.friend.dto.GuestbookMyResponseDto;
 import com.solux.piccountbe.domain.friend.entity.GuestBook;
 import com.solux.piccountbe.domain.friend.repository.GuestBookRepository;
 import com.solux.piccountbe.domain.member.entity.Member;
@@ -54,6 +55,17 @@ public class GuestBookService {
                         gb.getGuestbookId(),
                         gb.getWriter().getProfileImageUrl(),
                         gb.getWriter().getNickname(),
+                        gb.getContent(),
+                        gb.getCreatedAt()
+                ));
+    }
+
+    // 내가 남긴 방명록 조회
+    public Page<GuestbookMyResponseDto> getMyGuestbookPosts(Long memberId, Pageable pageable) {
+        return guestBookRepository.findByWriterId(memberId, pageable)
+                .map(gb -> new GuestbookMyResponseDto(
+                        gb.getGuestbookId(),
+                        gb.getOwner().getNickname(),
                         gb.getContent(),
                         gb.getCreatedAt()
                 ));
