@@ -71,4 +71,18 @@ public class GuestBookService {
                 ));
     }
 
+    // 내가 남긴 방명록 개별 삭제
+    @Transactional
+    public void deleteMyGuestbook(Long guestbookId, Long memberId) {
+        GuestBook guestBook = guestBookRepository.findById(guestbookId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 방명록이 존재하지 않습니다."));
+
+        if (!guestBook.getWriter().getMemberId().equals(memberId)) {
+            throw new IllegalArgumentException("본인이 작성한 방명록만 삭제할 수 있습니다.");
+        }
+
+        guestBook.setDeleted(true);
+    }
+
+
 }

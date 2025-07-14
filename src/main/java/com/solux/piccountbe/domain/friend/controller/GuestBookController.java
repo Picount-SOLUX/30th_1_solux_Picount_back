@@ -98,4 +98,15 @@ public class GuestBookController {
         Member loginMember = userDetails.getMember();
         return guestBookService.getMyGuestbookPosts(loginMember.getMemberId(), pageable);
     }
+
+    // 내가 남긴 방명록 개별 삭제
+    @DeleteMapping("/api/guestbook/my/{guestbookId}")
+    public ResponseEntity<?> deleteMyGuestbook(
+            @PathVariable Long guestbookId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        guestBookService.deleteMyGuestbook(guestbookId, userDetails.getMember().getMemberId());
+        return ResponseEntity.ok().body(Map.of("message", "방명록이 삭제되었습니다."));
+    }
+
 }

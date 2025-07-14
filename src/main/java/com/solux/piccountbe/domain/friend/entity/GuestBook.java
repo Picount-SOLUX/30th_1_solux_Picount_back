@@ -44,4 +44,8 @@ public class GuestBook extends Timestamped {
 		this.isDeleted = false;
 	}
 
+	public void setDeleted(Boolean deleted) {
+		this.isDeleted = deleted;
+	}
+
 }
