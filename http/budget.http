@@ -1,0 +1,10 @@
+### 예산생성
+POST http://localhost:8080/api/budgets
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "startDate" : "2025-07-01",
+  "endDate" : "2025-07-31",
+  "totalAmount" : 600000
+}
