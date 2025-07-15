@@ -12,7 +12,7 @@ import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
 import com.solux.piccountbe.domain.member.dto.SignupRequestDto;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.entity.Provider;
-import com.solux.piccountbe.domain.member.entity.UserGroupType;
+import com.solux.piccountbe.domain.member.entity.memberGroupType;
 import com.solux.piccountbe.domain.member.repository.MemberRepository;
 import com.solux.piccountbe.global.exception.CustomException;
 import com.solux.piccountbe.global.exception.ErrorCode;
@@ -62,7 +62,7 @@ public class MemberService {
 			.nickname(signupRequestDto.getNickname())
 			.profileImageUrl(defaultImageUrl)
 			.friendCode(friendCode)
-			.userGroupType(UserGroupType.STUDENT_UNIV)
+			.memberGroupType(memberGroupType.STUDENT_UNIV)
 			.withdraw(withDraw)
 			.isMainVisible(isMainVisible)
 			.build();
@@ -97,8 +97,8 @@ public class MemberService {
 			member.getMemberId(),
 			member.getEmail(),
 			member.getNickname(),
-			member.getUserGroupType(),
-			member.getUserGroupType().getLabel(),
+			member.getMemberGroupType(),
+			member.getMemberGroupType().getLabel(),
 			member.getIntro() != null ? member.getIntro() : "",
 			member.getFriendCode(),
 			member.getProfileImageUrl()

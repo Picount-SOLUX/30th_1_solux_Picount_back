@@ -3,7 +3,7 @@ package com.solux.piccountbe.domain.member.entity;
 import lombok.Getter;
 
 @Getter
-public enum UserGroupType {
+public enum memberGroupType {
 	STUDENT_YOUTH("중고등학생"),
 	STUDENT_UNIV("대학생"),
 	WORKER_2030("2030대 직장인"),
@@ -14,7 +14,7 @@ public enum UserGroupType {
 
 	private final String label;
 
-	UserGroupType(String label) {
+	memberGroupType(String label) {
 		this.label = label;
 	}
 

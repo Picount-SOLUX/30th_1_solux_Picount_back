@@ -1,6 +1,6 @@
 package com.solux.piccountbe.domain.member.dto;
 
-import com.solux.piccountbe.domain.member.entity.UserGroupType;
+import com.solux.piccountbe.domain.member.entity.memberGroupType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,8 +11,8 @@ public class ProfileResponseDto {
 	private Long memberId;
 	private String email;
 	private String nickname;
-	private UserGroupType userGroupType;
-	private String userGroupTypeLabel;
+	private memberGroupType memberGroupType;
+	private String memberGroupTypeLabel;
 	private String intro;
 	private String friendCode;
 	private String profileImageUrl;
