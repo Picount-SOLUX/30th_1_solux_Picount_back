@@ -182,6 +182,18 @@ public class MemberService {
 		member.memberGroupTypeUpdate(memberGroupType);
 	}
 
+	public void updateEmail(Long memberId, String email) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+		if (!member.getEmail().equals(email)) {
+			if (memberRepository.existsByEmail(email)) {
+				throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
+			}
+		}
+		Member updateMember = member.memberEmailUpdate(email);
+	}
+
 	public Member findByFriendCode(String friendCode) {
 		return memberRepository.findByFriendCode(friendCode)
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));

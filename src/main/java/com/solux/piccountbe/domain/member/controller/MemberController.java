@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.solux.piccountbe.config.security.UserDetailsImpl;
+import com.solux.piccountbe.domain.member.dto.EmailRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
@@ -74,6 +75,16 @@ public class MemberController {
 	) {
 		Long memberId = userDetails.getMember().getMemberId();
 		memberService.updateMemberGroupType(memberId, memberGroupTypeRequestDto.getMemberGroupType());
+		return ResponseEntity.ok(Response.success("직군 변경 성공", null));
+	}
+
+	@PutMapping(value = "/id")
+	public ResponseEntity<Response<Void>> updateEmail(
+		@RequestBody @Valid EmailRequestDto emailRequestDto,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Long memberId = userDetails.getMember().getMemberId();
+		memberService.updateEmail(memberId, emailRequestDto.getEmail());
 		return ResponseEntity.ok(Response.success("직군 변경 성공", null));
 	}
 

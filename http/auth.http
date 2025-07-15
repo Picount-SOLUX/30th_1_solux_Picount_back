@@ -25,6 +25,33 @@ Content-Type: application/json
     console.log("Access Token:", accessToken);
 %}
 
+### 회원가입2
+POST http://localhost:8080/api/members/signup
+Content-Type: application/json
+
+{
+  "email" : "email2@naver.com",
+  "password" : "Qwerty1234!",
+  "nickname" : "nickname2"
+}
+
+### 로그인2
+POST http://localhost:8080/api/members/login
+Content-Type: application/json
+
+{
+  "email" : "email2@naver.com",
+  "password" : "Qwerty1234!"
+}
+
+> {%
+    client.global.set("accessToken", response.body.data.accessToken);
+    client.global.set("refreshToken", response.body.data.refreshToken);
+
+    const accessToken = "Bearer " + client.global.get("accessToken");
+    console.log("Access Token:", accessToken);
+%}
+
 
 ### 마이프로필 조회
 GET http://localhost:8080/api/members/profile
@@ -39,4 +66,13 @@ Authorization: Bearer {{accessToken}}
 
 {
   "memberGroupType" : "YOUNGER"
+}
+
+### 이메일 수정
+PUT http://localhost:8080/api/members/id
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "email" : "aa@naver.com"
 }
