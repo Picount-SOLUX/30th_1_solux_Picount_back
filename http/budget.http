@@ -4,7 +4,13 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "startDate" : "2025-07-01",
-  "endDate" : "2025-07-31",
-  "totalAmount" : 600000
+  "startDate": "2025-07-01",
+  "endDate": "2025-07-31",
+  "totalAmount": 600000
 }
+
+
+### 예산삭제
+DELETE http://localhost:8080/api/budgets/2
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}

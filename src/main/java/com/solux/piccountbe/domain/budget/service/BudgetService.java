@@ -8,6 +8,8 @@ import com.solux.piccountbe.domain.budget.entity.Budget;
 import com.solux.piccountbe.domain.budget.repository.BudgetRepository;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.MemberService;
+import com.solux.piccountbe.global.exception.CustomException;
+import com.solux.piccountbe.global.exception.ErrorCode;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +33,16 @@ public class BudgetService {
 			.build();
 
 		budgetRepository.save(budget);
+	}
+
+	public void deleteBudget(Long memberId, Long budgetId) {
+		Budget budget = budgetRepository.findById(budgetId)
+			.orElseThrow(() -> new CustomException(ErrorCode.BUDGET_NOT_FOUND));
+
+		if (budget.getMember().getMemberId() != memberId) {
+			throw new CustomException(ErrorCode.BUDGET_NOT_MATCH_MEMBER);
+		}
+
+		budgetRepository.delete(budget);
 	}
 }
