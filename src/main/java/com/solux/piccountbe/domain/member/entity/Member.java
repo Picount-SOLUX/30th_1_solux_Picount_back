@@ -48,7 +48,7 @@ public class Member extends Timestamped {
 
 	@Column
 	@Enumerated(value = EnumType.STRING)
-	private memberGroupType memberGroupType;
+	private MemberGroupType memberGroupType;
 
 	@Column(nullable = false)
 	private String profileImageUrl;
@@ -79,7 +79,7 @@ public class Member extends Timestamped {
 
 	@Builder
 	public Member(Provider provider, String email, Long oauthId, String password, String nickname, String profileImageUrl, String friendCode, Boolean withdraw,
-		Boolean isMainVisible, memberGroupType memberGroupType) {
+		Boolean isMainVisible, MemberGroupType memberGroupType) {
 		this.provider = provider;
 		this.email = email;
 		this.oauthId = oauthId;
@@ -105,6 +105,10 @@ public class Member extends Timestamped {
 
 	public void memberProfileImageUrlUpdate(String profileImageUrl) {
 		this.profileImageUrl = profileImageUrl;
+	}
+
+	public void memberGroupTypeUpdate(MemberGroupType memberGroupType) {
+		this.memberGroupType = memberGroupType;
 	}
 
 	// 포인트 차감 메서드

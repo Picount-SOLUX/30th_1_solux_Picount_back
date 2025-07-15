@@ -20,7 +20,7 @@ import com.solux.piccountbe.domain.member.dto.ProfileUpdateRequestDto;
 import com.solux.piccountbe.domain.member.dto.SignupRequestDto;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.entity.Provider;
-import com.solux.piccountbe.domain.member.entity.memberGroupType;
+import com.solux.piccountbe.domain.member.entity.MemberGroupType;
 import com.solux.piccountbe.domain.member.repository.MemberRepository;
 import com.solux.piccountbe.global.exception.CustomException;
 import com.solux.piccountbe.global.exception.ErrorCode;
@@ -75,7 +75,7 @@ public class MemberService {
 			.nickname(signupRequestDto.getNickname())
 			.profileImageUrl(defaultImageUrl)
 			.friendCode(friendCode)
-			.memberGroupType(memberGroupType.STUDENT_UNIV)
+			.memberGroupType(MemberGroupType.STUDENT_UNIV)
 			.withdraw(withDraw)
 			.isMainVisible(isMainVisible)
 			.build();
@@ -173,6 +173,13 @@ public class MemberService {
 			member.memberProfileImageUrlUpdate("/images/profileImages/" + newFileName);
 		}
 
+	}
+
+	public void updateMemberGroupType(Long memberId, MemberGroupType memberGroupType) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+		member.memberGroupTypeUpdate(memberGroupType);
 	}
 
 	public Member findByFriendCode(String friendCode) {

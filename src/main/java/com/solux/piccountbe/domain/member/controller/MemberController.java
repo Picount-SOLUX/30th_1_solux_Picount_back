@@ -19,6 +19,7 @@ import com.solux.piccountbe.domain.member.dto.LoginResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileUpdateRequestDto;
 import com.solux.piccountbe.domain.member.dto.SignupRequestDto;
+import com.solux.piccountbe.domain.member.dto.MemberGroupTypeRequestDto;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.MemberService;
 import com.solux.piccountbe.global.Response;
@@ -58,12 +59,22 @@ public class MemberController {
 	public ResponseEntity<Response<Void>> updateProfile(
 		@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
 		@Valid @RequestPart(value = "profileInfo") ProfileUpdateRequestDto profileUpdateRequestDto,
-		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
 
 		Long memberId = userDetails.getMember().getMemberId();
 		memberService.updateProfile(memberId, profileImage, profileUpdateRequestDto);
 		return ResponseEntity.ok(Response.success("마이프로필 수정 성공", null));
+	}
 
+	@PutMapping(value = "/membergrouptype")
+	public ResponseEntity<Response<Void>> updateMemberGroupType(
+		@RequestBody MemberGroupTypeRequestDto memberGroupTypeRequestDto,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Long memberId = userDetails.getMember().getMemberId();
+		memberService.updateMemberGroupType(memberId, memberGroupTypeRequestDto.getMemberGroupType());
+		return ResponseEntity.ok(Response.success("직군 변경 성공", null));
 	}
 
 }
