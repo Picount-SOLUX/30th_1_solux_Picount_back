@@ -16,6 +16,8 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패했습니다."),
     MEMBER_OAUTH_MISMATCH(HttpStatus.BAD_REQUEST, "소셜 계정으로 가입된 회원은 이메일 로그인 방식을 사용할 수 없습니다."),
+    MEMBER_IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "프로필 이미지 저장에 실패했습니다."),
+    MEMBER_IMAGE_DIRECTORY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "프로질 이미지 디렉토리 생성에 실패했습니다."),
 
     // 상점
     NO_ITEMS_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),

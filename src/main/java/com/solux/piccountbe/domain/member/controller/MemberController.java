@@ -1,18 +1,23 @@
 package com.solux.piccountbe.domain.member.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.member.dto.LoginRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
+import com.solux.piccountbe.domain.member.dto.ProfileUpdateRequestDto;
 import com.solux.piccountbe.domain.member.dto.SignupRequestDto;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.MemberService;
@@ -47,6 +52,18 @@ public class MemberController {
 		Member member = userDetails.getMember();
 		ProfileResponseDto res = memberService.getProfile(member);
 		return ResponseEntity.ok(Response.success("마이프로필 조회 성공", res));
+	}
+
+	@PutMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Response<Void>> updateProfile(
+		@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+		@Valid @RequestPart(value = "profileInfo") ProfileUpdateRequestDto profileUpdateRequestDto,
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+		Long memberId = userDetails.getMember().getMemberId();
+		memberService.updateProfile(memberId, profileImage, profileUpdateRequestDto);
+		return ResponseEntity.ok(Response.success("마이프로필 수정 성공", null));
+
 	}
 
 }

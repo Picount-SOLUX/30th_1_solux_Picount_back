@@ -65,3 +65,7 @@ custom-security:
 
 callback-oauth:
   frontend-redirect-uri: http://localhost:8080/login.html
+
+upload:
+  dir: ./uploads/profileImages
+  default_profile_image: /images/profile/default-member-profile.png

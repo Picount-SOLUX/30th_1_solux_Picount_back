@@ -53,7 +53,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 		// TODO: 프론트와 연동 후 범위 설정
 		Member member = memberRepository.findByProviderAndOauthId(Provider.KAKAO, kakaoId)
-			.map(m -> m.memberUpdate(kakaoEmail))
+			.map(m -> m.memberEmailUpdate(kakaoEmail))
 			.orElseGet(() -> memberRepository.save(
 				Member.builder()
 					.provider(Provider.KAKAO)

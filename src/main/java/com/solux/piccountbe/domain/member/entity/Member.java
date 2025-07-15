@@ -16,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.transaction.Transactional;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,7 +49,6 @@ public class Member extends Timestamped {
 	@Column
 	@Enumerated(value = EnumType.STRING)
 	private memberGroupType memberGroupType;
-
 
 	@Column(nullable = false)
 	private String profileImageUrl;
@@ -92,9 +92,19 @@ public class Member extends Timestamped {
 		this.memberGroupType = memberGroupType;
 	}
 
-	public Member memberUpdate(String email) {
+	public Member memberEmailUpdate(String email) {
 		this.email = email;
 		return this;
+	}
+
+	@Transactional
+	public void memberProfileUpdate(String nickname, String intro) {
+		this.nickname = nickname;
+		this.intro = intro;
+	}
+
+	public void memberProfileImageUrlUpdate(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
 	}
 
 	// 포인트 차감 메서드
