@@ -1,7 +1,5 @@
 package com.solux.piccountbe.domain.member.dto;
 
-import com.solux.piccountbe.domain.member.entity.Gender;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -23,9 +21,4 @@ public class SignupRequestDto {
 
 	@NotBlank(message = "닉네임을 입력해주십시오.")
 	private String nickname;
-
-	private Gender gender;
-
-	private Integer age;
-
 }

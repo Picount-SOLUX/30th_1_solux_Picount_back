@@ -16,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.transaction.Transactional;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,10 +48,7 @@ public class Member extends Timestamped {
 
 	@Column
 	@Enumerated(value = EnumType.STRING)
-	private Occupation occupation;
-
-	@Column
-	private String purpose;
+	private MemberGroupType memberGroupType;
 
 	@Column(nullable = false)
 	private String profileImageUrl;
@@ -58,15 +56,8 @@ public class Member extends Timestamped {
 	@Column
 	private String intro;
 
-	@Column
-	@Enumerated(value = EnumType.STRING)
-	private Gender gender;
-
 	@Column(nullable = false, unique = true, length = 8)
 	private String friendCode;
-
-	@Column
-	private Integer age;
 
 	@Column(nullable = false)
 	private Boolean withdraw;
@@ -87,24 +78,37 @@ public class Member extends Timestamped {
 	private Long point = 0L; // 기본값 0, long 타입
 
 	@Builder
-	public Member(Provider provider, String email, Long oauthId, String password, String nickname, String profileImageUrl, Gender gender, String friendCode, Integer age, Boolean withdraw,
-		Boolean isMainVisible) {
+	public Member(Provider provider, String email, Long oauthId, String password, String nickname, String profileImageUrl, String friendCode, Boolean withdraw,
+		Boolean isMainVisible, MemberGroupType memberGroupType) {
 		this.provider = provider;
 		this.email = email;
 		this.oauthId = oauthId;
 		this.password = password;
 		this.nickname = nickname;
 		this.profileImageUrl = profileImageUrl;
-		this.gender = gender;
 		this.friendCode = friendCode;
-		this.age = age;
 		this.withdraw = withdraw;
 		this.isMainVisible = isMainVisible;
+		this.memberGroupType = memberGroupType;
 	}
 
-	public Member memberUpdate(String email) {
+	public Member memberEmailUpdate(String email) {
 		this.email = email;
 		return this;
+	}
+
+	@Transactional
+	public void memberProfileUpdate(String nickname, String intro) {
+		this.nickname = nickname;
+		this.intro = intro;
+	}
+
+	public void memberProfileImageUrlUpdate(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
+
+	public void memberGroupTypeUpdate(MemberGroupType memberGroupType) {
+		this.memberGroupType = memberGroupType;
 	}
 
 	// 포인트 차감 메서드
