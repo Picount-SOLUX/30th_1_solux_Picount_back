@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.solux.piccountbe.domain.budget.dto.BudgetAllocationDto;
+import com.solux.piccountbe.domain.budget.dto.BudgetResponseDto;
+import com.solux.piccountbe.domain.budget.dto.GetAllBudgetResponseDto;
 import com.solux.piccountbe.domain.budget.dto.GetBudgetResponseDto;
 import com.solux.piccountbe.domain.budget.entity.Budget;
 import com.solux.piccountbe.domain.budget.repository.BudgetRepository;
@@ -96,6 +98,24 @@ public class BudgetService {
 			budgetAllocationDtoList
 		);
 		return getBudgetResponseDto;
+	}
+
+	public GetAllBudgetResponseDto getAllBudget(Long memberId) {
+
+		Member member = memberService.getMemberById(memberId);
+		List<BudgetResponseDto> budgetResponseDtoList = member.getBudgets()
+			.stream()
+			.map(a -> new BudgetResponseDto(
+				a.getBudgetId(),
+				a.getStartDate(),
+				a.getEndDate(),
+				a.getTotalAmount(),
+				a.getIsActive()
+			))
+			.collect(Collectors.toList());
+
+		return new GetAllBudgetResponseDto(budgetResponseDtoList);
+
 	}
 
 	public Long getActiveBudgetId(Member member) {

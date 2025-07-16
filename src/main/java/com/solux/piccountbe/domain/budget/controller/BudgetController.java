@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.budget.dto.CreateBudgetRequestDto;
+import com.solux.piccountbe.domain.budget.dto.GetAllBudgetResponseDto;
 import com.solux.piccountbe.domain.budget.dto.GetBudgetResponseDto;
 import com.solux.piccountbe.domain.budget.service.BudgetService;
 import com.solux.piccountbe.domain.member.entity.Member;
@@ -57,13 +58,22 @@ public class BudgetController {
 	}
 
 	@GetMapping("/active")
-	public ResponseEntity<Response<GetBudgetResponseDto>> getBudget(
+	public ResponseEntity<Response<GetBudgetResponseDto>> getActiveBudget(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		Member member = userDetails.getMember();
 		Long budgetId = budgetService.getActiveBudgetId(member);
 		GetBudgetResponseDto res = budgetService.getBudget(member, budgetId);
 		return ResponseEntity.ok(Response.success("현재 활성화된 예산 개별조회 완료", res));
+	}
+
+	@GetMapping
+	public ResponseEntity<Response<GetAllBudgetResponseDto>> getBudget(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Long memberId = userDetails.getMember().getMemberId();
+		GetAllBudgetResponseDto res = budgetService.getAllBudget(memberId);
+		return ResponseEntity.ok(Response.success("사용자의 전체예산 조회 완료", res));
 	}
 
 }

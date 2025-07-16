@@ -26,3 +26,9 @@ Authorization: Bearer {{accessToken}}
 GET http://localhost:8080/api/budgets/active
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
+
+
+### 사용자의 예산 전체조회
+GET http://localhost:8080/api/budgets
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
