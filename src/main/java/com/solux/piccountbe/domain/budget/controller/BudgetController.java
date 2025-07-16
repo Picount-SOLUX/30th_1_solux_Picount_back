@@ -56,4 +56,14 @@ public class BudgetController {
 		return ResponseEntity.ok(Response.success("예산 개별조회 완료", res));
 	}
 
+	@GetMapping("/active")
+	public ResponseEntity<Response<GetBudgetResponseDto>> getBudget(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Member member = userDetails.getMember();
+		Long budgetId = budgetService.getActiveBudgetId(member);
+		GetBudgetResponseDto res = budgetService.getBudget(member, budgetId);
+		return ResponseEntity.ok(Response.success("현재 활성화된 예산 개별조회 완료", res));
+	}
+
 }

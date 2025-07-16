@@ -93,10 +93,16 @@ public class BudgetService {
 			budget.getEndDate(),
 			budget.getTotalAmount(),
 			budget.getIsActive(),
-			//TODO:budget목록보여주기필요
 			budgetAllocationDtoList
 		);
 		return getBudgetResponseDto;
+	}
+
+	public Long getActiveBudgetId(Member member) {
+		return budgetRepository.findByMemberAndIsActiveTrue(member)
+			.orElseThrow(() -> new CustomException(ErrorCode.BUDGET_NOT_FOUND))
+			.getBudgetId();
+
 	}
 
 }
