@@ -1,0 +1,20 @@
+### 카테고리생성(소비)
+POST http://localhost:8080/api/category
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "categoryName": "동생용돈1",
+  "type": "EXPENSE"
+}
+
+
+### 카테고리생성(소득)
+POST http://localhost:8080/api/category
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "categoryName": "알바비",
+  "type": "INCOME"
+}

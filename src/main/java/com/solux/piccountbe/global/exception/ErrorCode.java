@@ -20,6 +20,9 @@ public enum ErrorCode {
 	MEMBER_IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "프로필 이미지 저장에 실패했습니다."),
 	MEMBER_IMAGE_DIRECTORY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "프로질 이미지 디렉토리 생성에 실패했습니다."),
 
+	// 카테고리
+	CATAEGORY_EXIST(HttpStatus.CONFLICT, "이미 존재하는 카테고리입니다."),
+
 	// 예산
 	BUDGET_NOT_FOUND(HttpStatus.NOT_FOUND, "예산을 찾을 수 없습니다."),
 	BUDGET_NOT_MATCH_MEMBER(HttpStatus.BAD_REQUEST, "사용자의 예산이 아닙니다."),
