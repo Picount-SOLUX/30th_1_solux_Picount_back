@@ -1,0 +1,60 @@
+### 카테고리생성(지출)
+POST http://localhost:8080/api/category
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "categoryName": "동생용돈",
+  "type": "EXPENSE"
+}
+
+### 카테고리생성(수입)
+POST http://localhost:8080/api/category
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "categoryName": "알바비2",
+  "type": "INCOME"
+}
+
+
+### 단일 카테고리 조회
+GET http://localhost:8080/api/category/2
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+### 지출 카테고리 조회
+GET http://localhost:8080/api/category?type=EXPENSE
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 수입 카테고리 조회
+GET http://localhost:8080/api/category?type=INCOME
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 전체 카테고리 조회
+GET http://localhost:8080/api/category
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+
+### 카테고리 삭제
+DELETE http://localhost:8080/api/category/2
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 카테고리 업데이트
+PUT http://localhost:8080/api/category/1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "categoryName": "용돈",
+  "type": "INCOME"
+}

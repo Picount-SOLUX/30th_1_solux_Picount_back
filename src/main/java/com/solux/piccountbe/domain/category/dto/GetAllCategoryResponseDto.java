@@ -1,0 +1,13 @@
+package com.solux.piccountbe.domain.category.dto;
+
+import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@Getter
+public class GetAllCategoryResponseDto {
+	List<GetCategoryResponseDto> categories;
+}
