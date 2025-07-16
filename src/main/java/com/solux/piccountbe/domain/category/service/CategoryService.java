@@ -81,4 +81,14 @@ public class CategoryService {
 
 		return new GetAllCategoryResponseDto(categoryResponseDtoList);
 	}
+
+	public void deleteCategory(Long memberId, Long categoryId) {
+		Member member = memberService.getMemberById(memberId);
+		Category category = categoryRepository.findById(categoryId)
+			.orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+		if (!category.getMember().equals(member)) {
+			throw new CustomException(ErrorCode.CATEGORY_NOT_MATCH_MEMBER);
+		}
+		categoryRepository.deleteById(categoryId);
+	}
 }

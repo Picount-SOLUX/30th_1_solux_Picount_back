@@ -2,6 +2,7 @@ package com.solux.piccountbe.domain.category.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,6 +53,15 @@ public class CategoryController {
 		Long memberId = userDetails.getMember().getMemberId();
 		GetAllCategoryResponseDto res = categoryService.getAllCategory(memberId, type);
 		return ResponseEntity.ok(Response.success("전체 카테고리 조회 완료", res));
+	}
+
+	@DeleteMapping("/{categoryId}")
+	public ResponseEntity<Response<Void>> deleteCategory(
+		@PathVariable Long categoryId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		Long memberId = userDetails.getMember().getMemberId();
+		categoryService.deleteCategory(memberId, categoryId);
+		return ResponseEntity.ok(Response.success("카테고리 삭제 완료", null));
 	}
 
 }
