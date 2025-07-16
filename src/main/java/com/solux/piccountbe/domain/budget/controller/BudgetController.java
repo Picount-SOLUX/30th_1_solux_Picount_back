@@ -40,7 +40,17 @@ public class BudgetController {
 	) {
 		Long memberId = userDetails.getMember().getMemberId();
 		budgetService.deleteBudget(memberId, budgetId);
-		return ResponseEntity.ok(Response.success("예산  삭제 완료", null));
+		return ResponseEntity.ok(Response.success("예산 삭제 완료", null));
 	}
+
+	// @GetMapping("/{budgetId}")
+	// public ResponseEntity<Response<getBudgetResponseDto>> getBudget(
+	// 	@RequestBody getBudgetRequestDto req,
+	// 	@AuthenticationPrincipal UserDetailsImpl userDetails
+	// ) {
+	// 	Long memberId = userDetails.getMember().getMemberId();
+	// 	getBudgetResponseDto res = budgetService.getBudget(memberId, req);
+	// 	return ResponseEntity.ok(Response.success("예산 개별조회 완료", res));
+	// }
 
 }

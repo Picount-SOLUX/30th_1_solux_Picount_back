@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -44,6 +45,10 @@ public class Budget {
 
 	@Column
 	private Integer totalAmount;
+
+	@Column
+	@Setter
+	private Boolean isActive;
 
 	@OneToMany(mappedBy = "budget", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<BudgetAllocation> budgetAllocationList = new ArrayList<>();
