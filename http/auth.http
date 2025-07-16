@@ -74,5 +74,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "email" : "aa@naver.com"
+  "email": "aa@naver.com"
 }
+
+
