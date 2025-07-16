@@ -3,6 +3,7 @@ package com.solux.piccountbe.domain.budget.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.solux.piccountbe.config.security.UserDetailsImpl;
-import com.solux.piccountbe.domain.budget.dto.createBudgetRequestDto;
+import com.solux.piccountbe.domain.budget.dto.CreateBudgetRequestDto;
+import com.solux.piccountbe.domain.budget.dto.GetBudgetResponseDto;
 import com.solux.piccountbe.domain.budget.service.BudgetService;
+import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.global.Response;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +28,7 @@ public class BudgetController {
 
 	@PostMapping
 	public ResponseEntity<Response<Void>> createBudget(
-		@RequestBody createBudgetRequestDto req,
+		@RequestBody CreateBudgetRequestDto req,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		Long memberId = userDetails.getMember().getMemberId();
@@ -43,14 +46,14 @@ public class BudgetController {
 		return ResponseEntity.ok(Response.success("예산 삭제 완료", null));
 	}
 
-	// @GetMapping("/{budgetId}")
-	// public ResponseEntity<Response<getBudgetResponseDto>> getBudget(
-	// 	@RequestBody getBudgetRequestDto req,
-	// 	@AuthenticationPrincipal UserDetailsImpl userDetails
-	// ) {
-	// 	Long memberId = userDetails.getMember().getMemberId();
-	// 	getBudgetResponseDto res = budgetService.getBudget(memberId, req);
-	// 	return ResponseEntity.ok(Response.success("예산 개별조회 완료", res));
-	// }
+	@GetMapping("/{budgetId}")
+	public ResponseEntity<Response<GetBudgetResponseDto>> getBudget(
+		@PathVariable Long budgetId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Member member = userDetails.getMember();
+		GetBudgetResponseDto res = budgetService.getBudget(member, budgetId);
+		return ResponseEntity.ok(Response.success("예산 개별조회 완료", res));
+	}
 
 }

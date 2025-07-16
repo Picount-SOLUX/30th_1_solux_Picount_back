@@ -1,9 +1,13 @@
 package com.solux.piccountbe.domain.budget.service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.solux.piccountbe.domain.budget.dto.BudgetAllocationDto;
+import com.solux.piccountbe.domain.budget.dto.GetBudgetResponseDto;
 import com.solux.piccountbe.domain.budget.entity.Budget;
 import com.solux.piccountbe.domain.budget.repository.BudgetRepository;
 import com.solux.piccountbe.domain.member.entity.Member;
@@ -64,4 +68,35 @@ public class BudgetService {
 				});
 		}
 	}
+
+	public GetBudgetResponseDto getBudget(Member member, Long budgetId) {
+		Budget budget = budgetRepository.findById(budgetId)
+			.orElseThrow(() -> new CustomException(ErrorCode.BUDGET_NOT_FOUND));
+
+		if (!budget.getMember().getMemberId().equals(member.getMemberId())) {
+			throw new CustomException(ErrorCode.BUDGET_NOT_MATCH_MEMBER);
+		}
+
+		List<BudgetAllocationDto> budgetAllocationDtoList = budget.getBudgetAllocationList()
+			.stream()
+			.map(a -> new BudgetAllocationDto(
+				a.getAllocationId(),
+				a.getCategory().getCategoryId(),
+				a.getCategory().getName(),
+				a.getAmount()
+			))
+			.collect(Collectors.toList());
+
+		GetBudgetResponseDto getBudgetResponseDto = new GetBudgetResponseDto(
+			budgetId,
+			budget.getStartDate(),
+			budget.getEndDate(),
+			budget.getTotalAmount(),
+			budget.getIsActive(),
+			//TODO:budget목록보여주기필요
+			budgetAllocationDtoList
+		);
+		return getBudgetResponseDto;
+	}
+
 }

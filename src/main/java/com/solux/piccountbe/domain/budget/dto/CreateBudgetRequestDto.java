@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class createBudgetRequestDto {
+public class CreateBudgetRequestDto {
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private int totalAmount;
