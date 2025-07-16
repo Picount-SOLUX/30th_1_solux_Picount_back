@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.category.dto.CreateCategoryRequestDto;
+import com.solux.piccountbe.domain.category.dto.GetAllCategoryResponseDto;
 import com.solux.piccountbe.domain.category.dto.GetCategoryResponseDto;
 import com.solux.piccountbe.domain.category.service.CategoryService;
 import com.solux.piccountbe.global.Response;
@@ -39,5 +40,13 @@ public class CategoryController {
 		Long memberId = userDetails.getMember().getMemberId();
 		GetCategoryResponseDto res = categoryService.getCategory(memberId, categoryId);
 		return ResponseEntity.ok(Response.success("단일 카테고리 조회 완료", res));
+	}
+
+	@GetMapping
+	public ResponseEntity<Response<GetAllCategoryResponseDto>> getAllCategory(
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		Long memberId = userDetails.getMember().getMemberId();
+		GetAllCategoryResponseDto res = categoryService.getAllCategory(memberId);
+		return ResponseEntity.ok(Response.success("전체 카테고리 조회 완료", res));
 	}
 }

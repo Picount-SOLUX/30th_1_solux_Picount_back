@@ -1,8 +1,12 @@
 package com.solux.piccountbe.domain.category.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.solux.piccountbe.domain.category.dto.CreateCategoryRequestDto;
+import com.solux.piccountbe.domain.category.dto.GetAllCategoryResponseDto;
 import com.solux.piccountbe.domain.category.dto.GetCategoryResponseDto;
 import com.solux.piccountbe.domain.category.entity.Category;
 import com.solux.piccountbe.domain.category.repository.CategoryRepository;
@@ -59,5 +63,20 @@ public class CategoryService {
 			category.getType(),
 			category.getType().getLabel()
 		);
+	}
+
+	public GetAllCategoryResponseDto getAllCategory(Long memberId) {
+		Member member = memberService.getMemberById(memberId);
+		List<GetCategoryResponseDto> categoryResponseDtoList = member.getCategories()
+			.stream()
+			.map(a -> new GetCategoryResponseDto(
+				a.getCategoryId(),
+				a.getName(),
+				a.getType(),
+				a.getType().getLabel()
+			))
+			.collect(Collectors.toList());
+
+		return new GetAllCategoryResponseDto(categoryResponseDtoList);
 	}
 }

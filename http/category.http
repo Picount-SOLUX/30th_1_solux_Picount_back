@@ -1,4 +1,4 @@
-### 카테고리생성(소비)
+### 카테고리생성(지출)
 POST http://localhost:8080/api/category
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
@@ -8,8 +8,24 @@ Authorization: Bearer {{accessToken}}
   "type": "EXPENSE"
 }
 
+### 카테고리생성(수입)
+POST http://localhost:8080/api/category
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "categoryName": "알바비",
+  "type": "INCOME"
+}
+
 
 ### 단일 카테고리 조회
-GET http://localhost:8080/api/category/1
+GET http://localhost:8080/api/category/2
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 전체 카테고리 조회
+GET http://localhost:8080/api/category
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
