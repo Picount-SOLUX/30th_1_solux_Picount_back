@@ -7,12 +7,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.category.dto.CreateCategoryRequestDto;
 import com.solux.piccountbe.domain.category.dto.GetAllCategoryResponseDto;
 import com.solux.piccountbe.domain.category.dto.GetCategoryResponseDto;
+import com.solux.piccountbe.domain.category.entity.Category;
+import com.solux.piccountbe.domain.category.entity.Type;
 import com.solux.piccountbe.domain.category.service.CategoryService;
 import com.solux.piccountbe.global.Response;
 
@@ -44,9 +47,11 @@ public class CategoryController {
 
 	@GetMapping
 	public ResponseEntity<Response<GetAllCategoryResponseDto>> getAllCategory(
+		@RequestParam(value="type", required=false) Type type,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		Long memberId = userDetails.getMember().getMemberId();
-		GetAllCategoryResponseDto res = categoryService.getAllCategory(memberId);
+		GetAllCategoryResponseDto res = categoryService.getAllCategory(memberId, type);
 		return ResponseEntity.ok(Response.success("전체 카테고리 조회 완료", res));
 	}
+
 }

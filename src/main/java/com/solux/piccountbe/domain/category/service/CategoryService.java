@@ -9,6 +9,7 @@ import com.solux.piccountbe.domain.category.dto.CreateCategoryRequestDto;
 import com.solux.piccountbe.domain.category.dto.GetAllCategoryResponseDto;
 import com.solux.piccountbe.domain.category.dto.GetCategoryResponseDto;
 import com.solux.piccountbe.domain.category.entity.Category;
+import com.solux.piccountbe.domain.category.entity.Type;
 import com.solux.piccountbe.domain.category.repository.CategoryRepository;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.MemberService;
@@ -65,10 +66,11 @@ public class CategoryService {
 		);
 	}
 
-	public GetAllCategoryResponseDto getAllCategory(Long memberId) {
+	public GetAllCategoryResponseDto getAllCategory(Long memberId, Type type) {
 		Member member = memberService.getMemberById(memberId);
 		List<GetCategoryResponseDto> categoryResponseDtoList = member.getCategories()
 			.stream()
+			.filter(cat -> type == null || cat.getType() == type)
 			.map(a -> new GetCategoryResponseDto(
 				a.getCategoryId(),
 				a.getName(),
