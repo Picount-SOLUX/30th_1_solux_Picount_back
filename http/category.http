@@ -9,12 +9,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 
-### 카테고리생성(소득)
-POST http://localhost:8080/api/category
+### 단일 카테고리 조회
+GET http://localhost:8080/api/category/1
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
-
-{
-  "categoryName": "알바비",
-  "type": "INCOME"
-}

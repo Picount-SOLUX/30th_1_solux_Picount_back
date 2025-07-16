@@ -22,6 +22,8 @@ public enum ErrorCode {
 
 	// 카테고리
 	CATAEGORY_EXIST(HttpStatus.CONFLICT, "이미 존재하는 카테고리입니다."),
+	CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "카테고리를 찾을 수 없습니다."),
+	CATEGORY_NOT_MATCH_MEMBER(HttpStatus.BAD_REQUEST, "사용자의 카테고리가 아닙니다."),
 
 	// 예산
 	BUDGET_NOT_FOUND(HttpStatus.NOT_FOUND, "예산을 찾을 수 없습니다."),

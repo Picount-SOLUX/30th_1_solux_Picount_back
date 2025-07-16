@@ -3,6 +3,7 @@ package com.solux.piccountbe.domain.category.service;
 import org.springframework.stereotype.Service;
 
 import com.solux.piccountbe.domain.category.dto.CreateCategoryRequestDto;
+import com.solux.piccountbe.domain.category.dto.GetCategoryResponseDto;
 import com.solux.piccountbe.domain.category.entity.Category;
 import com.solux.piccountbe.domain.category.repository.CategoryRepository;
 import com.solux.piccountbe.domain.member.entity.Member;
@@ -39,5 +40,24 @@ public class CategoryService {
 			.build();
 
 		categoryRepository.save(category);
+	}
+
+	public GetCategoryResponseDto getCategory(Long memberId, Long categoryId) {
+
+		Member member = memberService.getMemberById(memberId);
+		Category category = categoryRepository.findById(categoryId).
+			orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
+			);
+
+		if (!category.getMember().equals(member)) {
+			throw new CustomException(ErrorCode.CATEGORY_NOT_MATCH_MEMBER);
+		}
+
+		return new GetCategoryResponseDto(
+			categoryId,
+			category.getName(),
+			category.getType(),
+			category.getType().getLabel()
+		);
 	}
 }
