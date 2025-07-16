@@ -6,16 +6,16 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.solux.piccountbe.config.security.UserDetailsImpl;
-import com.solux.piccountbe.domain.category.dto.CreateCategoryRequestDto;
+import com.solux.piccountbe.domain.category.dto.CreateOrUpdateCategoryRequestDto;
 import com.solux.piccountbe.domain.category.dto.GetAllCategoryResponseDto;
 import com.solux.piccountbe.domain.category.dto.GetCategoryResponseDto;
-import com.solux.piccountbe.domain.category.entity.Category;
 import com.solux.piccountbe.domain.category.entity.Type;
 import com.solux.piccountbe.domain.category.service.CategoryService;
 import com.solux.piccountbe.global.Response;
@@ -30,7 +30,7 @@ public class CategoryController {
 
 	@PostMapping
 	public ResponseEntity<Response<Void>> createCategory(
-		@RequestBody CreateCategoryRequestDto req,
+		@RequestBody CreateOrUpdateCategoryRequestDto req,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		Long memberId = userDetails.getMember().getMemberId();
 		categoryService.createCategory(memberId, req);
@@ -62,6 +62,16 @@ public class CategoryController {
 		Long memberId = userDetails.getMember().getMemberId();
 		categoryService.deleteCategory(memberId, categoryId);
 		return ResponseEntity.ok(Response.success("카테고리 삭제 완료", null));
+	}
+
+	@PutMapping("/{categoryId}")
+	public ResponseEntity<Response<Void>> updateCategory(
+		@PathVariable Long categoryId,
+		@RequestBody CreateOrUpdateCategoryRequestDto req,
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		Long memberId = userDetails.getMember().getMemberId();
+		categoryService.updateCategory(memberId, categoryId, req);
+		return ResponseEntity.ok(Response.success("카테고리 수정 완료", null));
 	}
 
 }

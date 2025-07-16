@@ -44,6 +44,17 @@ Authorization: Bearer {{accessToken}}
 
 
 ### 카테고리 삭제
-DELETE http://localhost:8080/api/category/1
+DELETE http://localhost:8080/api/category/2
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
+
+
+### 카테고리 업데이트
+PUT http://localhost:8080/api/category/1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "categoryName": "용돈",
+  "type": "INCOME"
+}

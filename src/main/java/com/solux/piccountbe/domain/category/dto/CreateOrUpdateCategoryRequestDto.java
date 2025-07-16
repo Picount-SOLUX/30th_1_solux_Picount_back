@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class CreateCategoryRequestDto {
+public class CreateOrUpdateCategoryRequestDto {
 	private String categoryName;
 	private Type type;
 }

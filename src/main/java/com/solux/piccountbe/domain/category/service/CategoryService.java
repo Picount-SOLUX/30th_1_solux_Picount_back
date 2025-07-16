@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.solux.piccountbe.domain.category.dto.CreateCategoryRequestDto;
+import com.solux.piccountbe.domain.category.dto.CreateOrUpdateCategoryRequestDto;
 import com.solux.piccountbe.domain.category.dto.GetAllCategoryResponseDto;
 import com.solux.piccountbe.domain.category.dto.GetCategoryResponseDto;
 import com.solux.piccountbe.domain.category.entity.Category;
@@ -27,7 +27,7 @@ public class CategoryService {
 	private final CategoryRepository categoryRepository;
 	private final MemberService memberService;
 
-	public void createCategory(Long memberId, CreateCategoryRequestDto categoryRequestDto) {
+	public void createCategory(Long memberId, CreateOrUpdateCategoryRequestDto categoryRequestDto) {
 		Member member = memberService.getMemberById(memberId);
 
 		if (categoryRepository.existsByMemberAndTypeAndName(
@@ -90,5 +90,17 @@ public class CategoryService {
 			throw new CustomException(ErrorCode.CATEGORY_NOT_MATCH_MEMBER);
 		}
 		categoryRepository.deleteById(categoryId);
+	}
+
+	public void updateCategory(Long memberId, Long categoryId, CreateOrUpdateCategoryRequestDto updateRequestDto) {
+		Member member = memberService.getMemberById(memberId);
+		Category category = categoryRepository.findById(categoryId)
+			.orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+		if (!category.getMember().equals(member)) {
+			throw new CustomException(ErrorCode.CATEGORY_NOT_MATCH_MEMBER);
+		}
+
+		category.updateCategory(updateRequestDto.getCategoryName(), updateRequestDto.getType());
+		categoryRepository.save(category);
 	}
 }

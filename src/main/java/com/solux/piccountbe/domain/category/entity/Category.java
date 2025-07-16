@@ -38,4 +38,10 @@ public class Category {
 	@Column
 	@Enumerated(value = EnumType.STRING)
 	private Type type;
+
+
+	public void updateCategory(String name, Type type) {
+		this.name = name;
+		this.type = type;
+	}
 }
