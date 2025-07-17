@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
-@RequestMapping("/api/emotions")
+@RequestMapping("/api/calendar/emotion")
 @RequiredArgsConstructor
 public class EmotionController {
 
