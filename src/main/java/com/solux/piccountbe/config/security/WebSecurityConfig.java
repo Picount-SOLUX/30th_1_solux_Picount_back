@@ -23,7 +23,7 @@ import com.solux.piccountbe.domain.member.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
 
-@Configuration
+/*@Configuration
 @EnableWebSecurity
 @EnableConfigurationProperties(SecurityProperties.class)
 @RequiredArgsConstructor
@@ -86,4 +86,54 @@ public class WebSecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
+}*/
+
+@Configuration
+@EnableWebSecurity
+@EnableConfigurationProperties(SecurityProperties.class)
+@RequiredArgsConstructor
+public class WebSecurityConfig {
+
+	private final UserDetailsServiceImpl userDetailsServiceImpl;
+	private final SecurityProperties securityProperties;
+	private final JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
+
+	private final CustomOAuth2UserService customOAuth2UserService;
+	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http
+				.csrf(AbstractHttpConfigurer::disable)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(securityProperties.getWhitelist().toArray(new String[0])).permitAll()
+						.anyRequest().authenticated()
+				)
+				.oauth2Login(oauth -> oauth
+						.loginPage("/login.html")
+						.authorizationEndpoint(ae -> ae.baseUri("/login/oauth2/authorization"))
+						.redirectionEndpoint(re -> re.baseUri("/api/members/social/*"))
+						.userInfoEndpoint(ui -> ui.userService(customOAuth2UserService))
+						.successHandler(oAuth2LoginSuccessHandler)
+						.failureHandler(oAuth2LoginFailureHandler)
+				)
+				.addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(PasswordEncoder passwordEncoder) {
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+		authProvider.setUserDetailsService(userDetailsServiceImpl);
+		authProvider.setPasswordEncoder(passwordEncoder);
+		return new ProviderManager(authProvider);
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }

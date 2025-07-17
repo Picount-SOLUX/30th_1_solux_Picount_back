@@ -29,4 +29,10 @@ public class CalendarPhoto {
 
 	@Column
 	private Float fileSizeMb;
+
+	public CalendarPhoto(CalendarEntry calendarEntry, String filePath, float fileSizeMb) {
+		this.calendarEntry = calendarEntry;
+		this.filePath = filePath;
+		this.fileSizeMb = fileSizeMb;
+	}
 }

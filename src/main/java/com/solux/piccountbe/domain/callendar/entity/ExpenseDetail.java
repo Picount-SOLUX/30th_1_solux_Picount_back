@@ -32,4 +32,10 @@ public class ExpenseDetail {
 
 	@Column(nullable = false)
 	private Integer amount;
+
+	public ExpenseDetail(CalendarEntry calendarEntry, Category category, Integer amount) {
+		this.calendarEntry = calendarEntry;
+		this.category = category;
+		this.amount = amount;
+	}
 }
