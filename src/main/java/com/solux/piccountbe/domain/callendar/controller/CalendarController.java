@@ -19,6 +19,7 @@ import com.solux.piccountbe.domain.callendar.service.CalendarService;
 import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.global.Response;
 import com.solux.piccountbe.domain.callendar.dto.CalendarRecordDetailResponseDto;
+import com.solux.piccountbe.domain.callendar.dto.CalendarMonthlySummaryResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,4 +51,16 @@ public class CalendarController {
         CalendarRecordDetailResponseDto responseDto = calendarService.getCalendarDetail(userDetails.getMember(), date);
         return ResponseEntity.ok(Response.success("달력 상세 조회 성공", responseDto));
     }
+
+    // 요약 조회
+    @GetMapping("/summary")
+    public ResponseEntity<Response<CalendarMonthlySummaryResponseDto>> getMonthlySummary(
+            @RequestParam int year,
+            @RequestParam int month,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        CalendarMonthlySummaryResponseDto responseDto = calendarService.getMonthlySummary(userDetails.getMember(), year, month);
+        return ResponseEntity.ok(Response.success("달력 요약 조회 성공", responseDto));
+    }
+
 }

@@ -19,7 +19,6 @@ public class CalendarEmotion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 외래키 관계 - member_id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -40,5 +39,11 @@ public class CalendarEmotion {
 
     public static CalendarEmotion of(Member member, LocalDate entryDate, EmotionType emotion) {
         return new CalendarEmotion(member, entryDate, emotion);
+    }
+
+    // 감정 수정
+    public void updateEmotion(EmotionType newEmotion) {
+        this.emotion = newEmotion;
+        this.createdAt = LocalDateTime.now();
     }
 }

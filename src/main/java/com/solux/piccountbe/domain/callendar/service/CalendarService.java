@@ -6,11 +6,17 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.solux.piccountbe.domain.callendar.entity.EmotionType;
+import com.solux.piccountbe.domain.callendar.entity.CalendarEmotion;
 import com.solux.piccountbe.domain.callendar.dto.*;
 import com.solux.piccountbe.domain.callendar.entity.*;
 import com.solux.piccountbe.domain.callendar.repository.*;
@@ -32,7 +38,9 @@ public class CalendarService {
     private final ExpenseDetailRepository expenseDetailRepository;
     private final CalendarPhotoRepository calendarPhotoRepository;
     private final CategoryRepository categoryRepository;
+    private final CalendarEmotionRepository emotionRepository;
 
+    // 달력 등록
     public void createEntry(CalendarRecordRequestDto request, MultipartFile[] photos, Member member) {
         LocalDate date = request.getEntryDate() != null ? request.getEntryDate() : LocalDate.now();
 
@@ -165,6 +173,53 @@ public class CalendarService {
                                 .map(CalendarPhoto::getFilePath)
                                 .toList()
                 )
+                .build();
+    }
+
+    // 요약 조회
+    public CalendarMonthlySummaryResponseDto getMonthlySummary(Member member, int year, int month) {
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        // 감정 맵
+        Map<LocalDate, EmotionType> emotionMap = emotionRepository
+                .findAllByMemberAndEntryDateBetween(member, start, end)
+                .stream()
+                .collect(Collectors.toMap(CalendarEmotion::getEntryDate, CalendarEmotion::getEmotion));
+
+        // 수입 맵
+        Map<LocalDate, Integer> incomeMap = incomeDetailRepository
+                .findDailyIncomeSums(member, start, end)
+                .stream()
+                .collect(Collectors.toMap(
+                        row -> (LocalDate) row[0],
+                        row -> ((Long) row[1]).intValue()
+                ));
+
+        // 지출 맵
+        Map<LocalDate, Integer> expenseMap = expenseDetailRepository
+                .findDailyExpenseSums(member, start, end)
+                .stream()
+                .collect(Collectors.toMap(
+                        row -> (LocalDate) row[0],
+                        row -> ((Long) row[1]).intValue()
+                ));
+
+        List<CalendarMonthlySummaryResponseDto.DailySummary> summaryList = new ArrayList<>();
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            summaryList.add(
+                    CalendarMonthlySummaryResponseDto.DailySummary.builder()
+                            .date(date)
+                            .emotion(emotionMap.getOrDefault(date, null))
+                            .incomeTotal(incomeMap.getOrDefault(date, 0))
+                            .expenseTotal(expenseMap.getOrDefault(date, 0))
+                            .build()
+            );
+        }
+
+        return CalendarMonthlySummaryResponseDto.builder()
+                .month(String.format("%04d-%02d", year, month))
+                .summary(summaryList)
                 .build();
     }
 }
