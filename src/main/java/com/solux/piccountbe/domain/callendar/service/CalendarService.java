@@ -123,9 +123,48 @@ public class CalendarService {
     private Category validateCategory(Member member, Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
-        if (!category.getMember().equals(member)) {
+
+        if (!category.getMember().getMemberId().equals(member.getMemberId())) {
             throw new CustomException(ErrorCode.CATEGORY_NOT_MATCH_MEMBER);
         }
+
         return category;
+    }
+
+    // 상세 조회
+    @Transactional(readOnly = true)
+    public CalendarRecordDetailResponseDto getCalendarDetail(Member member, LocalDate date) {
+        CalendarEntry entry = calendarEntryRepository.findByMemberAndEntryDate(member, date)
+                .orElseThrow(() -> new CustomException(ErrorCode.CALENDAR_NOT_FOUND));
+
+        List<IncomeDetail> incomes = incomeDetailRepository.findAllByCalendarEntry(entry);
+        List<ExpenseDetail> expenses = expenseDetailRepository.findAllByCalendarEntry(entry);
+        List<CalendarPhoto> photos = calendarPhotoRepository.findAllByCalendarEntry(entry);
+
+        return CalendarRecordDetailResponseDto.builder()
+                .date(date)
+                .memo(entry.getMemo())
+                .incomes(
+                        incomes.stream()
+                                .map(i -> new CalendarRecordDetailResponseDto.IncomeDto(
+                                        i.getCategory().getCategoryId(),
+                                        i.getCategory().getName(),
+                                        i.getAmount()
+                                )).toList()
+                )
+                .expenses(
+                        expenses.stream()
+                                .map(e -> new CalendarRecordDetailResponseDto.ExpenseDto(
+                                        e.getCategory().getCategoryId(),
+                                        e.getCategory().getName(),
+                                        e.getAmount()
+                                )).toList()
+                )
+                .imageUrls(
+                        photos.stream()
+                                .map(CalendarPhoto::getFilePath)
+                                .toList()
+                )
+                .build();
     }
 }
