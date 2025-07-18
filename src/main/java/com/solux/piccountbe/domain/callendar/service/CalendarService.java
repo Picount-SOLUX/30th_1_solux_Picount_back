@@ -86,18 +86,18 @@ public class CalendarService {
         }
 
         // 사진 저장
+        calendarPhotoRepository.deleteByCalendarEntry(entry);
+
         if (photos != null && photos.length > 0) {
             if (photos.length > 1) {
                 throw new CustomException(ErrorCode.CALENDAR_TOO_MANY_PHOTOS);
             }
 
-            // 기존 사진 모두 삭제 후 교체
-            calendarPhotoRepository.deleteByCalendarEntry(entry);
-
             MultipartFile file = photos[0];
             if (file.getSize() > 5 * 1024 * 1024) {
                 throw new CustomException(ErrorCode.CALENDAR_PHOTO_TOO_LARGE);
             }
+
             String path = saveFile(file);
             CalendarPhoto photo = new CalendarPhoto(entry, path, file.getSize() / (1024f * 1024f));
             calendarPhotoRepository.save(photo);
