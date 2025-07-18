@@ -8,6 +8,8 @@ import com.solux.piccountbe.domain.friend.entity.GuestBook;
 import com.solux.piccountbe.domain.friend.repository.GuestBookRepository;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.MemberService;
+import com.solux.piccountbe.global.exception.ErrorCode;
+import com.solux.piccountbe.global.exception.CustomException;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,10 +26,19 @@ public class GuestBookService {
     private final GuestBookRepository guestBookRepository;
     private final MemberService memberService;
 
+    //공통 접근 제어 로직
+    private void validateAccess(Member viewer, Member owner) {
+        if (!viewer.getMemberId().equals(owner.getMemberId()) && !owner.getIsMainVisible()) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED, "비공개 설정된 사용자입니다.");
+        }
+    }
+
     // 방명록 작성
     @Transactional
     public void createGuestbook(Member writer, GuestBookRequestDto requestDto) {
         Member owner = memberService.getMemberById(requestDto.getOwnerId());
+
+        validateAccess(writer, owner); // 접근 제어
 
         GuestBook guestBook = new GuestBook(writer, owner, requestDto.getContent());
         guestBookRepository.save(guestBook);
@@ -37,6 +48,8 @@ public class GuestBookService {
     @Transactional(readOnly = true)
     public Page<GuestBookSummaryDto> getGuestBooks(Member viewer, Long ownerId, Pageable pageable) {
         Member owner = memberService.getMemberById(ownerId);
+
+        validateAccess(viewer, owner); // 접근 제어
 
         return guestBookRepository.findByOwnerAndIsDeletedFalse(owner, pageable)
                 .map(gb -> new GuestBookSummaryDto(
@@ -51,6 +64,8 @@ public class GuestBookService {
     @Transactional(readOnly = true)
     public Page<GuestBookDetailDto> getGuestbookDetails(Member viewer, Long ownerId, Pageable pageable) {
         Member owner = memberService.getMemberById(ownerId);
+
+        validateAccess(viewer, owner); // 접근 제어
 
         return guestBookRepository.findByOwnerAndIsDeletedFalse(owner, pageable)
                 .map(gb -> new GuestBookDetailDto(
