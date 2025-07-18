@@ -36,4 +36,17 @@ public class EmotionService {
             emotionRepository.save(emotion);
         }
     }
+
+    // 삭제
+    @Transactional
+    public void deleteEmotion(Member member, String dateStr) {
+        LocalDate date = LocalDate.parse(dateStr);
+
+        CalendarEmotion emotion = emotionRepository
+                .findByMember_MemberIdAndEntryDate(member.getMemberId(), date)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_EMOTION));
+
+        emotionRepository.delete(emotion);
+    }
+
 }

@@ -45,6 +45,7 @@ public enum ErrorCode {
 	// 캘린더
 	CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 날짜의 가계부 정보가 존재하지 않습니다."),
 	CALENDAR_EMOTION_ALREADY_EXISTS(HttpStatus.CONFLICT,"감정 스티커는 하루에 한 번만 등록할 수 있습니다."),
+	NOT_FOUND_EMOTION(HttpStatus.NOT_FOUND, "해당 날짜에 감정 스티커가 존재하지 않습니다."),
 	CALENDAR_ENTRY_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 날짜에는 이미 작성한 기록이 존재합니다."),
 	CALENDAR_EMPTY_INCOME_AND_EXPENSE(HttpStatus.BAD_REQUEST, "수입 또는 지출 중 하나는 반드시 입력해야 합니다."),
 	CALENDAR_INVALID_AMOUNT(HttpStatus.BAD_REQUEST, "금액은 0보다 커야 합니다."),

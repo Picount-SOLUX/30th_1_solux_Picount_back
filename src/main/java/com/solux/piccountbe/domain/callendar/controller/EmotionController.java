@@ -29,4 +29,13 @@ public class EmotionController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Response.success("감정 스티커 등록 성공", null));
     }
+
+    @DeleteMapping
+    public ResponseEntity<Response<Void>> deleteEmotion(
+            @RequestParam("date") String dateStr,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        emotionService.deleteEmotion(userDetails.getMember(), dateStr);
+        return ResponseEntity.ok(Response.success("감정 스티커 삭제 성공", null));
+    }
 }
