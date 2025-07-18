@@ -42,6 +42,8 @@ public enum ErrorCode {
 	FALSE_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 JWT 토큰입니다."),
 	HEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, "헤더가 잘못되었거나 누락되었습니다."),
 
+	// 친구
+	FRIEND_ACCESS_DENIED(HttpStatus.FORBIDDEN, "친구 목록은 본인만 조회할 수 있습니다."),
 	// 캘린더
 	CALENDAR_INCOME_NOT_FOUND(HttpStatus.NOT_FOUND, "수정할 수입 항목을 찾을 수 없습니다."),
 	CALENDAR_EXPENSE_NOT_FOUND(HttpStatus.NOT_FOUND, "수정할 지출 항목을 찾을 수 없습니다."),

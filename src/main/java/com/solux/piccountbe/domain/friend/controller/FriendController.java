@@ -1,5 +1,7 @@
 package com.solux.piccountbe.domain.friend.controller;
 
+import com.solux.piccountbe.global.exception.CustomException;
+import com.solux.piccountbe.global.exception.ErrorCode;
 import com.solux.piccountbe.domain.friend.dto.FriendRequestDto;
 import com.solux.piccountbe.domain.friend.dto.FriendResponseDto;
 import com.solux.piccountbe.domain.friend.dto.FriendMainResponseDto;
@@ -64,9 +66,16 @@ public class FriendController {
     // 친구 조회 - 메인페이지
     @GetMapping("/main")
     public ResponseEntity<Map<String, Object>> getFriendsForMainPage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long ownerId // 프론트에서 ownerId 전달받기
+    ) {
         Member loginMember = userDetails.getMember();
+
+        // 본인 확인
+        if (!loginMember.getMemberId().equals(ownerId)) {
+            throw new CustomException(ErrorCode.FRIEND_ACCESS_DENIED);
+        }
+
         List<FriendMainResponseDto> friendList = friendService.getFriendsForMain(loginMember);
 
         Map<String, Object> response = new HashMap<>();
