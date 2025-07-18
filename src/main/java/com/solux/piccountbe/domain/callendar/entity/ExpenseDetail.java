@@ -20,7 +20,7 @@ public class ExpenseDetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column
-	private Long incomeId;
+	private Long expenseId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="calendar_entry_id", nullable = false)
@@ -37,5 +37,10 @@ public class ExpenseDetail {
 		this.calendarEntry = calendarEntry;
 		this.category = category;
 		this.amount = amount;
+	}
+
+	public void update(Integer amount, Category category) {
+		this.amount = amount;
+		this.category = category;
 	}
 }

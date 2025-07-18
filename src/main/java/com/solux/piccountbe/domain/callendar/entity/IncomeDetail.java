@@ -38,4 +38,9 @@ public class IncomeDetail {
 		this.category = category;
 		this.amount = amount;
 	}
+
+	public void update(Integer amount, Category category) {
+		this.amount = amount;
+		this.category = category;
+	}
 }

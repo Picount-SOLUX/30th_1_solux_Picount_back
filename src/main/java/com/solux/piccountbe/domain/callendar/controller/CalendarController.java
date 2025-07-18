@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.solux.piccountbe.domain.callendar.dto.CalendarRecordUpdateRequestDto;
 import com.solux.piccountbe.domain.callendar.dto.CalendarRecordRequestDto;
 import com.solux.piccountbe.domain.callendar.service.CalendarService;
 import com.solux.piccountbe.config.security.UserDetailsImpl;
@@ -62,5 +64,18 @@ public class CalendarController {
         CalendarMonthlySummaryResponseDto responseDto = calendarService.getMonthlySummary(userDetails.getMember(), year, month);
         return ResponseEntity.ok(Response.success("달력 요약 조회 성공", responseDto));
     }
+
+    // 수정하기
+    @PatchMapping("/record")
+    public ResponseEntity<Response<Void>> updateCalendarEntry(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestPart("request") CalendarRecordUpdateRequestDto request,
+            @RequestPart(value = "photo", required = false) MultipartFile[] photo,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        calendarService.updateEntry(request, photo, userDetails.getMember(), date);
+        return ResponseEntity.ok(Response.success("가계부 수정 성공", null));
+    }
+
 
 }

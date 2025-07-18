@@ -43,16 +43,15 @@ public enum ErrorCode {
 	HEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, "헤더가 잘못되었거나 누락되었습니다."),
 
 	// 캘린더
+	CALENDAR_INCOME_NOT_FOUND(HttpStatus.NOT_FOUND, "수정할 수입 항목을 찾을 수 없습니다."),
+	CALENDAR_EXPENSE_NOT_FOUND(HttpStatus.NOT_FOUND, "수정할 지출 항목을 찾을 수 없습니다."),
+	CALENDAR_FORBIDDEN(HttpStatus.FORBIDDEN, "해당 항목에 접근할 권한이 없습니다."),
 	CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 날짜의 가계부 정보가 존재하지 않습니다."),
-	CALENDAR_EMOTION_ALREADY_EXISTS(HttpStatus.CONFLICT,"감정 스티커는 하루에 한 번만 등록할 수 있습니다."),
 	NOT_FOUND_EMOTION(HttpStatus.NOT_FOUND, "해당 날짜에 감정 스티커가 존재하지 않습니다."),
-	CALENDAR_ENTRY_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 날짜에는 이미 작성한 기록이 존재합니다."),
-	CALENDAR_EMPTY_INCOME_AND_EXPENSE(HttpStatus.BAD_REQUEST, "수입 또는 지출 중 하나는 반드시 입력해야 합니다."),
 	CALENDAR_INVALID_AMOUNT(HttpStatus.BAD_REQUEST, "금액은 0보다 커야 합니다."),
-	CALENDAR_TOO_MANY_PHOTOS(HttpStatus.BAD_REQUEST, "사진은 최대 3장까지 등록 가능합니다."),
+	CALENDAR_TOO_MANY_PHOTOS(HttpStatus.BAD_REQUEST, "사진은 한 장만 등록 가능합니다."),
 	CALENDAR_PHOTO_TOO_LARGE(HttpStatus.BAD_REQUEST, "사진 용량은 5MB 이하로만 등록 가능합니다."),
-	CALENDAR_FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
-	CALENDAR_FILE_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 저장 중 오류가 발생했습니다.");
+	CALENDAR_FILE_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
 	private final HttpStatus status;
 	private final String message;
 }

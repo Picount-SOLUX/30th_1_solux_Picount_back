@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -89,21 +87,20 @@ public class CalendarService {
 
         // 사진 저장
         if (photos != null && photos.length > 0) {
-            if (photos.length > 3) {
+            if (photos.length > 1) {
                 throw new CustomException(ErrorCode.CALENDAR_TOO_MANY_PHOTOS);
             }
 
             // 기존 사진 모두 삭제 후 교체
             calendarPhotoRepository.deleteByCalendarEntry(entry);
 
-            for (MultipartFile file : photos) {
-                if (file.getSize() > 5 * 1024 * 1024) {
-                    throw new CustomException(ErrorCode.CALENDAR_PHOTO_TOO_LARGE);
-                }
-                String path = saveFile(file);
-                CalendarPhoto photo = new CalendarPhoto(entry, path, file.getSize() / (1024f * 1024f));
-                calendarPhotoRepository.save(photo);
+            MultipartFile file = photos[0];
+            if (file.getSize() > 5 * 1024 * 1024) {
+                throw new CustomException(ErrorCode.CALENDAR_PHOTO_TOO_LARGE);
             }
+            String path = saveFile(file);
+            CalendarPhoto photo = new CalendarPhoto(entry, path, file.getSize() / (1024f * 1024f));
+            calendarPhotoRepository.save(photo);
         }
     }
 
@@ -221,5 +218,68 @@ public class CalendarService {
                 .month(String.format("%04d-%02d", year, month))
                 .summary(summaryList)
                 .build();
+    }
+
+    // 수정하기
+    @Transactional
+    public void updateEntry(CalendarRecordUpdateRequestDto request, MultipartFile[] photo, Member member, LocalDate date) {
+        CalendarEntry entry = calendarEntryRepository.findByMemberAndEntryDate(member, date)
+                .orElseThrow(() -> new CustomException(ErrorCode.CALENDAR_NOT_FOUND));
+
+        // 수입 수정 or 삭제
+        if (request.getIncomeList() != null) {
+            for (UpdateIncomeDto dto : request.getIncomeList()) {
+                IncomeDetail income = incomeDetailRepository.findById(dto.getIncomeId())
+                        .orElseThrow(() -> new CustomException(ErrorCode.CALENDAR_INCOME_NOT_FOUND));
+                if (!income.getCalendarEntry().equals(entry)) {
+                    throw new CustomException(ErrorCode.CALENDAR_FORBIDDEN);
+                }
+                if (dto.isDelete()) {
+                    incomeDetailRepository.delete(income);
+                } else {
+                    Category category = validateCategory(member, dto.getCategoryId());
+                    income.update(dto.getAmount(), category);
+                }
+            }
+        }
+
+        // 지출 수정 or 삭제
+        if (request.getExpenseList() != null) {
+            for (UpdateExpenseDto dto : request.getExpenseList()) {
+                ExpenseDetail expense = expenseDetailRepository.findById(dto.getExpenseId())
+                        .orElseThrow(() -> new CustomException(ErrorCode.CALENDAR_EXPENSE_NOT_FOUND));
+                if (!expense.getCalendarEntry().equals(entry)) {
+                    throw new CustomException(ErrorCode.CALENDAR_FORBIDDEN);
+                }
+                if (dto.isDelete()) {
+                    expenseDetailRepository.delete(expense);
+                } else {
+                    Category category = validateCategory(member, dto.getCategoryId());
+                    expense.update(dto.getAmount(), category);
+                }
+            }
+        }
+
+        // 메모 수정
+        if (request.getMemo() != null) {
+            entry.setMemo(request.getMemo());
+        }
+
+        // 사진 수정 (덮어쓰기)
+        if (photo != null && photo.length > 0) {
+            if (photo.length > 1) {
+                throw new CustomException(ErrorCode.CALENDAR_TOO_MANY_PHOTOS);
+            }
+
+            calendarPhotoRepository.deleteByCalendarEntry(entry);
+
+            MultipartFile file = photo[0];
+            if (file.getSize() > 5 * 1024 * 1024) {
+                throw new CustomException(ErrorCode.CALENDAR_PHOTO_TOO_LARGE);
+            }
+            String path = saveFile(file);
+            CalendarPhoto newPhoto = new CalendarPhoto(entry, path, file.getSize() / (1024f * 1024f));
+            calendarPhotoRepository.save(newPhoto);
+        }
     }
 }
