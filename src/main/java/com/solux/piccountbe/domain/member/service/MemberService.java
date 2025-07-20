@@ -140,6 +140,19 @@ public class MemberService {
 		member.withdraw();
 	}
 
+	public void updatePassword(Long memberId, String prePassword, String newPassword) {
+		Member member = getMemberById(memberId);
+		if (!passwordEncoder.matches(prePassword, member.getPassword())) {
+			throw new CustomException(ErrorCode.INVALID_PASSWORD);
+		}
+		String password = passwordEncoder.encode(newPassword);
+		if (passwordEncoder.matches(prePassword, password)) {
+			throw new CustomException(ErrorCode.SAME_PASSWORD);
+		}
+
+		member.memberPasswordUpdate(password);
+	}
+
 	public ProfileResponseDto getProfile(Member member) {
 		ProfileResponseDto profileResponseDto = new ProfileResponseDto(
 			member.getMemberId(),

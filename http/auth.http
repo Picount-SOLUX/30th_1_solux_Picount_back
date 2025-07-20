@@ -47,6 +47,17 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 
+### 비밀번호 변경
+PATCH http://localhost:8080/api/members/password
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "prePassword": "Qwerty1234!",
+  "newPassword": "Qwerty1234!!"
+}
+
+
 ### 회원가입2
 POST http://localhost:8080/api/members/signup
 Content-Type: application/json
@@ -88,15 +99,6 @@ Authorization: Bearer {{accessToken}}
 
 {
   "memberGroupType": "YOUNGER"
-}
-
-### 이메일 수정
-PUT http://localhost:8080/api/members/id
-Content-Type: application/json
-Authorization: Bearer {{accessToken}}
-
-{
-  "email": "aa@naver.com"
 }
 
 

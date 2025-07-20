@@ -19,6 +19,7 @@ import com.solux.piccountbe.domain.member.dto.EmailRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginResponseDto;
 import com.solux.piccountbe.domain.member.dto.MemberGroupTypeRequestDto;
+import com.solux.piccountbe.domain.member.dto.PasswordRequestDto;
 import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileUpdateRequestDto;
 import com.solux.piccountbe.domain.member.dto.RefreshRequestDto;
@@ -71,6 +72,16 @@ public class MemberController {
 		Long memberId = userDetails.getMember().getMemberId();
 		memberService.withdraw(memberId);
 		return ResponseEntity.ok(Response.success("회원탈퇴 완료", null));
+	}
+
+	@PatchMapping("/password")
+	public ResponseEntity<Response<Void>> updatePassword(
+		@RequestBody @Valid PasswordRequestDto req,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Long memberId = userDetails.getMember().getMemberId();
+		memberService.updatePassword(memberId, req.getPrePassword(), req.getNewPassword());
+		return ResponseEntity.ok(Response.success("비밀번호 변경 완료", null));
 	}
 
 	@GetMapping("/profile")

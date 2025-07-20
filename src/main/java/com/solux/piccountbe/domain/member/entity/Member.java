@@ -112,6 +112,10 @@ public class Member extends Timestamped {
 		this.memberGroupType = memberGroupType;
 	}
 
+	public void memberPasswordUpdate(String password) {
+		this.password = password;
+	}
+
 	public void plusTokenVersion() {
 		this.tokenVersion++;
 	}
