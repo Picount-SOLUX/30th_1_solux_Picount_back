@@ -34,8 +34,15 @@ Content-Type: application/json
   "refreshToken":
 }
 
+
 ### 로그아웃
 POST http://localhost:8080/api/members/logout
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 탈퇴
+PATCH http://localhost:8080/api/members/withdraw
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

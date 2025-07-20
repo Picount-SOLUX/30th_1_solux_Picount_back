@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,6 +62,15 @@ public class MemberController {
 		Long memberId = userDetails.getMember().getMemberId();
 		memberService.logout(memberId);
 		return ResponseEntity.ok(Response.success("로그아웃 완료", null));
+	}
+
+	@PatchMapping("/withdraw")
+	public ResponseEntity<Response<Void>> withdraw(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Long memberId = userDetails.getMember().getMemberId();
+		memberService.withdraw(memberId);
+		return ResponseEntity.ok(Response.success("회원탈퇴 완료", null));
 	}
 
 	@GetMapping("/profile")

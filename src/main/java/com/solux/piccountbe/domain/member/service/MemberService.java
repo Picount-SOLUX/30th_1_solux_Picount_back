@@ -87,6 +87,10 @@ public class MemberService {
 		Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_EMAIL_NOT_FOUND));
 
+		if (member.getWithdraw()) {
+			throw new CustomException(ErrorCode.USER_DELETED);
+		}
+
 		if (member.getProvider().equals(Provider.KAKAO)) {
 			throw new CustomException(ErrorCode.MEMBER_OAUTH_MISMATCH);
 		}
@@ -128,6 +132,12 @@ public class MemberService {
 	public void logout(Long memberId) {
 		Member member = getMemberById(memberId);
 		member.plusTokenVersion();
+	}
+
+	public void withdraw(Long memberId) {
+		logout(memberId);
+		Member member = getMemberById(memberId);
+		member.withdraw();
 	}
 
 	public ProfileResponseDto getProfile(Member member) {

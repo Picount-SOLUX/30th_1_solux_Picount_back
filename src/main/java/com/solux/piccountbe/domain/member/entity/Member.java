@@ -116,6 +116,10 @@ public class Member extends Timestamped {
 		this.tokenVersion++;
 	}
 
+	public void withdraw() {
+		this.withdraw = true;
+	}
+
 	// 포인트 차감 메서드
 	public void usePoint(Long amount) {
 		if (this.point < amount) {
