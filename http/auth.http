@@ -26,6 +26,14 @@ Content-Type: application/json
 %}
 
 
+### 토큰 재발급
+POST http://localhost:8080/api/members/refresh
+Content-Type: application/json
+
+{
+  "refreshToken":
+}
+
 ### 로그아웃
 POST http://localhost:8080/api/members/logout
 Content-Type: application/json

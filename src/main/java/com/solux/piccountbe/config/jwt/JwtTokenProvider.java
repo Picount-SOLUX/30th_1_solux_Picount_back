@@ -80,6 +80,11 @@ public class JwtTokenProvider {
 		return claims.getSubject();
 	}
 
+	public Integer getTokenVersion(String token) {
+		Claims claims = getClaims(token);
+		return claims.get("tokenVersion", Integer.class);
+	}
+
 	public Claims getClaims(String token) {
 		return Jwts.parserBuilder()
 			.setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))

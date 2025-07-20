@@ -104,6 +104,27 @@ public class MemberService {
 		return loginResponseDto;
 	}
 
+	public LoginResponseDto refresh(String refreshToken) {
+
+		jwtTokenProvider.validToken(refreshToken);
+		String email = jwtTokenProvider.getEmail(refreshToken);
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_EMAIL_NOT_FOUND));
+		Integer tokenVersion = jwtTokenProvider.getTokenVersion(refreshToken);
+
+		if (!tokenVersion.equals(member.getTokenVersion())) {
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
+		}
+
+		String newAccessToken = jwtTokenProvider.makeAccessToken(member);
+		String newRefreshToken = jwtTokenProvider.makeRefreshToken(member);
+
+		tokenService.createOrUpdateRefreshToken(newRefreshToken, member);
+
+		LoginResponseDto loginResponseDto = new LoginResponseDto(newAccessToken, newRefreshToken);
+		return loginResponseDto;
+	}
+
 	public void logout(Long memberId) {
 		Member member = getMemberById(memberId);
 		member.plusTokenVersion();

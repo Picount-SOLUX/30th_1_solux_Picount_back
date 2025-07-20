@@ -19,7 +19,6 @@ import com.solux.piccountbe.domain.member.repository.MemberRepository;
 import com.solux.piccountbe.global.exception.CustomException;
 import com.solux.piccountbe.global.exception.ErrorCode;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -64,13 +63,12 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
 		}
 
-		Claims claims = jwtTokenProvider.getClaims(accessToken);
-		Integer tokenVersionInJwt = claims.get("tokenVersion", Integer.class);
+		Integer tokenVersion = jwtTokenProvider.getTokenVersion(accessToken);
 		String email = jwtTokenProvider.getEmail(accessToken);
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_EMAIL_NOT_FOUND));
 
-		if (!tokenVersionInJwt.equals(member.getTokenVersion())) {
+		if (!tokenVersion.equals(member.getTokenVersion())) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰 버전 불일치");
 			return;
 		}

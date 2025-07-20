@@ -20,6 +20,7 @@ import com.solux.piccountbe.domain.member.dto.LoginResponseDto;
 import com.solux.piccountbe.domain.member.dto.MemberGroupTypeRequestDto;
 import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileUpdateRequestDto;
+import com.solux.piccountbe.domain.member.dto.RefreshRequestDto;
 import com.solux.piccountbe.domain.member.dto.SignupRequestDto;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.MemberService;
@@ -45,6 +46,12 @@ public class MemberController {
 	public ResponseEntity<Response<LoginResponseDto>> login(@RequestBody LoginRequestDto req) {
 		LoginResponseDto res = memberService.login(req);
 		return ResponseEntity.status(HttpStatus.CREATED).body(Response.success("로그인 성공", res));
+	}
+
+	@PostMapping("/refresh")
+	public ResponseEntity<Response<LoginResponseDto>> refresh(@RequestBody RefreshRequestDto req) {
+		LoginResponseDto res = memberService.refresh(req.getRefreshToken());
+		return ResponseEntity.status(HttpStatus.CREATED).body(Response.success("토큰 재발급 완료", res));
 	}
 
 	@PostMapping("/logout")
