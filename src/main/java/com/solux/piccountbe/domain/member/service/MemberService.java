@@ -62,6 +62,7 @@ public class MemberService {
 		do {
 			friendCode = GenerateRandomCode.generateRandomCode();
 		} while (memberRepository.existsByFriendCode(friendCode));
+		Integer tokenVersion = 1;
 		boolean withDraw = false;
 		boolean isMainVisible = false;
 
@@ -73,6 +74,7 @@ public class MemberService {
 			.profileImageUrl(defaultImageUrl)
 			.friendCode(friendCode)
 			.memberGroupType(MemberGroupType.STUDENT_UNIV)
+			.tokenVersion(tokenVersion)
 			.withdraw(withDraw)
 			.isMainVisible(isMainVisible)
 			.build();
@@ -100,6 +102,11 @@ public class MemberService {
 
 		LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, refreshToken);
 		return loginResponseDto;
+	}
+
+	public void logout(Long memberId) {
+		Member member = getMemberById(memberId);
+		member.plusTokenVersion();
 	}
 
 	public ProfileResponseDto getProfile(Member member) {

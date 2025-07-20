@@ -17,10 +17,10 @@ import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.member.dto.EmailRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginResponseDto;
+import com.solux.piccountbe.domain.member.dto.MemberGroupTypeRequestDto;
 import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileUpdateRequestDto;
 import com.solux.piccountbe.domain.member.dto.SignupRequestDto;
-import com.solux.piccountbe.domain.member.dto.MemberGroupTypeRequestDto;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.MemberService;
 import com.solux.piccountbe.global.Response;
@@ -45,6 +45,15 @@ public class MemberController {
 	public ResponseEntity<Response<LoginResponseDto>> login(@RequestBody LoginRequestDto req) {
 		LoginResponseDto res = memberService.login(req);
 		return ResponseEntity.status(HttpStatus.CREATED).body(Response.success("로그인 성공", res));
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<Response<Void>> logout(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Long memberId = userDetails.getMember().getMemberId();
+		memberService.logout(memberId);
+		return ResponseEntity.ok(Response.success("로그아웃 완료", null));
 	}
 
 	@GetMapping("/profile")

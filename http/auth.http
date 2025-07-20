@@ -3,9 +3,9 @@ POST http://localhost:8080/api/members/signup
 Content-Type: application/json
 
 {
-  "email" : "email@naver.com",
-  "password" : "Qwerty1234!",
-  "nickname" : "nickname"
+  "email": "email@naver.com",
+  "password": "Qwerty1234!",
+  "nickname": "nickname"
 }
 
 ### 로그인
@@ -13,8 +13,8 @@ POST http://localhost:8080/api/members/login
 Content-Type: application/json
 
 {
-  "email" : "email@naver.com",
-  "password" : "Qwerty1234!"
+  "email": "email@naver.com",
+  "password": "Qwerty1234!"
 }
 
 > {%
@@ -25,14 +25,21 @@ Content-Type: application/json
     console.log("Access Token:", accessToken);
 %}
 
+
+### 로그아웃
+POST http://localhost:8080/api/members/logout
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
 ### 회원가입2
 POST http://localhost:8080/api/members/signup
 Content-Type: application/json
 
 {
-  "email" : "email2@naver.com",
-  "password" : "Qwerty1234!",
-  "nickname" : "nickname2"
+  "email": "email2@naver.com",
+  "password": "Qwerty1234!",
+  "nickname": "nickname2"
 }
 
 ### 로그인2
@@ -40,8 +47,8 @@ POST http://localhost:8080/api/members/login
 Content-Type: application/json
 
 {
-  "email" : "email2@naver.com",
-  "password" : "Qwerty1234!"
+  "email": "email2@naver.com",
+  "password": "Qwerty1234!"
 }
 
 > {%
@@ -65,7 +72,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "memberGroupType" : "YOUNGER"
+  "memberGroupType": "YOUNGER"
 }
 
 ### 이메일 수정

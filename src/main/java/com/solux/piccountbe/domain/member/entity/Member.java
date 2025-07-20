@@ -60,6 +60,9 @@ public class Member extends Timestamped {
 	private String friendCode;
 
 	@Column(nullable = false)
+	private Integer tokenVersion;
+
+	@Column(nullable = false)
 	private Boolean withdraw;
 
 	@Column(nullable = false)
@@ -75,7 +78,7 @@ public class Member extends Timestamped {
 	private Long point = 0L; // 기본값 0, long 타입
 
 	@Builder
-	public Member(Provider provider, String email, Long oauthId, String password, String nickname, String profileImageUrl, String friendCode, Boolean withdraw,
+	public Member(Provider provider, String email, Long oauthId, String password, String nickname, String profileImageUrl, String friendCode, Integer tokenVersion, Boolean withdraw,
 		Boolean isMainVisible, MemberGroupType memberGroupType) {
 		this.provider = provider;
 		this.email = email;
@@ -84,6 +87,7 @@ public class Member extends Timestamped {
 		this.nickname = nickname;
 		this.profileImageUrl = profileImageUrl;
 		this.friendCode = friendCode;
+		this.tokenVersion = tokenVersion;
 		this.withdraw = withdraw;
 		this.isMainVisible = isMainVisible;
 		this.memberGroupType = memberGroupType;
@@ -106,6 +110,10 @@ public class Member extends Timestamped {
 
 	public void memberGroupTypeUpdate(MemberGroupType memberGroupType) {
 		this.memberGroupType = memberGroupType;
+	}
+
+	public void plusTokenVersion() {
+		this.tokenVersion++;
 	}
 
 	// 포인트 차감 메서드

@@ -73,6 +73,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 						.nickname(kakaoNickname)
 						.profileImageUrl(defaultProfileImage)
 						.memberGroupType(MemberGroupType.STUDENT_UNIV) // 기본값
+						.tokenVersion(1)
 						.withdraw(false)
 						.isMainVisible(false)
 						.friendCode(friendCode)
