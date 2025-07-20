@@ -3,9 +3,9 @@ POST http://localhost:8080/api/members/signup
 Content-Type: application/json
 
 {
-  "email" : "email@naver.com",
-  "password" : "Qwerty1234!",
-  "nickname" : "nickname"
+  "email": "email@naver.com",
+  "password": "Qwerty1234!",
+  "nickname": "nickname"
 }
 
 ### 로그인
@@ -13,8 +13,8 @@ POST http://localhost:8080/api/members/login
 Content-Type: application/json
 
 {
-  "email" : "email@naver.com",
-  "password" : "Qwerty1234!"
+  "email": "email@naver.com",
+  "password": "Qwerty1234!"
 }
 
 > {%
@@ -25,14 +25,47 @@ Content-Type: application/json
     console.log("Access Token:", accessToken);
 %}
 
+
+### 토큰 재발급
+POST http://localhost:8080/api/members/refresh
+Content-Type: application/json
+
+{
+  "refreshToken":
+}
+
+
+### 로그아웃
+POST http://localhost:8080/api/members/logout
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 탈퇴
+PATCH http://localhost:8080/api/members/withdraw
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 비밀번호 변경
+PATCH http://localhost:8080/api/members/password
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "prePassword": "Qwerty1234!",
+  "newPassword": "Qwerty1234!!"
+}
+
+
 ### 회원가입2
 POST http://localhost:8080/api/members/signup
 Content-Type: application/json
 
 {
-  "email" : "email2@naver.com",
-  "password" : "Qwerty1234!",
-  "nickname" : "nickname2"
+  "email": "email2@naver.com",
+  "password": "Qwerty1234!",
+  "nickname": "nickname2"
 }
 
 ### 로그인2
@@ -40,8 +73,8 @@ POST http://localhost:8080/api/members/login
 Content-Type: application/json
 
 {
-  "email" : "email2@naver.com",
-  "password" : "Qwerty1234!"
+  "email": "email2@naver.com",
+  "password": "Qwerty1234!"
 }
 
 > {%
@@ -65,16 +98,7 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "memberGroupType" : "YOUNGER"
-}
-
-### 이메일 수정
-PUT http://localhost:8080/api/members/id
-Content-Type: application/json
-Authorization: Bearer {{accessToken}}
-
-{
-  "email": "aa@naver.com"
+  "memberGroupType": "YOUNGER"
 }
 
 

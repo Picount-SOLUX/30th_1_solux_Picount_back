@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,10 +18,12 @@ import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.member.dto.EmailRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginResponseDto;
+import com.solux.piccountbe.domain.member.dto.MemberGroupTypeRequestDto;
+import com.solux.piccountbe.domain.member.dto.PasswordRequestDto;
 import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileUpdateRequestDto;
+import com.solux.piccountbe.domain.member.dto.RefreshRequestDto;
 import com.solux.piccountbe.domain.member.dto.SignupRequestDto;
-import com.solux.piccountbe.domain.member.dto.MemberGroupTypeRequestDto;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.MemberService;
 import com.solux.piccountbe.global.Response;
@@ -45,6 +48,40 @@ public class MemberController {
 	public ResponseEntity<Response<LoginResponseDto>> login(@RequestBody LoginRequestDto req) {
 		LoginResponseDto res = memberService.login(req);
 		return ResponseEntity.status(HttpStatus.CREATED).body(Response.success("로그인 성공", res));
+	}
+
+	@PostMapping("/refresh")
+	public ResponseEntity<Response<LoginResponseDto>> refresh(@RequestBody RefreshRequestDto req) {
+		LoginResponseDto res = memberService.refresh(req.getRefreshToken());
+		return ResponseEntity.status(HttpStatus.CREATED).body(Response.success("토큰 재발급 완료", res));
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<Response<Void>> logout(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Long memberId = userDetails.getMember().getMemberId();
+		memberService.logout(memberId);
+		return ResponseEntity.ok(Response.success("로그아웃 완료", null));
+	}
+
+	@PatchMapping("/withdraw")
+	public ResponseEntity<Response<Void>> withdraw(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Long memberId = userDetails.getMember().getMemberId();
+		memberService.withdraw(memberId);
+		return ResponseEntity.ok(Response.success("회원탈퇴 완료", null));
+	}
+
+	@PatchMapping("/password")
+	public ResponseEntity<Response<Void>> updatePassword(
+		@RequestBody @Valid PasswordRequestDto req,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Long memberId = userDetails.getMember().getMemberId();
+		memberService.updatePassword(memberId, req.getPrePassword(), req.getNewPassword());
+		return ResponseEntity.ok(Response.success("비밀번호 변경 완료", null));
 	}
 
 	@GetMapping("/profile")

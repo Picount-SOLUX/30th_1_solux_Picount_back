@@ -50,6 +50,7 @@ public class JwtTokenProvider {
 		return Jwts.builder()
 			.setSubject(member.getEmail())
 			.claim("memberId", member.getMemberId())
+			.claim("tokenVersion", member.getTokenVersion())
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + expired))
 			.signWith(hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)), signatureAlgorithm)
@@ -79,7 +80,12 @@ public class JwtTokenProvider {
 		return claims.getSubject();
 	}
 
-	private Claims getClaims(String token) {
+	public Integer getTokenVersion(String token) {
+		Claims claims = getClaims(token);
+		return claims.get("tokenVersion", Integer.class);
+	}
+
+	public Claims getClaims(String token) {
 		return Jwts.parserBuilder()
 			.setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
 			.build()

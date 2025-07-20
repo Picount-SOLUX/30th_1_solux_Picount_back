@@ -12,6 +12,8 @@ import com.solux.piccountbe.config.jwt.JwtTokenProvider;
 import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.service.TokenService;
+import com.solux.piccountbe.global.exception.CustomException;
+import com.solux.piccountbe.global.exception.ErrorCode;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,6 +37,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		UserDetailsImpl user = (UserDetailsImpl)authentication.getPrincipal();
 		Member member = user.getMember();
+
+		if(member.getWithdraw()) {
+			throw new CustomException(ErrorCode.USER_DELETED);
+		}
 
 		String accessToken = jwtTokenProvider.makeAccessToken(member);
 		String refreshToken = jwtTokenProvider.makeRefreshToken(member);

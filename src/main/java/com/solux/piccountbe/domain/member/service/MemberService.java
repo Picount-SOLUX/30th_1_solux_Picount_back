@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.SecureRandom;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -13,14 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.solux.piccountbe.config.jwt.JwtTokenProvider;
+import com.solux.piccountbe.domain.member.GenerateRandomCode;
 import com.solux.piccountbe.domain.member.dto.LoginRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileUpdateRequestDto;
 import com.solux.piccountbe.domain.member.dto.SignupRequestDto;
 import com.solux.piccountbe.domain.member.entity.Member;
-import com.solux.piccountbe.domain.member.entity.Provider;
 import com.solux.piccountbe.domain.member.entity.MemberGroupType;
+import com.solux.piccountbe.domain.member.entity.Provider;
 import com.solux.piccountbe.domain.member.repository.MemberRepository;
 import com.solux.piccountbe.global.exception.CustomException;
 import com.solux.piccountbe.global.exception.ErrorCode;
@@ -39,9 +39,6 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final TokenService tokenService;
 
-	private static final String CODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	private static final int CODE_LEN = 8;
-	private final SecureRandom random = new SecureRandom();
 	private final JwtTokenProvider jwtTokenProvider;
 
 	@Value("${upload.default_profile_image}")
@@ -63,8 +60,9 @@ public class MemberService {
 		String defaultImageUrl = defaultProfileImage;
 		String friendCode;
 		do {
-			friendCode = generateRandomCode();
+			friendCode = GenerateRandomCode.generateRandomCode();
 		} while (memberRepository.existsByFriendCode(friendCode));
+		Integer tokenVersion = 1;
 		boolean withDraw = false;
 		boolean isMainVisible = false;
 
@@ -76,6 +74,7 @@ public class MemberService {
 			.profileImageUrl(defaultImageUrl)
 			.friendCode(friendCode)
 			.memberGroupType(MemberGroupType.STUDENT_UNIV)
+			.tokenVersion(tokenVersion)
 			.withdraw(withDraw)
 			.isMainVisible(isMainVisible)
 			.build();
@@ -87,6 +86,10 @@ public class MemberService {
 
 		Member member = memberRepository.findByEmail(loginRequestDto.getEmail())
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_EMAIL_NOT_FOUND));
+
+		if (member.getWithdraw()) {
+			throw new CustomException(ErrorCode.USER_DELETED);
+		}
 
 		if (member.getProvider().equals(Provider.KAKAO)) {
 			throw new CustomException(ErrorCode.MEMBER_OAUTH_MISMATCH);
@@ -103,6 +106,51 @@ public class MemberService {
 
 		LoginResponseDto loginResponseDto = new LoginResponseDto(accessToken, refreshToken);
 		return loginResponseDto;
+	}
+
+	public LoginResponseDto refresh(String refreshToken) {
+
+		jwtTokenProvider.validToken(refreshToken);
+		String email = jwtTokenProvider.getEmail(refreshToken);
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_EMAIL_NOT_FOUND));
+		Integer tokenVersion = jwtTokenProvider.getTokenVersion(refreshToken);
+
+		if (!tokenVersion.equals(member.getTokenVersion())) {
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
+		}
+
+		String newAccessToken = jwtTokenProvider.makeAccessToken(member);
+		String newRefreshToken = jwtTokenProvider.makeRefreshToken(member);
+
+		tokenService.createOrUpdateRefreshToken(newRefreshToken, member);
+
+		LoginResponseDto loginResponseDto = new LoginResponseDto(newAccessToken, newRefreshToken);
+		return loginResponseDto;
+	}
+
+	public void logout(Long memberId) {
+		Member member = getMemberById(memberId);
+		member.plusTokenVersion();
+	}
+
+	public void withdraw(Long memberId) {
+		logout(memberId);
+		Member member = getMemberById(memberId);
+		member.withdraw();
+	}
+
+	public void updatePassword(Long memberId, String prePassword, String newPassword) {
+		Member member = getMemberById(memberId);
+		if (!passwordEncoder.matches(prePassword, member.getPassword())) {
+			throw new CustomException(ErrorCode.INVALID_PASSWORD);
+		}
+		String password = passwordEncoder.encode(newPassword);
+		if (passwordEncoder.matches(prePassword, password)) {
+			throw new CustomException(ErrorCode.SAME_PASSWORD);
+		}
+
+		member.memberPasswordUpdate(password);
 	}
 
 	public ProfileResponseDto getProfile(Member member) {
@@ -197,14 +245,6 @@ public class MemberService {
 	public Member findByFriendCode(String friendCode) {
 		return memberRepository.findByFriendCode(friendCode)
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-	}
-
-	private String generateRandomCode() {
-		StringBuilder sb = new StringBuilder(CODE_LEN);
-		for (int i = 0; i < CODE_LEN; i++) {
-			sb.append(CODE_CHARS.charAt(random.nextInt(CODE_CHARS.length())));
-		}
-		return sb.toString();
 	}
 
 	@Transactional

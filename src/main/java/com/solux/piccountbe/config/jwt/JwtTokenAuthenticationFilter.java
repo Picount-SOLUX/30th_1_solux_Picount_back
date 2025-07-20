@@ -14,6 +14,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.solux.piccountbe.config.security.SecurityProperties;
 import com.solux.piccountbe.config.security.UserDetailsServiceImpl;
+import com.solux.piccountbe.domain.member.entity.Member;
+import com.solux.piccountbe.domain.member.repository.MemberRepository;
+import com.solux.piccountbe.global.exception.CustomException;
+import com.solux.piccountbe.global.exception.ErrorCode;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,6 +35,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 	private final UserDetailsServiceImpl userDetailsServiceImpl;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final SecurityProperties securityProperties;
+	private final MemberRepository memberRepository;
 
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 	private static final String TOKEN_PREFIX = "Bearer ";
@@ -58,9 +63,18 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
 		}
 
-		// log.info("* 토큰에서 이메일 확인");
+		Integer tokenVersion = jwtTokenProvider.getTokenVersion(accessToken);
 		String email = jwtTokenProvider.getEmail(accessToken);
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new CustomException(ErrorCode.USER_EMAIL_NOT_FOUND));
+
+		if (!tokenVersion.equals(member.getTokenVersion())) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰 버전 불일치");
+			return;
+		}
+
 		UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(email);
+
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 		// log.info("* 인증객체 저장");

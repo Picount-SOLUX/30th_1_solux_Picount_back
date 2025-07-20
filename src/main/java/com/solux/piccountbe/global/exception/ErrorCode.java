@@ -14,6 +14,7 @@ public enum ErrorCode {
 	EMAIL_DUPLICATED(HttpStatus.CONFLICT, "중복된 이메일입니다"),
 	NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "중복된 닉네임입니다"),
 	INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "일치하지 않는 패스워드입니다."),
+	SAME_PASSWORD(HttpStatus.BAD_REQUEST, "기존과 동일한 비밀번호입니다."),
 	MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "사용자 인증에 실패했습니다."),
 	MEMBER_OAUTH_MISMATCH(HttpStatus.BAD_REQUEST, "소셜 계정으로 가입된 회원은 이메일 로그인 방식을 사용할 수 없습니다."),

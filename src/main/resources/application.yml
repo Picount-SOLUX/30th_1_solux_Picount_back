@@ -58,6 +58,7 @@ custom-security:
   whitelist:
     - /api/members/signup
     - /api/members/login
+    - /api/members/refresh
     - /needtofix/login.html
     - /login.html
     - /login/oauth2/authorization/**
