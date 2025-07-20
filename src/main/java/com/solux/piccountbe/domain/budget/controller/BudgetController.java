@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.solux.piccountbe.config.security.UserDetailsImpl;
+import com.solux.piccountbe.domain.budget.dto.BudgetResponseDto;
 import com.solux.piccountbe.domain.budget.dto.CreateBudgetRequestDto;
 import com.solux.piccountbe.domain.budget.dto.GetAllBudgetResponseDto;
 import com.solux.piccountbe.domain.budget.dto.GetBudgetResponseDto;
@@ -30,13 +31,13 @@ public class BudgetController {
 	private final BudgetService budgetService;
 
 	@PostMapping
-	public ResponseEntity<Response<Void>> createBudget(
+	public ResponseEntity<Response<BudgetResponseDto>> createBudget(
 		@RequestBody CreateBudgetRequestDto req,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		Long memberId = userDetails.getMember().getMemberId();
-		budgetService.createBudget(memberId, req.getStartDate(), req.getEndDate(), req.getTotalAmount());
-		return ResponseEntity.ok(Response.success("예산 생성 완료", null));
+		BudgetResponseDto res = budgetService.createBudget(memberId, req.getStartDate(), req.getEndDate(), req.getTotalAmount());
+		return ResponseEntity.ok(Response.success("예산 생성 완료", res));
 	}
 
 	@DeleteMapping("/{budgetId}")

@@ -39,9 +39,9 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<Response<Void>> signup(@RequestBody @Valid SignupRequestDto req) {
-		memberService.signup(req);
-		return ResponseEntity.status(HttpStatus.CREATED).body(Response.success("회원가입 성공", null));
+	public ResponseEntity<Response<ProfileResponseDto>> signup(@RequestBody @Valid SignupRequestDto req) {
+		ProfileResponseDto res = memberService.signup(req);
+		return ResponseEntity.status(HttpStatus.CREATED).body(Response.success("회원가입 성공", res));
 	}
 
 	@PostMapping("/login")
@@ -94,35 +94,25 @@ public class MemberController {
 	}
 
 	@PutMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<Response<Void>> updateProfile(
+	public ResponseEntity<Response<ProfileResponseDto>> updateProfile(
 		@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
 		@Valid @RequestPart(value = "profileInfo") ProfileUpdateRequestDto profileUpdateRequestDto,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 
 		Long memberId = userDetails.getMember().getMemberId();
-		memberService.updateProfile(memberId, profileImage, profileUpdateRequestDto);
-		return ResponseEntity.ok(Response.success("마이프로필 수정 성공", null));
+		ProfileResponseDto res = memberService.updateProfile(memberId, profileImage, profileUpdateRequestDto);
+		return ResponseEntity.ok(Response.success("마이프로필 수정 성공", res));
 	}
 
 	@PutMapping(value = "/membergrouptype")
-	public ResponseEntity<Response<Void>> updateMemberGroupType(
+	public ResponseEntity<Response<ProfileResponseDto>> updateMemberGroupType(
 		@RequestBody MemberGroupTypeRequestDto memberGroupTypeRequestDto,
 		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
 		Long memberId = userDetails.getMember().getMemberId();
-		memberService.updateMemberGroupType(memberId, memberGroupTypeRequestDto.getMemberGroupType());
-		return ResponseEntity.ok(Response.success("직군 변경 성공", null));
-	}
-
-	@PutMapping(value = "/id")
-	public ResponseEntity<Response<Void>> updateEmail(
-		@RequestBody @Valid EmailRequestDto emailRequestDto,
-		@AuthenticationPrincipal UserDetailsImpl userDetails
-	) {
-		Long memberId = userDetails.getMember().getMemberId();
-		memberService.updateEmail(memberId, emailRequestDto.getEmail());
-		return ResponseEntity.ok(Response.success("직군 변경 성공", null));
+		ProfileResponseDto res = memberService.updateMemberGroupType(memberId, memberGroupTypeRequestDto.getMemberGroupType());
+		return ResponseEntity.ok(Response.success("직군 변경 성공", res));
 	}
 
 }
