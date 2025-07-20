@@ -2,6 +2,7 @@ package com.solux.piccountbe.domain.member.service;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -9,9 +10,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.solux.piccountbe.config.security.UserDetailsImpl;
+import com.solux.piccountbe.domain.member.GenerateRandomCode;
 import com.solux.piccountbe.domain.member.entity.Member;
-import com.solux.piccountbe.domain.member.entity.Provider;
 import com.solux.piccountbe.domain.member.entity.MemberGroupType;
+import com.solux.piccountbe.domain.member.entity.Provider;
 import com.solux.piccountbe.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 	private final MemberRepository memberRepository;
+
+	@Value("${upload.default_profile_image}")
+	private String defaultProfileImage;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -54,19 +59,26 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		// TODO: 프론트와 연동 후 범위 설정
 		Member member = memberRepository.findByProviderAndOauthId(Provider.KAKAO, kakaoId)
 			.map(m -> m.memberEmailUpdate(kakaoEmail))
-			.orElseGet(() -> memberRepository.save(
-				Member.builder()
-					.provider(Provider.KAKAO)
-					.email(kakaoEmail)
-					.oauthId(kakaoId)
-					.nickname(kakaoNickname)
-					.profileImageUrl("images/default-member-profile.jpg") //임시 defaultImageUrl
-					.memberGroupType(MemberGroupType.STUDENT_UNIV) // 기본값
-					.withdraw(false)
-					.isMainVisible(false)
-					.friendCode("WRECKITR") // 임시설정
-					.build()
-			));
+			.orElseGet(() -> {
+				String friendCode;
+				do {
+					friendCode = GenerateRandomCode.generateRandomCode();
+				} while (memberRepository.existsByFriendCode(friendCode));
+
+				return memberRepository.save(
+					Member.builder()
+						.provider(Provider.KAKAO)
+						.email(kakaoEmail)
+						.oauthId(kakaoId)
+						.nickname(kakaoNickname)
+						.profileImageUrl(defaultProfileImage)
+						.memberGroupType(MemberGroupType.STUDENT_UNIV) // 기본값
+						.withdraw(false)
+						.isMainVisible(false)
+						.friendCode(friendCode)
+						.build()
+				);
+			});
 
 		return UserDetailsImpl.create(member, attributes);
 

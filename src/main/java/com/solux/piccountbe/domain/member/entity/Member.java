@@ -65,9 +65,6 @@ public class Member extends Timestamped {
 	@Column(nullable = false)
 	private Boolean isMainVisible;
 
-	// @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-	// private List<Token> tokens = new ArrayList<>();
-
 	@OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
 	private List<Category> categories = new ArrayList<>();
 

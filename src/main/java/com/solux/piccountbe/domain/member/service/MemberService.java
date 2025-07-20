@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.SecureRandom;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -13,14 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.solux.piccountbe.config.jwt.JwtTokenProvider;
+import com.solux.piccountbe.domain.member.GenerateRandomCode;
 import com.solux.piccountbe.domain.member.dto.LoginRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileResponseDto;
 import com.solux.piccountbe.domain.member.dto.ProfileUpdateRequestDto;
 import com.solux.piccountbe.domain.member.dto.SignupRequestDto;
 import com.solux.piccountbe.domain.member.entity.Member;
-import com.solux.piccountbe.domain.member.entity.Provider;
 import com.solux.piccountbe.domain.member.entity.MemberGroupType;
+import com.solux.piccountbe.domain.member.entity.Provider;
 import com.solux.piccountbe.domain.member.repository.MemberRepository;
 import com.solux.piccountbe.global.exception.CustomException;
 import com.solux.piccountbe.global.exception.ErrorCode;
@@ -39,9 +39,6 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final TokenService tokenService;
 
-	private static final String CODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	private static final int CODE_LEN = 8;
-	private final SecureRandom random = new SecureRandom();
 	private final JwtTokenProvider jwtTokenProvider;
 
 	@Value("${upload.default_profile_image}")
@@ -63,7 +60,7 @@ public class MemberService {
 		String defaultImageUrl = defaultProfileImage;
 		String friendCode;
 		do {
-			friendCode = generateRandomCode();
+			friendCode = GenerateRandomCode.generateRandomCode();
 		} while (memberRepository.existsByFriendCode(friendCode));
 		boolean withDraw = false;
 		boolean isMainVisible = false;
@@ -197,14 +194,6 @@ public class MemberService {
 	public Member findByFriendCode(String friendCode) {
 		return memberRepository.findByFriendCode(friendCode)
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-	}
-
-	private String generateRandomCode() {
-		StringBuilder sb = new StringBuilder(CODE_LEN);
-		for (int i = 0; i < CODE_LEN; i++) {
-			sb.append(CODE_CHARS.charAt(random.nextInt(CODE_CHARS.length())));
-		}
-		return sb.toString();
 	}
 
 	@Transactional
