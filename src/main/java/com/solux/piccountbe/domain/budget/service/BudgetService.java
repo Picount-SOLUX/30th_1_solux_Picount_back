@@ -38,7 +38,7 @@ public class BudgetService {
 	private final BudgetRepository budgetRepository;
 	private final BudgetAllocationRepository budgetAllocationRepository;
 
-	public void createBudget(Long memberId, LocalDate startDate, LocalDate endDate, Integer totalAmount) {
+	public BudgetResponseDto createBudget(Long memberId, LocalDate startDate, LocalDate endDate, Integer totalAmount) {
 
 		Member member = memberService.getMemberById(memberId);
 
@@ -60,6 +60,14 @@ public class BudgetService {
 			.build();
 
 		budgetRepository.save(budget);
+
+		return BudgetResponseDto.builder()
+			.budgetId(budget.getBudgetId())
+			.startDate(budget.getStartDate())
+			.endDate(budget.getEndDate())
+			.totalAmount(budget.getTotalAmount())
+			.active(budget.getActive())
+			.build();
 	}
 
 	public void deleteBudget(Long memberId, Long budgetId) {
