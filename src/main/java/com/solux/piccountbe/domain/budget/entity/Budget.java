@@ -52,4 +52,11 @@ public class Budget {
 
 	@OneToMany(mappedBy = "budget", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<BudgetAllocation> budgetAllocationList = new ArrayList<>();
+
+	public void updateBudget(LocalDate startDate, LocalDate endDate, Integer totalAmount) {
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.totalAmount = totalAmount;
+	}
+
 }

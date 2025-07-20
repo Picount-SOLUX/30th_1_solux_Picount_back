@@ -34,31 +34,27 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 
-#### 현재 활성화된 예산 개별조회 & 세부예산 전체조회
-#GET http://localhost:8080/api/budgets/3
-#Content-Type: application/json
-#Authorization: Bearer {{accessToken}}
-#
-#
-#{
-#  "startDate": "2025-07-01",
-#  "endDate": "2025-07-31",
-#  "totalAmount": 500000,
-#  "budgetAllocationList": [
-#    {
-#      "categoryId": 1,
-#      "amount": 150000
-#    },
-#    {
-#      "categoryId": 2,
-#      "amount": 30000
-#    },
-#    {
-#      "categoryId": 3,
-#      "amount": 100000
-#    },
-#    {
-#      "categoryId": 4,
-#      "amount": 220000
-#    }
-#  ]
+### 예산&세부예산계획 수정
+PUT http://localhost:8080/api/budgets/2
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "startDate": "2025-07-13",
+  "endDate": "2025-07-31",
+  "totalAmount": 333300,
+  "budgetAllocationList": [
+    {
+      "categoryId": 1,
+      "amount": 1500
+    },
+    {
+      "categoryId": 2,
+      "amount": 30000
+    },
+    {
+      "categoryId": 3,
+      "amount": 100000
+    }
+  ]
+}

@@ -12,7 +12,7 @@ public class GetBudgetResponseDto {
 	private long budgetId;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	private int totalAmount;
+	private Integer totalAmount;
 	private boolean active;
 	private List<BudgetAllocationDto> budgetAllocationList;
 }
