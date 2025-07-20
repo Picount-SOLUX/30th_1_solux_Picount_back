@@ -29,12 +29,12 @@ public class CategoryController {
 	private final CategoryService categoryService;
 
 	@PostMapping
-	public ResponseEntity<Response<Void>> createCategory(
+	public ResponseEntity<Response<GetCategoryResponseDto>> createCategory(
 		@RequestBody CreateOrUpdateCategoryRequestDto req,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		Long memberId = userDetails.getMember().getMemberId();
-		categoryService.createCategory(memberId, req);
-		return ResponseEntity.ok(Response.success("카테고리 생성 완료", null));
+		GetCategoryResponseDto res = categoryService.createCategory(memberId, req);
+		return ResponseEntity.ok(Response.success("카테고리 생성 완료", res));
 	}
 
 	@GetMapping({"/{categoryId}"})
@@ -65,13 +65,13 @@ public class CategoryController {
 	}
 
 	@PutMapping("/{categoryId}")
-	public ResponseEntity<Response<Void>> updateCategory(
+	public ResponseEntity<Response<GetCategoryResponseDto>> updateCategory(
 		@PathVariable Long categoryId,
 		@RequestBody CreateOrUpdateCategoryRequestDto req,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		Long memberId = userDetails.getMember().getMemberId();
-		categoryService.updateCategory(memberId, categoryId, req);
-		return ResponseEntity.ok(Response.success("카테고리 수정 완료", null));
+		GetCategoryResponseDto res = categoryService.updateCategory(memberId, categoryId, req);
+		return ResponseEntity.ok(Response.success("카테고리 수정 완료", res));
 	}
 
 }

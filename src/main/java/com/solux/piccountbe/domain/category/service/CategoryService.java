@@ -27,7 +27,7 @@ public class CategoryService {
 	private final MemberService memberService;
 	private final CategoryRepository categoryRepository;
 
-	public void createCategory(Long memberId, CreateOrUpdateCategoryRequestDto categoryRequestDto) {
+	public GetCategoryResponseDto createCategory(Long memberId, CreateOrUpdateCategoryRequestDto categoryRequestDto) {
 		Member member = memberService.getMemberById(memberId);
 
 		if (categoryRepository.existsByMemberAndTypeAndName(
@@ -45,18 +45,25 @@ public class CategoryService {
 			.build();
 
 		categoryRepository.save(category);
+
+		return GetCategoryResponseDto.builder()
+			.categoryId(category.getCategoryId())
+			.categoryName(category.getName())
+			.type(category.getType())
+			.typeLabel(category.getType().getLabel())
+			.build();
 	}
 
 	public GetCategoryResponseDto getCategory(Long memberId, Long categoryId) {
 
 		Category category = getCategoryById(memberId, categoryId);
 
-		return new GetCategoryResponseDto(
-			categoryId,
-			category.getName(),
-			category.getType(),
-			category.getType().getLabel()
-		);
+		return GetCategoryResponseDto.builder()
+			.categoryId(category.getCategoryId())
+			.categoryName(category.getName())
+			.type(category.getType())
+			.typeLabel(category.getType().getLabel())
+			.build();
 	}
 
 	public GetAllCategoryResponseDto getAllCategory(Long memberId, Type type) {
@@ -82,11 +89,18 @@ public class CategoryService {
 		categoryRepository.delete(category);
 	}
 
-	public void updateCategory(Long memberId, Long categoryId, CreateOrUpdateCategoryRequestDto updateRequestDto) {
+	public GetCategoryResponseDto updateCategory(Long memberId, Long categoryId, CreateOrUpdateCategoryRequestDto updateRequestDto) {
 
 		Category category = getCategoryById(memberId, categoryId);
 		category.updateCategory(updateRequestDto.getCategoryName(), updateRequestDto.getType());
 		categoryRepository.save(category);
+
+		return GetCategoryResponseDto.builder()
+			.categoryId(category.getCategoryId())
+			.categoryName(category.getName())
+			.type(category.getType())
+			.typeLabel(category.getType().getLabel())
+			.build();
 	}
 
 	public Category getCategoryById(Long memberId, Long categoryId) {
