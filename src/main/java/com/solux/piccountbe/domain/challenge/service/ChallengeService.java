@@ -2,6 +2,7 @@ package com.solux.piccountbe.domain.challenge.service;
 
 import com.solux.piccountbe.domain.callendar.entity.CalendarEntry;
 import com.solux.piccountbe.domain.callendar.repository.CalendarEntryRepository;
+import com.solux.piccountbe.domain.callendar.service.CalendarService;
 import com.solux.piccountbe.domain.challenge.dto.response.ChallengeResponseDto;
 import com.solux.piccountbe.domain.challenge.dto.response.ChallengeRewardResponseDto;
 import com.solux.piccountbe.domain.challenge.dto.response.MemberChallengeResponseDto;
@@ -38,6 +39,7 @@ public class ChallengeService {
     private final MemberChallengeRepository memberChallengeRepository;
     private final MemberService memberService;
     private final PointService pointService;
+    private final CalendarService calendarService;
     private final ChallengeRepository challengeRepository;
     private final CalendarEntryRepository calendarEntryRepository;
     private final GuestBookRepository guestBookRepository;
@@ -93,6 +95,7 @@ public class ChallengeService {
                 List<Integer> options = List.of(50, 100, 150);
                 reward = options.get(new Random().nextInt(options.size()));
                 reason = Reason.ATTENDANCE;
+                calendarService.updateTodayPoint(member, reward);
             }
             case ATTENDANCE7 -> {
                 reward = 1000;
@@ -179,7 +182,7 @@ public class ChallengeService {
     }
 
 
-    // 7일 연속 출석
+    // 7일 연속 출석 - 30일과 로직 똑같음
     private void updateAttendance7Challenge(Member member) {
         Challenge challenge = challengeRepository.findByType(Type.ATTENDANCE7)
                 .orElseThrow(() -> new CustomException(ErrorCode.CHALLENGE_NOT_FOUND));
@@ -196,9 +199,10 @@ public class ChallengeService {
                 .mapToObj(baseDate::plusDays)
                 .toList();
 
-        List<LocalDate> attendedDates = calendarEntryRepository.findAttendedDatesByMemberAndDates(member, targetDates);
+        List<LocalDate> rewardedDates = calendarEntryRepository
+                .findAttendanceRewardDates(member, targetDates); // 일일 출석 보상 기준
 
-        boolean isAll7Attended = attendedDates.containsAll(targetDates);
+        boolean isAll7Attended = rewardedDates.containsAll(targetDates);
 
         if (isAll7Attended) {
             memberChallenge.updateStatus(Status.ONGOING);
@@ -226,11 +230,12 @@ public class ChallengeService {
                 .mapToObj(baseDate::plusDays)
                 .toList();
 
-        List<LocalDate> attendedDates = calendarEntryRepository.findAttendedDatesByMemberAndDates(member, targetDates);
+        List<LocalDate> rewardedDates = calendarEntryRepository
+                .findAttendanceRewardDates(member, targetDates);
 
-        boolean isAll7Attended = attendedDates.containsAll(targetDates);
+        boolean isAll30Attended = rewardedDates.containsAll(targetDates);
 
-        if (isAll7Attended) {
+        if (isAll30Attended) {
             memberChallenge.updateStatus(Status.ONGOING);
         } else {
             memberChallenge.updateStatus(Status.LOCKED);
@@ -269,15 +274,17 @@ public class ChallengeService {
         MemberChallenge memberChallenge = memberChallengeRepository.findByMemberAndChallenge(member, challenge)
                 .orElseGet(() -> memberChallengeRepository.save(new MemberChallenge(member, challenge, Status.LOCKED)));
 
-        if (memberChallenge.getStatus() == Status.COMPLETED) {
-            return;
-        }
+        // completedAt 다음 날부터 무지출 일수 계산
+        LocalDate baseDate = memberChallenge.getCompletedAt() != null
+                ? memberChallenge.getCompletedAt().plusDays(1)
+                : LocalDate.of(2025, 7, 20);  // 처음일 때
 
-        int noSpendingDays = calendarEntryRepository.countNoSpendingDays(member);
+        int noSpendingDays = calendarEntryRepository.countNoSpendingDaysFromDate(member, baseDate);
 
         if (noSpendingDays >= 10) {
             memberChallenge.updateStatus(Status.ONGOING);
-            memberChallengeRepository.save(memberChallenge);
+        } else {
+            memberChallenge.updateStatus(Status.LOCKED);
         }
     }
 
