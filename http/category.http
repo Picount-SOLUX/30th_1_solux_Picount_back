@@ -1,5 +1,5 @@
 ### 카테고리생성(지출)
-POST http://localhost:8080/api/category
+POST http://localhost:8080/api/categories
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -9,7 +9,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 카테고리생성(수입)
-POST http://localhost:8080/api/category
+POST http://localhost:8080/api/categories
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -20,12 +20,12 @@ Authorization: Bearer {{accessToken}}
 
 
 ### 단일 카테고리 조회
-GET http://localhost:8080/api/category/2
+GET http://localhost:8080/api/categories/2
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ### 지출 카테고리 조회
-GET http://localhost:8080/api/category?type=EXPENSE
+GET http://localhost:8080/api/categories?type=EXPENSE
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

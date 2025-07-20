@@ -48,7 +48,7 @@ public class Budget {
 
 	@Column
 	@Setter
-	private Boolean isActive;
+	private Boolean active;
 
 	@OneToMany(mappedBy = "budget", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<BudgetAllocation> budgetAllocationList = new ArrayList<>();

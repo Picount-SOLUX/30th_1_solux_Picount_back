@@ -11,24 +11,54 @@ Authorization: Bearer {{accessToken}}
 
 
 ### 예산삭제
-DELETE http://localhost:8080/api/budgets/5
+DELETE http://localhost:8080/api/budgets/1
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 
-### 예산조회
-GET http://localhost:8080/api/budgets/3
+### 사용자의 예산 전체 조회
+GET http://localhost:8080/api/budgets
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 
-### 활성화된 예산 조회
+### 예산 개별조회 & 세부예산 전체조회
+GET http://localhost:8080/api/budgets/2
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 현재 활성화된 예산 개별조회 & 세부예산 전체조회
 GET http://localhost:8080/api/budgets/active
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 
-### 사용자의 예산 전체조회
-GET http://localhost:8080/api/budgets
-Content-Type: application/json
-Authorization: Bearer {{accessToken}}
+#### 현재 활성화된 예산 개별조회 & 세부예산 전체조회
+#GET http://localhost:8080/api/budgets/3
+#Content-Type: application/json
+#Authorization: Bearer {{accessToken}}
+#
+#
+#{
+#  "startDate": "2025-07-01",
+#  "endDate": "2025-07-31",
+#  "totalAmount": 500000,
+#  "budgetAllocationList": [
+#    {
+#      "categoryId": 1,
+#      "amount": 150000
+#    },
+#    {
+#      "categoryId": 2,
+#      "amount": 30000
+#    },
+#    {
+#      "categoryId": 3,
+#      "amount": 100000
+#    },
+#    {
+#      "categoryId": 4,
+#      "amount": 220000
+#    }
+#  ]

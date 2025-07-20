@@ -54,7 +54,7 @@ public class BudgetController {
 	) {
 		Member member = userDetails.getMember();
 		GetBudgetResponseDto res = budgetService.getBudget(member, budgetId);
-		return ResponseEntity.ok(Response.success("예산 개별조회 완료", res));
+		return ResponseEntity.ok(Response.success("예산 개별조회 & 세부예산 전체조회 완료", res));
 	}
 
 	@GetMapping("/active")
@@ -64,7 +64,7 @@ public class BudgetController {
 		Member member = userDetails.getMember();
 		Long budgetId = budgetService.getActiveBudgetId(member);
 		GetBudgetResponseDto res = budgetService.getBudget(member, budgetId);
-		return ResponseEntity.ok(Response.success("현재 활성화된 예산 개별조회 완료", res));
+		return ResponseEntity.ok(Response.success("현재 활성화된 예산 개별조회 & 세부예산 전체조회 완료", res));
 	}
 
 	@GetMapping
@@ -73,7 +73,16 @@ public class BudgetController {
 	) {
 		Long memberId = userDetails.getMember().getMemberId();
 		GetAllBudgetResponseDto res = budgetService.getAllBudget(memberId);
-		return ResponseEntity.ok(Response.success("사용자의 전체예산 조회 완료", res));
+		return ResponseEntity.ok(Response.success("사용자의 예산 전체 조회 완료", res));
 	}
+
+	// @PutMapping("/{budgetId}")
+	// public ResponseEntity<Response<UpdateBudgetResponseDto>> updateBudget(
+	// 	@RequestBody UpdateBudgetRequestDto req,
+	// 	@AuthenticationPrincipal UserDetailsImpl userDetails
+	// ) {
+	// 	Long memberId = userDetails.getMember().getMemberId();
+	//
+	// }
 
 }

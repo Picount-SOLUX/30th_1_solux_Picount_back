@@ -33,11 +33,11 @@ public class BudgetService {
 		Member member = memberService.getMemberById(memberId);
 
 		Budget beforeActiveBudget = budgetRepository
-			.findByMemberAndIsActiveTrue(member)
+			.findByMemberAndActiveTrue(member)
 			.orElse(null);
 
 		if (beforeActiveBudget != null) {
-			beforeActiveBudget.setIsActive(false);
+			beforeActiveBudget.setActive(false);
 			budgetRepository.save(beforeActiveBudget);
 		}
 
@@ -45,8 +45,8 @@ public class BudgetService {
 			.member(member)
 			.startDate(startDate)
 			.endDate(endDate)
+			.active(true)
 			.totalAmount(totalAmount)
-			.isActive(true)
 			.build();
 
 		budgetRepository.save(budget);
@@ -60,12 +60,12 @@ public class BudgetService {
 			throw new CustomException(ErrorCode.BUDGET_NOT_MATCH_MEMBER);
 		}
 		Member member = memberService.getMemberById(memberId);
-		boolean wasActive = budget.getIsActive();
+		boolean wasActive = budget.getActive();
 		budgetRepository.delete(budget);
 		if (wasActive) {
 			budgetRepository.findTopByMemberOrderByStartDateDesc(member)
 				.ifPresent(next -> {
-					next.setIsActive(true);
+					next.setActive(true);
 					budgetRepository.save(next);
 				});
 		}
@@ -94,7 +94,7 @@ public class BudgetService {
 			budget.getStartDate(),
 			budget.getEndDate(),
 			budget.getTotalAmount(),
-			budget.getIsActive(),
+			budget.getActive(),
 			budgetAllocationDtoList
 		);
 		return getBudgetResponseDto;
@@ -110,7 +110,7 @@ public class BudgetService {
 				a.getStartDate(),
 				a.getEndDate(),
 				a.getTotalAmount(),
-				a.getIsActive()
+				a.getActive()
 			))
 			.collect(Collectors.toList());
 
@@ -119,7 +119,7 @@ public class BudgetService {
 	}
 
 	public Long getActiveBudgetId(Member member) {
-		return budgetRepository.findByMemberAndIsActiveTrue(member)
+		return budgetRepository.findByMemberAndActiveTrue(member)
 			.orElseThrow(() -> new CustomException(ErrorCode.BUDGET_NOT_FOUND))
 			.getBudgetId();
 
