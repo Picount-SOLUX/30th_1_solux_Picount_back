@@ -44,8 +44,7 @@ public class MemberService {
 	@Value("${upload.default_profile_image}")
 	private String defaultProfileImage;
 
-	@Transactional
-	public void signup(SignupRequestDto signupRequestDto) {
+	public ProfileResponseDto signup(SignupRequestDto signupRequestDto) {
 		boolean isEmailExists = memberRepository.existsByEmail(signupRequestDto.getEmail());
 		if (isEmailExists) {
 			throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
@@ -80,6 +79,12 @@ public class MemberService {
 			.build();
 
 		memberRepository.save(member);
+
+		return ProfileResponseDto.builder()
+			.memberId(member.getMemberId())
+			.email(member.getEmail())
+			.nickname(member.getNickname())
+			.build();
 	}
 
 	public LoginResponseDto login(LoginRequestDto loginRequestDto) {
@@ -167,7 +172,7 @@ public class MemberService {
 		return profileResponseDto;
 	}
 
-	public void updateProfile(Long memberId, MultipartFile profileImage, ProfileUpdateRequestDto profileUpdateRequestDto) {
+	public ProfileResponseDto updateProfile(Long memberId, MultipartFile profileImage, ProfileUpdateRequestDto profileUpdateRequestDto) {
 
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
@@ -221,26 +226,27 @@ public class MemberService {
 			member.memberProfileImageUrlUpdate("/images/profileImages/" + newFileName);
 		}
 
+		return ProfileResponseDto.builder()
+			.memberId(member.getMemberId())
+			.nickname(member.getNickname())
+			.intro(member.getIntro())
+			.profileImageUrl(member.getProfileImageUrl())
+			.build();
 	}
 
-	public void updateMemberGroupType(Long memberId, MemberGroupType memberGroupType) {
+	public ProfileResponseDto updateMemberGroupType(Long memberId, MemberGroupType memberGroupType) {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
 		member.memberGroupTypeUpdate(memberGroupType);
+
+		return ProfileResponseDto.builder()
+			.memberId(member.getMemberId())
+			.memberGroupType(memberGroupType)
+			.memberGroupTypeLabel(memberGroupType.getLabel())
+			.build();
 	}
 
-	public void updateEmail(Long memberId, String email) {
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-
-		if (!member.getEmail().equals(email)) {
-			if (memberRepository.existsByEmail(email)) {
-				throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
-			}
-		}
-		Member updateMember = member.memberEmailUpdate(email);
-	}
 
 	public Member findByFriendCode(String friendCode) {
 		return memberRepository.findByFriendCode(friendCode)
