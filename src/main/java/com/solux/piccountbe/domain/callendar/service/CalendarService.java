@@ -282,4 +282,15 @@ public class CalendarService {
             calendarPhotoRepository.save(newPhoto);
         }
     }
+
+    // 오늘 출석체크 포인트 저장
+    @Transactional
+    public void updateTodayPoint(Member member, long point) {
+        LocalDate today = LocalDate.now();
+
+        CalendarEntry entry = calendarEntryRepository.findByMemberAndEntryDate(member, today)
+                .orElseGet(() -> calendarEntryRepository.save(new CalendarEntry(member, today)));
+
+        entry.setPoint(point);
+    }
 }

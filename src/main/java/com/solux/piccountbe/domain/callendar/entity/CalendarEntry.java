@@ -40,7 +40,7 @@ public class CalendarEntry extends Timestamped {
 	private String memo;
 
 	@Column
-	private Integer point; // 출석 포인트 추가
+	private Long point; // 출석 포인트 추가
 
 	// 무지출 챌린지는 memo 입력이 없을때
 	public boolean isNoSpendingDay() {
@@ -64,5 +64,8 @@ public class CalendarEntry extends Timestamped {
 		this.memo = memo;
 	}
 
-
+	// 포인트 저장
+	public void setPoint(long point) {
+		this.point = point;
+	}
 }

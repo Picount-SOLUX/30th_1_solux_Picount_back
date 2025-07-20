@@ -40,6 +40,12 @@ public class ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
+        // 이미 샀으면 예외
+        boolean alreadyPurchased = purchaseRepository.existsByMemberAndItem(member, item);
+        if (alreadyPurchased) {
+            throw new CustomException(ErrorCode.ALREADY_PURCHASED_ITEM);
+        }
+
         // 포인트 차감 및 기록은 PointService
         pointService.deductPoints(member, item.getPrice().longValue(), Reason.ITEM_PURCHASE);
 

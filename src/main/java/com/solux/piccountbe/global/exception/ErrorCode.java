@@ -37,6 +37,7 @@ public enum ErrorCode {
 	STICKER_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
 	ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
 	NOT_ENOUGH_POINT(HttpStatus.BAD_REQUEST, "포인트가 부족합니다."),
+	ALREADY_PURCHASED_ITEM(HttpStatus.CONFLICT, "이미 구매한 상품입니다."),
 
 	// 챌린지
 	CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "챌린지를 찾을 수 없습니다."),
