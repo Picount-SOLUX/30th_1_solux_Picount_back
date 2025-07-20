@@ -1,15 +1,8 @@
 package com.solux.piccountbe.domain.challenge.entity;
 
 public enum Status {
-	ONGOING;
+	ONGOING, // 진행 중 (조건 만족)
+	COMPLETED, // 완료
+	LOCKED // 아직 조건 만족 x
 
-	// private final String label;
-	//
-	// Type(String label) {
-	// 	this.label = label;
-	// }
-	//
-	// public String getLabel() {
-	// 	return label;
-	// }
 }

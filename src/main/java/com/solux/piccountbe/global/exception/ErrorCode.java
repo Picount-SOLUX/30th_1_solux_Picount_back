@@ -38,6 +38,11 @@ public enum ErrorCode {
 	ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
 	NOT_ENOUGH_POINT(HttpStatus.BAD_REQUEST, "포인트가 부족합니다."),
 
+	// 챌린지
+	CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "챌린지를 찾을 수 없습니다."),
+	MEMBER_CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자의 챌린지를 찾을 수 없습니다."),
+	INVALID_CHALLENGE_STATUS(HttpStatus.CONFLICT, "올바르지 않은 챌린지 상태입니다."),
+
 	//Token
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 JWT 토큰입니다."),
 	TOKEN_EXPIRATION(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),

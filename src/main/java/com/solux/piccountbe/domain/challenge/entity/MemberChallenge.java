@@ -40,4 +40,31 @@ public class MemberChallenge {
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private Status status;
+
+	public MemberChallenge(Member member, Challenge challenge, Status status) {
+		this.member = member;
+		this.challenge = challenge;
+		this.status = status;
+		this.completedAt = null;
+	}
+
+	public void complete() {
+		this.status = Status.COMPLETED;
+		this.completedAt = LocalDate.now();
+	}
+
+	public void resetDaily() {
+		if (this.challenge.getType() == Type.ATTENDANCE || this.challenge.getType() == Type.GUESTBOOK) {
+			this.status = Status.LOCKED;
+			this.completedAt = null;
+		}
+	}
+
+	public void updateStatus(Status status) {
+		this.status = status;
+	}
+
+	public void setCompletedAt(LocalDate now) {
+		this.completedAt = now;
+	}
 }

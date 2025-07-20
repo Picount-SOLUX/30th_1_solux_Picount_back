@@ -1,12 +1,10 @@
 package com.solux.piccountbe.domain.challenge.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @NoArgsConstructor
 public class Challenge {
@@ -21,6 +19,14 @@ public class Challenge {
 	@Column(nullable = false)
 	private Integer rewardPoint;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Type type;
+
+	public Challenge(String name, Integer rewardPoint, Type type) {
+		this.name = name;
+		this.rewardPoint = rewardPoint;
+		this.type = type;
+	}
+
 }
