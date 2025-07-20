@@ -8,6 +8,7 @@ import com.solux.piccountbe.domain.friend.entity.GuestBook;
 import com.solux.piccountbe.domain.member.entity.Member;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface GuestBookRepository extends JpaRepository<GuestBook, Long> {
@@ -15,4 +16,8 @@ public interface GuestBookRepository extends JpaRepository<GuestBook, Long> {
     Page<GuestBook> findByWriterId(@Param("writerId") Long writerId, Pageable pageable);
     List<GuestBook> findAllByWriter_MemberIdAndIsDeletedFalse(Long memberId);
     Page<GuestBook> findByOwnerAndIsDeletedFalse(Member owner, Pageable pageable);
+    boolean existsByWriterAndIsDeletedFalseAndCreatedAtBetween(
+            Member writer, LocalDateTime start, LocalDateTime end
+    );
+
 }

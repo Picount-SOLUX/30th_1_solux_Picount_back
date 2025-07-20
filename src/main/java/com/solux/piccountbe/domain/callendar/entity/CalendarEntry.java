@@ -39,6 +39,14 @@ public class CalendarEntry extends Timestamped {
 	@Column
 	private String memo;
 
+	@Column
+	private Integer point; // 출석 포인트 추가
+
+	// 무지출 챌린지는 memo 입력이 없을때
+	public boolean isNoSpendingDay() {
+		return this.memo == null || this.memo.trim().isEmpty();
+	}
+
 	// 생성자
 	public CalendarEntry(Member member, LocalDate entryDate, String memo) {
 		this.member = member;
@@ -46,9 +54,15 @@ public class CalendarEntry extends Timestamped {
 		this.memo = memo;
 	}
 
+	public CalendarEntry(Member member, LocalDate entryDate) {
+		this.member = member;
+		this.entryDate = entryDate;
+	}
+
 	// 메모 수정
 	public void setMemo(String memo) {
 		this.memo = memo;
 	}
+
 
 }

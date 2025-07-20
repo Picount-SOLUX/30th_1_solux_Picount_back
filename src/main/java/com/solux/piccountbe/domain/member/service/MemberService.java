@@ -213,4 +213,10 @@ public class MemberService {
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 	}
 
+	// 포인트 추가
+	public void addPoint(Member member, long amount) {
+		member.addPoint(amount);
+		memberRepository.save(member);
+	}
+
 }

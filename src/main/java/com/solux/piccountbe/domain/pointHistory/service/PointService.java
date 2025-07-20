@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -45,6 +46,16 @@ public class PointService {
 
         member.usePoint(amount); // 엔티티에서 차감
         PointHistory history = new PointHistory(member, -amount, reason);
+        pointHistoryRepository.save(history);
+    }
+
+    // 챌린지 - 포인트 지급
+    public void saveChallengeRewardHistory(Member member, long reward, Reason reason) {
+        PointHistory history = new PointHistory(
+                member,
+                reward,
+                reason
+        );
         pointHistoryRepository.save(history);
     }
 }
