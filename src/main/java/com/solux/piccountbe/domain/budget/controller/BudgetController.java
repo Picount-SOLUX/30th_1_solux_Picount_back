@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.budget.dto.CreateBudgetRequestDto;
 import com.solux.piccountbe.domain.budget.dto.GetAllBudgetResponseDto;
 import com.solux.piccountbe.domain.budget.dto.GetBudgetResponseDto;
+import com.solux.piccountbe.domain.budget.dto.UpdateBudgetRequestDto;
 import com.solux.piccountbe.domain.budget.service.BudgetService;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.global.Response;
@@ -54,7 +56,7 @@ public class BudgetController {
 	) {
 		Member member = userDetails.getMember();
 		GetBudgetResponseDto res = budgetService.getBudget(member, budgetId);
-		return ResponseEntity.ok(Response.success("예산 개별조회 완료", res));
+		return ResponseEntity.ok(Response.success("예산 개별조회 & 세부예산 전체조회 완료", res));
 	}
 
 	@GetMapping("/active")
@@ -64,7 +66,7 @@ public class BudgetController {
 		Member member = userDetails.getMember();
 		Long budgetId = budgetService.getActiveBudgetId(member);
 		GetBudgetResponseDto res = budgetService.getBudget(member, budgetId);
-		return ResponseEntity.ok(Response.success("현재 활성화된 예산 개별조회 완료", res));
+		return ResponseEntity.ok(Response.success("현재 활성화된 예산 개별조회 & 세부예산 전체조회 완료", res));
 	}
 
 	@GetMapping
@@ -73,7 +75,25 @@ public class BudgetController {
 	) {
 		Long memberId = userDetails.getMember().getMemberId();
 		GetAllBudgetResponseDto res = budgetService.getAllBudget(memberId);
-		return ResponseEntity.ok(Response.success("사용자의 전체예산 조회 완료", res));
+		return ResponseEntity.ok(Response.success("사용자의 예산 전체 조회 완료", res));
+	}
+
+	@PutMapping("/{budgetId}")
+	public ResponseEntity<Response<GetBudgetResponseDto>> updateBudget(
+		@PathVariable Long budgetId,
+		@RequestBody UpdateBudgetRequestDto req,
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		Long memberId = userDetails.getMember().getMemberId();
+		GetBudgetResponseDto res = budgetService.updateBudget(
+			memberId,
+			budgetId,
+			req.getStartDate(),
+			req.getEndDate(),
+			req.getTotalAmount(),
+			req.getBudgetAllocationList()
+		);
+		return ResponseEntity.ok(Response.success("예산&세부예산계획 수정 완료", res));
 	}
 
 }

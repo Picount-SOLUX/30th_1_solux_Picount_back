@@ -9,6 +9,6 @@ import com.solux.piccountbe.domain.member.entity.Member;
 
 public interface BudgetRepository extends JpaRepository<Budget, Long> {
 
-	Optional<Budget> findByMemberAndIsActiveTrue(Member member);
+	Optional<Budget> findByMemberAndActiveTrue(Member member);
 	Optional<Budget> findTopByMemberOrderByStartDateDesc(Member member);
 }

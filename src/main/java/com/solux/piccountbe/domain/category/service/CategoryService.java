@@ -24,8 +24,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class CategoryService {
 
-	private final CategoryRepository categoryRepository;
 	private final MemberService memberService;
+	private final CategoryRepository categoryRepository;
 
 	public void createCategory(Long memberId, CreateOrUpdateCategoryRequestDto categoryRequestDto) {
 		Member member = memberService.getMemberById(memberId);
@@ -49,14 +49,7 @@ public class CategoryService {
 
 	public GetCategoryResponseDto getCategory(Long memberId, Long categoryId) {
 
-		Member member = memberService.getMemberById(memberId);
-		Category category = categoryRepository.findById(categoryId).
-			orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
-			);
-
-		if (!category.getMember().equals(member)) {
-			throw new CustomException(ErrorCode.CATEGORY_NOT_MATCH_MEMBER);
-		}
+		Category category = getCategoryById(memberId, categoryId);
 
 		return new GetCategoryResponseDto(
 			categoryId,
@@ -83,24 +76,30 @@ public class CategoryService {
 	}
 
 	public void deleteCategory(Long memberId, Long categoryId) {
-		Member member = memberService.getMemberById(memberId);
-		Category category = categoryRepository.findById(categoryId)
-			.orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
-		if (!category.getMember().equals(member)) {
-			throw new CustomException(ErrorCode.CATEGORY_NOT_MATCH_MEMBER);
-		}
-		categoryRepository.deleteById(categoryId);
+
+		Category category = getCategoryById(memberId, categoryId);
+
+		categoryRepository.delete(category);
 	}
 
 	public void updateCategory(Long memberId, Long categoryId, CreateOrUpdateCategoryRequestDto updateRequestDto) {
+
+		Category category = getCategoryById(memberId, categoryId);
+		category.updateCategory(updateRequestDto.getCategoryName(), updateRequestDto.getType());
+		categoryRepository.save(category);
+	}
+
+	public Category getCategoryById(Long memberId, Long categoryId) {
+
 		Member member = memberService.getMemberById(memberId);
-		Category category = categoryRepository.findById(categoryId)
-			.orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+		Category category = categoryRepository.findById(categoryId).
+			orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
+			);
+
 		if (!category.getMember().equals(member)) {
 			throw new CustomException(ErrorCode.CATEGORY_NOT_MATCH_MEMBER);
 		}
 
-		category.updateCategory(updateRequestDto.getCategoryName(), updateRequestDto.getType());
-		categoryRepository.save(category);
+		return category;
 	}
 }
