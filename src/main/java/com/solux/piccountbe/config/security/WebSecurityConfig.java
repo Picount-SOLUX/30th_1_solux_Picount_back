@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,6 +22,12 @@ import com.solux.piccountbe.config.oauth.OAuth2LoginSuccessHandler;
 import com.solux.piccountbe.domain.member.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -36,17 +43,35 @@ public class WebSecurityConfig {
 	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOriginPatterns(Arrays.asList(
+				"http://localhost:5179"
+		));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+		configuration.setAllowedHeaders(List.of("*"));
+		configuration.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+
+		return source;
+	}
+
 	//특정 http 요청에 대한 웹 기반 보안 구성
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
+		http
+				.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
+				.csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
 			.authorizeHttpRequests(auth -> //인증/인가 설정
 				auth.requestMatchers(securityProperties.getWhitelist().toArray(new String[0])).permitAll()
 					.anyRequest().authenticated()
 			)
 			.oauth2Login(oauth -> oauth
 				// 추후 로그인 페이지는 프론트 담당
-				.loginPage("/login.html")
+				.loginPage("http://localhost:5179/login")
 				// 카카오 인가 요청 URL
 				.authorizationEndpoint(ae -> ae
 					.baseUri("/login/oauth2/authorization")
