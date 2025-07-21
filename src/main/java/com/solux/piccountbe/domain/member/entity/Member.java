@@ -137,4 +137,8 @@ public class Member extends Timestamped {
 		this.point += amount;
 	}
 
+	// 공개 여부 설정
+	public void updateMainVisible(Boolean isMainVisible) {
+		this.isMainVisible = isMainVisible;
+	}
 }

@@ -265,4 +265,10 @@ public class MemberService {
 		memberRepository.save(member);
 	}
 
+	// 공개 여부
+	public void updateMainVisibility(Long memberId, boolean isMainVisible) {
+		Member member = getMemberById(memberId);
+		member.updateMainVisible(isMainVisible);
+		log.info("공개 여부 수정 완료: {}", member.getIsMainVisible());
+	}
 }

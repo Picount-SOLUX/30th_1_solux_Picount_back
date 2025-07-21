@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.solux.piccountbe.domain.member.dto.MainVisibilityRequestDto;
 import com.solux.piccountbe.config.security.UserDetailsImpl;
 import com.solux.piccountbe.domain.member.dto.EmailRequestDto;
 import com.solux.piccountbe.domain.member.dto.LoginRequestDto;
@@ -113,6 +114,16 @@ public class MemberController {
 		Long memberId = userDetails.getMember().getMemberId();
 		ProfileResponseDto res = memberService.updateMemberGroupType(memberId, memberGroupTypeRequestDto.getMemberGroupType());
 		return ResponseEntity.ok(Response.success("직군 변경 성공", res));
+	}
+
+	@PatchMapping("/visibility/main")
+	public ResponseEntity<Response<Void>> updateMainVisibility(
+			@AuthenticationPrincipal UserDetailsImpl userDetails,
+			@RequestBody MainVisibilityRequestDto requestDto
+	) {
+		Long memberId = userDetails.getMember().getMemberId();
+		memberService.updateMainVisibility(memberId, requestDto.getIsMainVisible());
+		return ResponseEntity.ok(Response.success("메인페이지 공개 여부가 변경되었습니다.", null));
 	}
 
 }
