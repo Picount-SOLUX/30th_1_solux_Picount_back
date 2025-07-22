@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  springboot-blue:
+    image: nimesss/picount-prac:latest
+    container_name: springboot-blue
+    ports:
+      - "8081:8080"
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Seoul
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  springboot-green:
+    image: picount-prac:latest
+    container_name: springboot-green
+    ports:
+      - "8082:8080"
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Seoul
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  jenkins:
+    image: jenkins/jenkins:jdk17
+    container_name: jenkins
+    ports:
+      - "9090:8080"
+      - "50000:50000"
+    volumes:
+      - ~/jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
