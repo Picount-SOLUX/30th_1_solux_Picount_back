@@ -11,13 +11,13 @@ spring:
           kakao:
             client-id: ${OAUTH2_KAKAO_CLIENT_ID}
             client-secret: ${OAUTH2_KAKAO_CLIENT_SECRET}
+#           TODO: baseURL 수정 - kakao developers와 맞추기
             redirect-uri: http://localhost:8080/api/members/social/kakao
             client-authentication-method: client_secret_post
             client-name: Kakao
             authorization-grant-type: authorization_code
             scope:
               - profile_nickname
-              - profile_image
               - account_email
         provider:
           kakao:
@@ -59,13 +59,13 @@ custom-security:
     - /api/members/signup
     - /api/members/login
     - /api/members/refresh
-    - /needtofix/login.html
-    - /login.html
     - /login/oauth2/authorization/**
     - /api/members/social/**
+#   TODO: 프론트와 연동 확인 이후 삭제
+    - /login.html
 
 callback-oauth:
-  frontend-redirect-uri: http://localhost:8080/login.html
+  frontend-redirect-uri: http://localhost:5179/callback
 
 upload:
   dir: ./uploads/profileImages

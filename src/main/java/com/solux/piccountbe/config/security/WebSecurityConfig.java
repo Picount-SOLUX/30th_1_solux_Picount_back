@@ -1,12 +1,14 @@
 package com.solux.piccountbe.config.security;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -15,6 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.solux.piccountbe.config.jwt.JwtTokenAuthenticationFilter;
 import com.solux.piccountbe.config.oauth.OAuth2LoginFailureHandler;
@@ -22,12 +27,6 @@ import com.solux.piccountbe.config.oauth.OAuth2LoginSuccessHandler;
 import com.solux.piccountbe.domain.member.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -47,7 +46,7 @@ public class WebSecurityConfig {
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOriginPatterns(Arrays.asList(
-				"http://localhost:5179"
+			"http://localhost:5179"
 		));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		configuration.setAllowedHeaders(List.of("*"));
@@ -63,18 +62,18 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-				.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
-				.csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
+			.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
+			.csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
 			.authorizeHttpRequests(auth -> //인증/인가 설정
 				auth.requestMatchers(securityProperties.getWhitelist().toArray(new String[0])).permitAll()
 					.anyRequest().authenticated()
 			)
 			.oauth2Login(oauth -> oauth
-				// 추후 로그인 페이지는 프론트 담당
-				.loginPage("http://localhost:5179/login")
+				// TODO: 프론트 연동 확인 후 삭제
+				.loginPage("/login.html")
 				// 카카오 인가 요청 URL
 				.authorizationEndpoint(ae -> ae
-					.baseUri("/login/oauth2/authorization")
+					.baseUri("/api/login/oauth2/authorization")
 				)
 				// 카카오가 보내준 code 받을 API
 				.redirectionEndpoint(re -> re

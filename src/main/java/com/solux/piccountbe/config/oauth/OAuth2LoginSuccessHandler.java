@@ -36,6 +36,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 		Authentication authentication) throws IOException {
 
 		UserDetailsImpl user = (UserDetailsImpl)authentication.getPrincipal();
+		boolean isNew = user.isOAuthNewMember();
 		Member member = user.getMember();
 
 		if(member.getWithdraw()) {
@@ -47,10 +48,11 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		tokenService.createOrUpdateRefreshToken(refreshToken, member);
 
-		// 리다이렉트 URI에 토큰 붙여서 보내기
+		// 리다이렉트 URI에 토큰 붙여서 보내기, 신규유저 판별
 		String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
 			.queryParam("access_token", accessToken)
 			.queryParam("refresh_token", refreshToken)
+			.queryParam("is_new", isNew)
 			.build().toUriString();
 
 		response.sendRedirect(targetUrl);

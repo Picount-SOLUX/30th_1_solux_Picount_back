@@ -31,7 +31,7 @@ POST http://localhost:8080/api/members/refresh
 Content-Type: application/json
 
 {
-  "refreshToken":
+  "refreshToken": ""
 }
 
 
@@ -41,10 +41,26 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 
+
+### 카카오 로그아웃
+POST http://localhost:8080/api/members/logout
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtc2o5MDAwQG5hdGUuY29tIiwibWVtYmVySWQiOjEsInRva2VuVmVyc2lvbiI6MSwiaWF0IjoxNzUzMTk0NTMwLCJleHAiOjE3NTMxOTYzMzB9.5Xir7mY-u--ZIMIVd-Q2x_du4gFhJNnCeCSq6uJSpFU
+
+
+
 ### 탈퇴
 PATCH http://localhost:8080/api/members/withdraw
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
+
+
+
+### 카카오 탈퇴
+PATCH http://localhost:8080/api/members/withdraw
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtc2o5MDAwQG5hdGUuY29tIiwibWVtYmVySWQiOjEsInRva2VuVmVyc2lvbiI6MiwiaWF0IjoxNzUzMTk0NjE4LCJleHAiOjE3NTMxOTY0MTh9.WEDLOqUmtxRIELjTvbX2Pi64JHGjVNofB2ZPhi51OuQ
+
 
 
 ### 비밀번호 변경
