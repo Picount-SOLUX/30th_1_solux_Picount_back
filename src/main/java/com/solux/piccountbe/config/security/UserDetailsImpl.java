@@ -14,6 +14,7 @@ import com.solux.piccountbe.domain.member.entity.Member;
 public class UserDetailsImpl implements UserDetails, OAuth2User {
 	private final Member member;
 	private Map<String, Object> attributes;
+	private boolean isOAuthNewMember;
 
 	public UserDetailsImpl(final Member member) {
 		this.member = member;
@@ -23,9 +24,13 @@ public class UserDetailsImpl implements UserDetails, OAuth2User {
 		return member;
 	}
 
+	public boolean isOAuthNewMember() {
+		return isOAuthNewMember;
+	}
+
 	public static UserDetailsImpl create(Member member, Map<String, Object> attributes) {
 		UserDetailsImpl principal = new UserDetailsImpl(member);
-		principal.setAttributes(attributes);
+		principal.setAttributesAndIsOAuthNewMember(attributes);
 		return principal;
 	}
 
@@ -35,8 +40,9 @@ public class UserDetailsImpl implements UserDetails, OAuth2User {
 		return attributes;
 	}
 
-	public void setAttributes(Map<String, Object> attributes) {
+	public void setAttributesAndIsOAuthNewMember(Map<String, Object> attributes) {
 		this.attributes = attributes;
+		this.isOAuthNewMember = Boolean.TRUE.equals(attributes.get("isOAuthNewMember"));
 	}
 
 	@Override

@@ -1,6 +1,8 @@
 package com.solux.piccountbe.domain.member.service;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -36,8 +38,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
 		//saveOrUpdate(oAuth2User);
 
-		//그냥 바로 여기서 파싱
-		Map<String, Object> attributes = oAuth2User.getAttributes();
+		// 파싱
+		Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
 
 		// 카카오 Id
 		Map<String, Object> account = (Map<String, Object>)attributes.get("kakao_account");
@@ -46,26 +48,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		// log.info("kakao_acount: {}", account);
 		// log.info("profile: {}", profile);
 
-		if (account == null || profile == null) {
-			return null;
-		}
-
 		Long kakaoId = (Long)attributes.get("id");
 		// 닉네임
 		String kakaoNickname = (String)profile.get("nickname");
 		// 이메일
 		String kakaoEmail = (String)account.get("email");
+		// 신규유저 확인
+		AtomicReference<Boolean> isOAuthNewMember = new AtomicReference<>(false);
 
-		// TODO: 프론트와 연동 후 범위 설정
 		Member member = memberRepository.findByProviderAndOauthId(Provider.KAKAO, kakaoId)
 			.map(m -> m.memberEmailUpdate(kakaoEmail))
 			.orElseGet(() -> {
+				isOAuthNewMember.set(true);
 				String friendCode;
 				do {
 					friendCode = GenerateRandomCode.generateRandomCode();
 				} while (memberRepository.existsByFriendCode(friendCode));
 
-				return memberRepository.save(
+				Member newMember =
 					Member.builder()
 						.provider(Provider.KAKAO)
 						.email(kakaoEmail)
@@ -77,9 +77,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 						.withdraw(false)
 						.isMainVisible(false)
 						.friendCode(friendCode)
-						.build()
-				);
+						.build();
+				memberRepository.save(newMember);
+				return newMember;
+
 			});
+
+		attributes.put("isOAuthNewMember", isOAuthNewMember.get());
 
 		return UserDetailsImpl.create(member, attributes);
 
