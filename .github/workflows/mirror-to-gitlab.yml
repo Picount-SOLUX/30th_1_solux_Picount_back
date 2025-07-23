@@ -1,0 +1,22 @@
+name: Mirror to GitLab
+
+on:
+  push:
+    branches:
+      - develop  # GitHub에서 이 브랜치에 push 될 때마다 작동
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Mirror to GitLab
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git remote add gitlab "$GITLAB_REPO"
+          git push --mirror gitlab
+        env:
+          GITLAB_REPO: ${{ secrets.GITLAB_REPO }}
