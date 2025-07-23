@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
 
   springboot-green:
-    image: picount-prac:latest
+    image: nimesss/picount-prac:latest
     container_name: springboot-green
     ports:
       - "8082:8080"
