@@ -3,7 +3,7 @@ name: Mirror to GitLab
 on:
   push:
     branches:
-      - develop  # develop 브랜치에 push될 때 실행
+      - develop
 
 jobs:
   mirror:
@@ -12,11 +12,15 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 전체 커밋 히스토리 필요
 
       - name: Mirror to GitLab
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git remote add gitlab "https://oauth2:${{ secrets.GITLAB_TOKEN }}@${{ secrets.GITLAB_REPO }}"
-          git push --mirror gitlab
+          git push gitlab --all
+          git push gitlab --tags
+
 
