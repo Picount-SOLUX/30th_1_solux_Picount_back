@@ -59,7 +59,7 @@ management:
     health:
       show-details: always
 
-loud:
+cloud:
   aws:
     s3:
       bucket: ${S3_BUCKET_NAME}
