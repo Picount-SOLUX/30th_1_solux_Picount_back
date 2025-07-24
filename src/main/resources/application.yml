@@ -85,6 +85,7 @@ custom-security:
     - /api/members/refresh
     - /login/oauth2/authorization/**
     - /api/members/social/**
+    - /api/s3/**
 #   TODO: 프론트와 연동 확인 이후 삭제
     - /login.html
 
