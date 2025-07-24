@@ -47,22 +47,13 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
         List<String> whitelist = securityProperties.getWhitelist();
 
         // log.info("* 인증 불필요 엔드포인트 확인");
-  /*      for (String whitelink : whitelist) {
-            if (pathMatcher.match(whitelink, path)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-        }*/
-
-        log.info("요청 경로: {}", path);
         for (String whitelink : whitelist) {
-            log.info("화이트리스트 엔트리: {}", whitelink);
             if (pathMatcher.match(whitelink, path)) {
-                log.info("✅ 화이트리스트 매칭 성공 → 필터 생략: {}", path);
                 filterChain.doFilter(request, response);
                 return;
             }
         }
+
         String accessToken = resolveToken(request);
         // log.info("* [JwtTokenAuthFilter] accessToken : " + accessToken);
 
