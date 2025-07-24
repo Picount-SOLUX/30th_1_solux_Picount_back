@@ -22,7 +22,7 @@ public class S3Controller {
         return ResponseEntity.ok(url);
     }
 
-    // 파일 다운로드
+    // 파일 url 다운로드
     @GetMapping("/download")
     public ResponseEntity<UrlResource> download(@RequestParam String filename) {
         return s3UploadService.downloadImage(filename);
