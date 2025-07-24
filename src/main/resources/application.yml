@@ -83,6 +83,8 @@ custom-security:
     - /api/members/signup
     - /api/members/login
     - /api/members/refresh
+    - /api/members/findAccount
+    - /api/members/findAccount/**
     - /login/oauth2/authorization/**
     - /api/members/social/**
     - /api/s3/**
