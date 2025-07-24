@@ -49,10 +49,6 @@ spring:
         format_sql: true
         highlight_sql: true
         use_sql_comments: true
-# 테스트
-logging:
-  file:
-    name: logs/picount.log
 
 #logging:
 #    level:
