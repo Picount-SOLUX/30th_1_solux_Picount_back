@@ -59,6 +59,8 @@ custom-security:
     - /api/members/signup
     - /api/members/login
     - /api/members/refresh
+    - /api/members/findAccount
+    - /api/members/findAccount/**
     - /login/oauth2/authorization/**
     - /api/members/social/**
 #   TODO: 프론트와 연동 확인 이후 삭제
