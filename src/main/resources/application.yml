@@ -67,6 +67,8 @@ management:
   endpoint:
     health:
       show-details: always
+  security:
+    enabled: false
 
 cloud:
   aws:
