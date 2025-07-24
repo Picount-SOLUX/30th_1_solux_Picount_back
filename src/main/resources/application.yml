@@ -4,6 +4,12 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   security:
     oauth2:
       client:
@@ -30,7 +36,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/piccount
+    url: ${MYSQL_URL}
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
 
@@ -43,12 +49,35 @@ spring:
         format_sql: true
         highlight_sql: true
         use_sql_comments: true
-# 테스트
 
 #logging:
 #    level:
 #        org.hibernate.SQL: DEBUG
 #        org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
+  security:
+    enabled: false
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET_NAME}
+    credentials:
+      access-key: ${ACCESS_KEY}
+      secret-key: ${SECRET_ACCESS_KEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
 
 jwt:
   secret: ${JWT_SECRET_KEY}
@@ -57,6 +86,7 @@ jwt:
 
 custom-security:
   whitelist:
+    - /actuator/health
     - /api/members/signup
     - /api/members/login
     - /api/members/refresh
@@ -64,6 +94,7 @@ custom-security:
     - /api/members/findAccount/**
     - /login/oauth2/authorization/**
     - /api/members/social/**
+    - /api/s3/upload
 #   TODO: 프론트와 연동 확인 이후 삭제
     - /login.html
 
