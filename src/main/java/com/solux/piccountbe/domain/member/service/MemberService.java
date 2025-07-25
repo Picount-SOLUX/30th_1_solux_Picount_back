@@ -1,5 +1,6 @@
 package com.solux.piccountbe.domain.member.service;
 
+import com.solux.piccountbe.config.S3.S3UploadService;
 import com.solux.piccountbe.config.jwt.JwtTokenProvider;
 import com.solux.piccountbe.domain.member.GenerateRandomCode;
 import com.solux.piccountbe.domain.member.dto.*;
@@ -7,21 +8,17 @@ import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.domain.member.entity.MemberGroupType;
 import com.solux.piccountbe.domain.member.entity.Provider;
 import com.solux.piccountbe.domain.member.repository.MemberRepository;
+import com.solux.piccountbe.global.DefaultImageUtil;
 import com.solux.piccountbe.global.exception.CustomException;
 import com.solux.piccountbe.global.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @Transactional
@@ -32,11 +29,10 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final TokenService tokenService;
+    private final S3UploadService s3UploadService;
 
+    private final DefaultImageUtil defaultImageUtil;
     private final JwtTokenProvider jwtTokenProvider;
-
-    @Value("${upload.default_profile_image}")
-    private String defaultProfileImage;
 
     public ProfileResponseDto signup(SignupRequestDto signupRequestDto) {
         boolean isEmailExists = memberRepository.existsByEmail(signupRequestDto.getEmail());
@@ -50,7 +46,7 @@ public class MemberService {
 
         String password = signupRequestDto.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
-        String defaultImageUrl = defaultProfileImage;
+        String defaultImageUrl = defaultImageUtil.getDefaultProfileImageUrl();
         String friendCode;
         do {
             friendCode = GenerateRandomCode.generateRandomCode();
@@ -137,7 +133,8 @@ public class MemberService {
 
     public void findAccount(Long memberId, String password) {
         Member member = getMemberById(memberId);
-        member.memberPasswordUpdate(password);
+        String encodedPassword = passwordEncoder.encode(password);
+        member.memberPasswordUpdate(encodedPassword);
     }
 
     public void logout(Long memberId) {
@@ -178,7 +175,7 @@ public class MemberService {
         return profileResponseDto;
     }
 
-    public ProfileResponseDto updateProfile(Long memberId, MultipartFile profileImage, ProfileUpdateRequestDto profileUpdateRequestDto) {
+    public ProfileResponseDto updateProfile(Long memberId, MultipartFile profileImage, ProfileUpdateRequestDto profileUpdateRequestDto) throws IOException {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
@@ -193,43 +190,19 @@ public class MemberService {
                 profileUpdateRequestDto.getIntro()
         );
 
+        String defaultImageUrl = defaultImageUtil.getDefaultProfileImageUrl();
+
         if (profileImage != null && !profileImage.isEmpty()) {
-            String uploadDir = "./uploads/profileImages";
-            String newFileName = UUID.randomUUID() + "_" + profileImage.getOriginalFilename();
 
-            // 현재 디렉토리
-            Path cwd = Paths.get("").toAbsolutePath();
-            Path uploadPath = cwd.resolve(uploadDir).normalize();
-            try {
-                Files.createDirectories(uploadPath);
-            } catch (IOException e) {
-                throw new CustomException(ErrorCode.MEMBER_IMAGE_DIRECTORY_FAILED);
-            }
+            String profileImageUrl = s3UploadService.saveFile(profileImage);
 
-            // 이전 업로드한 파일 삭제
             String oldUrl = member.getProfileImageUrl();
-            if (oldUrl != null && !oldUrl.equals(defaultProfileImage)) {
-                // oldUrl에서 filename 추출
-                String oldFileName = Paths.get(oldUrl).getFileName().toString();
-                Path oldFile = uploadPath.resolve(oldFileName);
-                try {
-                    Files.deleteIfExists(oldFile);
-                } catch (IOException e) {
-                    // 삭제 실패돼도 이미지파일 변경 가능하도록
-                    log.warn("이전 프로필 이미지 삭제 실패: {}", oldFile, e);
-                }
+            member.memberProfileImageUrlUpdate(profileImageUrl);
+
+            if (oldUrl != null && !oldUrl.equals(defaultImageUrl)) {
+                String oldFileName = oldUrl.substring(oldUrl.lastIndexOf("/") + 1);
+                s3UploadService.deleteImage(oldFileName);
             }
-
-            Path target = uploadPath.resolve(newFileName);
-
-            try {
-                profileImage.transferTo(target.toFile());
-            } catch (IOException e) {
-                throw new CustomException(
-                        ErrorCode.MEMBER_IMAGE_UPLOAD_FAILED);
-            }
-
-            member.memberProfileImageUrlUpdate("/images/profileImages/" + newFileName);
         }
 
         return ProfileResponseDto.builder()

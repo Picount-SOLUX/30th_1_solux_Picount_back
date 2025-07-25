@@ -14,6 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
@@ -100,8 +102,7 @@ public class MemberController {
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
             @Valid @RequestPart(value = "profileInfo") ProfileUpdateRequestDto profileUpdateRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
-
+    ) throws IOException {
         Long memberId = userDetails.getMember().getMemberId();
         ProfileResponseDto res = memberService.updateProfile(memberId, profileImage, profileUpdateRequestDto);
         return ResponseEntity.ok(Response.success("마이프로필 수정 성공", res));
