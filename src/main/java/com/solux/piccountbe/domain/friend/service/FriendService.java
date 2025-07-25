@@ -46,13 +46,30 @@ public class FriendService {
     // 친구 신청
     @Transactional
     public void requestFriend(Member loginMember, FriendRequestDto requestDto) {
-
         // friendCode로 친구 멤버 조회
         Member friendMember = memberService.findByFriendCode(requestDto.getFriendCode());
-        // 친구 관계 생성
+
+        // 자기 자신에게 친구 신청 방지
+        if (loginMember.getFriendCode().equals(requestDto.getFriendCode())) {
+            throw new CustomException(ErrorCode.CANNOT_ADD_SELF_AS_FRIEND);
+        }
+
+        // 이미 APPROVAL 상태 친구 관계가 있는지 양방향으로 검사
+        boolean alreadyFriends = friendRepository.existsByMemberAndFriendMemberAndStatus(loginMember, friendMember, Status.APPROVAL)
+                || friendRepository.existsByMemberAndFriendMemberAndStatus(friendMember, loginMember, Status.APPROVAL);
+
+        if (alreadyFriends) {
+            throw new CustomException(ErrorCode.ALREADY_FRIENDS); // 메시지: "이미 친구인 상태입니다."
+        }
+        if (alreadyFriends) {
+            throw new CustomException(ErrorCode.ALREADY_FRIENDS);
+        }
+
+        // 친구 관계 저장 (승인 상태로)
         Friend friend = new Friend(loginMember, friendMember, Status.APPROVAL);
         friendRepository.save(friend);
     }
+
 
     // 마이페이지 친구 조회
     @Transactional(readOnly = true)

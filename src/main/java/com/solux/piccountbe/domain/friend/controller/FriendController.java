@@ -27,13 +27,19 @@ public class FriendController {
 
     // 친구 요청
     @PostMapping("/request")
-    public ResponseEntity<String> requestFriend(
+    public ResponseEntity<Map<String, Object>> requestFriend(
             @RequestBody FriendRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Member loginMember = userDetails.getMember();
         friendService.requestFriend(loginMember, requestDto);
-        return ResponseEntity.ok("친구 요청이 성공적으로 처리되었습니다.");
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "친구 요청이 성공적으로 처리되었습니다.");
+        response.put("data", null);
+
+        return ResponseEntity.ok(response);
     }
 
     // 친구 조회 - 마이페이지

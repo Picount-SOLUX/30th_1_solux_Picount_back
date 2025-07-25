@@ -56,6 +56,8 @@ public enum ErrorCode {
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근이 거부되었습니다."),
 	// 친구
 	FRIEND_ACCESS_DENIED(HttpStatus.FORBIDDEN, "친구 목록은 본인만 조회할 수 있습니다."),
+	CANNOT_ADD_SELF_AS_FRIEND(HttpStatus.BAD_REQUEST, "자기 자신에게 친구 요청을 보낼 수 없습니다."),
+	ALREADY_FRIENDS(HttpStatus.BAD_REQUEST, "이미 친구 상태입니다."),
 	// 캘린더
 	CALENDAR_INCOME_NOT_FOUND(HttpStatus.NOT_FOUND, "수정할 수입 항목을 찾을 수 없습니다."),
 	CALENDAR_EXPENSE_NOT_FOUND(HttpStatus.NOT_FOUND, "수정할 지출 항목을 찾을 수 없습니다."),
