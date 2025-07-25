@@ -133,7 +133,8 @@ public class MemberService {
 
     public void findAccount(Long memberId, String password) {
         Member member = getMemberById(memberId);
-        member.memberPasswordUpdate(password);
+        String encodedPassword = passwordEncoder.encode(password);
+        member.memberPasswordUpdate(encodedPassword);
     }
 
     public void logout(Long memberId) {
