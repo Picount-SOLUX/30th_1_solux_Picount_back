@@ -36,19 +36,6 @@ public class S3UploadService {
         return amazonS3.getUrl(bucket, uuidFileName).toString();
     }
 
-    // 파일 다운로드
-    public ResponseEntity<UrlResource> downloadImage(String originalFilename) {
-        UrlResource urlResource = new UrlResource(amazonS3.getUrl(bucket, originalFilename));
-
-        String contentDisposition = "attachment; filename=\"" +  originalFilename + "\"";
-
-        // header에 CONTENT_DISPOSITION 설정을 통해 클릭 시 다운로드 진행
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
-                .body(urlResource);
-
-    }
-
     // 파일 삭제
     public void deleteImage(String originalFilename)  {
         amazonS3.deleteObject(bucket, originalFilename);
