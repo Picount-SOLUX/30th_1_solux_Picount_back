@@ -141,4 +141,8 @@ public class Member extends Timestamped {
 	public void updateMainVisible(Boolean isMainVisible) {
 		this.isMainVisible = isMainVisible;
 	}
+
+	public Boolean getIsMainVisible() {
+		return this.isMainVisible;
+	}
 }

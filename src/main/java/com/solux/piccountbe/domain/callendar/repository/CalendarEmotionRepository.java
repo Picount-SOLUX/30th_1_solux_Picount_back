@@ -15,4 +15,6 @@ public interface CalendarEmotionRepository extends JpaRepository<CalendarEmotion
     List<CalendarEmotion> findAllByMemberAndEntryDateBetween(Member member, LocalDate start, LocalDate end);
 
     Optional<CalendarEmotion> findByMember_MemberIdAndEntryDate(Long memberId, LocalDate entryDate);
+    List<CalendarEmotion> findAllByMember_MemberIdAndEntryDateBetween(Long memberId, LocalDate start, LocalDate end);
+
 }

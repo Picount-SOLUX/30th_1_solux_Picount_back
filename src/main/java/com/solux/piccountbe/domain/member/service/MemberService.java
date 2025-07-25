@@ -271,4 +271,9 @@ public class MemberService {
 		member.updateMainVisible(isMainVisible);
 		log.info("공개 여부 수정 완료: {}", member.getIsMainVisible());
 	}
+
+	public String getFriendCode(Member member) {
+		return member.getFriendCode();
+	}
+
 }

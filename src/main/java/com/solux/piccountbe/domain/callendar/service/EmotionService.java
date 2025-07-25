@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.time.YearMonth;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +51,17 @@ public class EmotionService {
 
         emotionRepository.delete(emotion);
     }
+
+    @Transactional(readOnly = true)
+    public List<EmotionRequestDto> getEmotionStickers(Long memberId, int year, int month) {
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        return emotionRepository.findAllByMember_MemberIdAndEntryDateBetween(memberId, start, end)
+                .stream()
+                .map(e -> new EmotionRequestDto(e.getEntryDate().toString(), e.getEmotion()))
+                .toList();
+    }
+
 
 }

@@ -19,5 +19,6 @@ public interface GuestBookRepository extends JpaRepository<GuestBook, Long> {
     boolean existsByWriterAndIsDeletedFalseAndCreatedAtBetween(
             Member writer, LocalDateTime start, LocalDateTime end
     );
+    List<GuestBook> findTop3ByOwnerAndIsDeletedFalseOrderByCreatedAtDesc(Member owner);
 
 }

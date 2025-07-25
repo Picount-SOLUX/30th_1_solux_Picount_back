@@ -126,4 +126,12 @@ public class MemberController {
 		return ResponseEntity.ok(Response.success("메인페이지 공개 여부가 변경되었습니다.", null));
 	}
 
+	@GetMapping("/friend-code")
+	public ResponseEntity<Response<String>> getFriendCode(
+			@AuthenticationPrincipal UserDetailsImpl userDetails
+	) {
+		String friendCode = memberService.getFriendCode(userDetails.getMember());
+		return ResponseEntity.ok(Response.success("친구 코드 조회 성공", friendCode));
+	}
+
 }

@@ -85,4 +85,32 @@ public class FriendController {
 
         return ResponseEntity.ok(response);
     }
+
+    // 친구 페이지 조회
+    @GetMapping("/main-page")
+    public ResponseEntity<Map<String, Object>> getFriendMainPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long ownerId // 친구의 userId
+    ) {
+        Member viewer = userDetails.getMember();
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            var friendMainPageDto = friendService.getFriendMainPage(viewer.getMemberId(), ownerId);
+
+            response.put("success", true);
+            response.put("message", "친구 메인 페이지 조회 성공");
+            response.put("data", friendMainPageDto);
+
+            return ResponseEntity.ok(response);
+
+        } catch (CustomException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            response.put("data", null);
+
+            return ResponseEntity.status(e.getErrorCode().getStatus()).body(response);
+        }
+    }
+
 }
