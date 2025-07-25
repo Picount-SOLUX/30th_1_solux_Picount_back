@@ -63,13 +63,12 @@ management:
   endpoint:
     health:
       show-details: always
-  security:
-    enabled: false
 
 cloud:
   aws:
     s3:
       bucket: ${S3_BUCKET_NAME}
+      base-url: https://${S3_BUCKET_NAME}.s3.ap-northeast-2.amazonaws.com
     credentials:
       access-key: ${ACCESS_KEY}
       secret-key: ${SECRET_ACCESS_KEY}
@@ -94,7 +93,7 @@ custom-security:
     - /api/members/findAccount/**
     - /login/oauth2/authorization/**
     - /api/members/social/**
-    - /api/s3/upload
+    - /api/s3/**
 #   TODO: 프론트와 연동 확인 이후 삭제
     - /login.html
 

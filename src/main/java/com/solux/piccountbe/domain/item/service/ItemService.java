@@ -88,7 +88,7 @@ public class ItemService {
         return items.stream()
                 .map(item -> {
                     String imageUrl = stickerRepository.findByItem(item)
-                            .map(Sticker::getPreviewImageUrl)
+                            .map(Sticker::getSkinImageUrl)
                             .orElse(null);
                     return ItemResponseDto.from(item, imageUrl);
                 })

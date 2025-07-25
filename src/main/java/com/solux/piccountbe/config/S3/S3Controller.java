@@ -22,12 +22,6 @@ public class S3Controller {
         return ResponseEntity.ok(url);
     }
 
-    // 파일 url 다운로드
-    @GetMapping("/download")
-    public ResponseEntity<UrlResource> download(@RequestParam String filename) {
-        return s3UploadService.downloadImage(filename);
-    }
-
     // 파일 삭제
     @DeleteMapping("/delete")
     public ResponseEntity<Void> delete(@RequestParam String filename) {
