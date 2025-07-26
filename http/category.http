@@ -1,41 +1,14 @@
-### 카테고리생성1(지출)
+### 카테고리다건생성
 POST http://localhost:8080/api/categories
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "categoryName": "동생용돈",
-  "type": "EXPENSE"
-}
-
-### 카테고리생성2(지출)
-POST http://localhost:8080/api/categories
-Content-Type: application/json
-Authorization: Bearer {{accessToken}}
-
-{
-  "categoryName": "동생용돈2",
-  "type": "EXPENSE"
-}
-
-### 카테고리생성3(지출)
-POST http://localhost:8080/api/categories
-Content-Type: application/json
-Authorization: Bearer {{accessToken}}
-
-{
-  "categoryName": "동생용돈3",
-  "type": "EXPENSE"
-}
-
-### 카테고리생성(수입)
-POST http://localhost:8080/api/categories
-Content-Type: application/json
-Authorization: Bearer {{accessToken}}
-
-{
-  "categoryName": "알바비2",
-  "type": "INCOME"
+  "categories": [
+    { "categoryName": "동생용돈", "type": "EXPENSE" },
+    { "categoryName": "식비", "type": "EXPENSE" },
+    { "categoryName": "월급", "type": "INCOME" }
+  ]
 }
 
 

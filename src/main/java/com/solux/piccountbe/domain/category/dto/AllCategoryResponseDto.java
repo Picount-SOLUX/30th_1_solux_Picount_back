@@ -4,10 +4,9 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @Getter
-public class GetAllCategoryResponseDto {
-	List<GetCategoryResponseDto> categories;
+public class AllCategoryResponseDto {
+	List<CategoryResponseDto> categories;
 }
