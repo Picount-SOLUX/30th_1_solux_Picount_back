@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.solux.piccountbe.config.security.UserDetailsImpl;
-import com.solux.piccountbe.domain.category.dto.CreateOrUpdateCategoryRequestDto;
-import com.solux.piccountbe.domain.category.dto.GetAllCategoryResponseDto;
-import com.solux.piccountbe.domain.category.dto.GetCategoryResponseDto;
+import com.solux.piccountbe.domain.category.dto.AllCategoryResponseDto;
+import com.solux.piccountbe.domain.category.dto.CategoryRequestDto;
+import com.solux.piccountbe.domain.category.dto.CategoryResponseDto;
+import com.solux.piccountbe.domain.category.dto.CreateCategoryRequestDto;
 import com.solux.piccountbe.domain.category.entity.Type;
 import com.solux.piccountbe.domain.category.service.CategoryService;
 import com.solux.piccountbe.global.Response;
@@ -29,29 +30,29 @@ public class CategoryController {
 	private final CategoryService categoryService;
 
 	@PostMapping
-	public ResponseEntity<Response<GetCategoryResponseDto>> createCategory(
-		@RequestBody CreateOrUpdateCategoryRequestDto req,
+	public ResponseEntity<Response<AllCategoryResponseDto>> createCategory(
+		@RequestBody CreateCategoryRequestDto req,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		Long memberId = userDetails.getMember().getMemberId();
-		GetCategoryResponseDto res = categoryService.createCategory(memberId, req);
+		AllCategoryResponseDto res = categoryService.createCategory(memberId, req);
 		return ResponseEntity.ok(Response.success("카테고리 생성 완료", res));
 	}
 
 	@GetMapping({"/{categoryId}"})
-	public ResponseEntity<Response<GetCategoryResponseDto>> getCategory(
+	public ResponseEntity<Response<CategoryResponseDto>> getCategory(
 		@PathVariable Long categoryId,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		Long memberId = userDetails.getMember().getMemberId();
-		GetCategoryResponseDto res = categoryService.getCategory(memberId, categoryId);
+		CategoryResponseDto res = categoryService.getCategory(memberId, categoryId);
 		return ResponseEntity.ok(Response.success("단일 카테고리 조회 완료", res));
 	}
 
 	@GetMapping
-	public ResponseEntity<Response<GetAllCategoryResponseDto>> getAllCategory(
-		@RequestParam(value="type", required=false) Type type,
+	public ResponseEntity<Response<AllCategoryResponseDto>> getAllCategory(
+		@RequestParam(value = "type", required = false) Type type,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		Long memberId = userDetails.getMember().getMemberId();
-		GetAllCategoryResponseDto res = categoryService.getAllCategory(memberId, type);
+		AllCategoryResponseDto res = categoryService.getAllCategory(memberId, type);
 		return ResponseEntity.ok(Response.success("전체 카테고리 조회 완료", res));
 	}
 
@@ -65,12 +66,12 @@ public class CategoryController {
 	}
 
 	@PutMapping("/{categoryId}")
-	public ResponseEntity<Response<GetCategoryResponseDto>> updateCategory(
+	public ResponseEntity<Response<CategoryResponseDto>> updateCategory(
 		@PathVariable Long categoryId,
-		@RequestBody CreateOrUpdateCategoryRequestDto req,
+		@RequestBody CategoryRequestDto req,
 		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		Long memberId = userDetails.getMember().getMemberId();
-		GetCategoryResponseDto res = categoryService.updateCategory(memberId, categoryId, req);
+		CategoryResponseDto res = categoryService.updateCategory(memberId, categoryId, req);
 		return ResponseEntity.ok(Response.success("카테고리 수정 완료", res));
 	}
 

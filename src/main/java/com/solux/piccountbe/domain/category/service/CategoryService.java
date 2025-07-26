@@ -1,13 +1,15 @@
 package com.solux.piccountbe.domain.category.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.solux.piccountbe.domain.category.dto.CreateOrUpdateCategoryRequestDto;
-import com.solux.piccountbe.domain.category.dto.GetAllCategoryResponseDto;
-import com.solux.piccountbe.domain.category.dto.GetCategoryResponseDto;
+import com.solux.piccountbe.domain.category.dto.AllCategoryResponseDto;
+import com.solux.piccountbe.domain.category.dto.CategoryRequestDto;
+import com.solux.piccountbe.domain.category.dto.CategoryResponseDto;
+import com.solux.piccountbe.domain.category.dto.CreateCategoryRequestDto;
 import com.solux.piccountbe.domain.category.entity.Category;
 import com.solux.piccountbe.domain.category.entity.Type;
 import com.solux.piccountbe.domain.category.repository.CategoryRepository;
@@ -27,38 +29,44 @@ public class CategoryService {
 	private final MemberService memberService;
 	private final CategoryRepository categoryRepository;
 
-	public GetCategoryResponseDto createCategory(Long memberId, CreateOrUpdateCategoryRequestDto categoryRequestDto) {
+	public AllCategoryResponseDto createCategory(Long memberId, CreateCategoryRequestDto categoryRequestDto) {
 		Member member = memberService.getMemberById(memberId);
+		List<CategoryResponseDto> categoryResponseDtoList = new ArrayList<>();
 
-		if (categoryRepository.existsByMemberAndTypeAndName(
-			member,
-			categoryRequestDto.getType(),
-			categoryRequestDto.getCategoryName())
-		) {
-			throw new CustomException(ErrorCode.CATAEGORY_EXIST);
+		for (CategoryRequestDto categoryDto : categoryRequestDto.getCategories()) {
+
+			if (categoryRepository.existsByMemberAndTypeAndName(
+				member,
+				categoryDto.getType(),
+				categoryDto.getCategoryName())
+			) {
+				throw new CustomException(ErrorCode.CATAEGORY_EXIST);
+			}
+
+			Category category = Category.builder()
+				.member(member)
+				.name(categoryDto.getCategoryName())
+				.type(categoryDto.getType())
+				.build();
+
+			categoryRepository.save(category);
+
+			categoryResponseDtoList.add(CategoryResponseDto.builder()
+				.categoryId(category.getCategoryId())
+				.categoryName(category.getName())
+				.type(category.getType())
+				.typeLabel(category.getType().getLabel())
+				.build());
 		}
 
-		Category category = Category.builder()
-			.member(member)
-			.name(categoryRequestDto.getCategoryName())
-			.type(categoryRequestDto.getType())
-			.build();
-
-		categoryRepository.save(category);
-
-		return GetCategoryResponseDto.builder()
-			.categoryId(category.getCategoryId())
-			.categoryName(category.getName())
-			.type(category.getType())
-			.typeLabel(category.getType().getLabel())
-			.build();
+		return new AllCategoryResponseDto(categoryResponseDtoList);
 	}
 
-	public GetCategoryResponseDto getCategory(Long memberId, Long categoryId) {
+	public CategoryResponseDto getCategory(Long memberId, Long categoryId) {
 
 		Category category = getCategoryById(memberId, categoryId);
 
-		return GetCategoryResponseDto.builder()
+		return CategoryResponseDto.builder()
 			.categoryId(category.getCategoryId())
 			.categoryName(category.getName())
 			.type(category.getType())
@@ -66,12 +74,12 @@ public class CategoryService {
 			.build();
 	}
 
-	public GetAllCategoryResponseDto getAllCategory(Long memberId, Type type) {
+	public AllCategoryResponseDto getAllCategory(Long memberId, Type type) {
 		Member member = memberService.getMemberById(memberId);
-		List<GetCategoryResponseDto> categoryResponseDtoList = member.getCategories()
+		List<CategoryResponseDto> categoryResponseDtoList = member.getCategories()
 			.stream()
 			.filter(cat -> type == null || cat.getType() == type)
-			.map(a -> new GetCategoryResponseDto(
+			.map(a -> new CategoryResponseDto(
 				a.getCategoryId(),
 				a.getName(),
 				a.getType(),
@@ -79,7 +87,7 @@ public class CategoryService {
 			))
 			.collect(Collectors.toList());
 
-		return new GetAllCategoryResponseDto(categoryResponseDtoList);
+		return new AllCategoryResponseDto(categoryResponseDtoList);
 	}
 
 	public void deleteCategory(Long memberId, Long categoryId) {
@@ -89,13 +97,13 @@ public class CategoryService {
 		categoryRepository.delete(category);
 	}
 
-	public GetCategoryResponseDto updateCategory(Long memberId, Long categoryId, CreateOrUpdateCategoryRequestDto updateRequestDto) {
+	public CategoryResponseDto updateCategory(Long memberId, Long categoryId, CategoryRequestDto updateRequestDto) {
 
 		Category category = getCategoryById(memberId, categoryId);
 		category.updateCategory(updateRequestDto.getCategoryName(), updateRequestDto.getType());
 		categoryRepository.save(category);
 
-		return GetCategoryResponseDto.builder()
+		return CategoryResponseDto.builder()
 			.categoryId(category.getCategoryId())
 			.categoryName(category.getName())
 			.type(category.getType())

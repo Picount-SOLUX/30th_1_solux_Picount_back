@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class GetCategoryResponseDto {
+public class CategoryResponseDto {
 	private Long categoryId;
 	private String categoryName;
 	private Type type;
