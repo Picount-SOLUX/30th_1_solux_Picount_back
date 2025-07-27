@@ -26,10 +26,10 @@ public class WebSkinMockDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Item webSkin1 = new Item("파란색 웹", ShopCategory.WEB_SKIN, 3000);
-        Item webSkin2 = new Item("회색 웹", ShopCategory.WEB_SKIN, 2500);
-        Item webSkin3 = new Item("초록색 웹", ShopCategory.WEB_SKIN, 2500);
-        Item webSkin4 = new Item("노란색 웹", ShopCategory.WEB_SKIN, 2500);
+        Item webSkin1 = new Item("파란색 웹", ShopCategory.WEB_SKIN, 1000);
+        Item webSkin2 = new Item("회색 웹", ShopCategory.WEB_SKIN, 1000);
+        Item webSkin3 = new Item("초록색 웹", ShopCategory.WEB_SKIN, 1000);
+        Item webSkin4 = new Item("노란색 웹", ShopCategory.WEB_SKIN, 1000);
 
         itemRepository.saveAll(List.of(webSkin1, webSkin2, webSkin3, webSkin4));
 
