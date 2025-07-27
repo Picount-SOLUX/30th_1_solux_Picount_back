@@ -27,9 +27,9 @@ public class CalendarMockDataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         Item calendarSkin1 = new Item("천사 달력", ShopCategory.CALENDAR_SKIN, 3000);
-        Item calendarSkin2 = new Item("창 달력", ShopCategory.CALENDAR_SKIN, 2500);
-        Item calendarSkin3 = new Item("왕관 달력", ShopCategory.CALENDAR_SKIN, 2500);
-        Item calendarSkin4 = new Item("토마토 달력", ShopCategory.CALENDAR_SKIN, 2500);
+        Item calendarSkin2 = new Item("창 달력", ShopCategory.CALENDAR_SKIN, 3000);
+        Item calendarSkin3 = new Item("왕관 달력", ShopCategory.CALENDAR_SKIN, 3000);
+        Item calendarSkin4 = new Item("토마토 달력", ShopCategory.CALENDAR_SKIN, 3000);
 
         itemRepository.saveAll(List.of(calendarSkin1, calendarSkin2, calendarSkin3, calendarSkin4));
 

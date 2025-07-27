@@ -26,10 +26,10 @@ public class CakeMockDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Item cakeSkin1 = new Item("파란색 케이크", ShopCategory.CAKE_SKIN, 3000);
-        Item cakeSkin2 = new Item("체리 케이크", ShopCategory.CAKE_SKIN, 2500);
-        Item cakeSkin3 = new Item("초코 케이크", ShopCategory.CAKE_SKIN, 2500);
-        Item cakeSkin4 = new Item("딸기 케이크", ShopCategory.CAKE_SKIN, 2500);
+        Item cakeSkin1 = new Item("파란색 케이크", ShopCategory.CAKE_SKIN, 2000);
+        Item cakeSkin2 = new Item("체리 케이크", ShopCategory.CAKE_SKIN, 2000);
+        Item cakeSkin3 = new Item("초코 케이크", ShopCategory.CAKE_SKIN, 2000);
+        Item cakeSkin4 = new Item("딸기 케이크", ShopCategory.CAKE_SKIN, 2000);
 
         itemRepository.saveAll(List.of(cakeSkin1, cakeSkin2, cakeSkin3, cakeSkin4));
 
