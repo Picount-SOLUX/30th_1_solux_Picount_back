@@ -41,16 +41,16 @@ public class WebSkinMockDataInitializer implements CommandLineRunner {
 
         Sticker sticker2 = new Sticker(
                 webSkin2,
-                baseUrl + "/web/web_gray",
+                baseUrl + "/web/web_gray.png",
                 baseUrl + "/web/web_gray.png"
         );
         Sticker sticker3 = new Sticker(
                 webSkin3,
-                baseUrl + "/web/web_green",
+                baseUrl + "/web/web_green.png",
                 baseUrl + "/web/web_green.png"
         );Sticker sticker4 = new Sticker(
                 webSkin4,
-                baseUrl + "/web/web_yellow",
+                baseUrl + "/web/web_yellow.png",
                 baseUrl + "/web/web_yellow.png"
         );
 

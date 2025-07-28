@@ -41,16 +41,16 @@ public class CalendarMockDataInitializer implements CommandLineRunner {
 
         Sticker sticker2 = new Sticker(
                 calendarSkin2,
-                baseUrl + "/calendar/cal_chang_skin",
+                baseUrl + "/calendar/cal_chang_skin.png",
                 baseUrl + "/calendar/cal_chang_prev.png"
         );
         Sticker sticker3 = new Sticker(
                 calendarSkin3,
-                baseUrl + "/calendar/cal_tiara_skin",
+                baseUrl + "/calendar/cal_tiara_skin.png",
                 baseUrl + "/calendar/cal_tiara_prev.png"
         );Sticker sticker4 = new Sticker(
                 calendarSkin4,
-                baseUrl + "/calendar/cal_tomato_skin",
+                baseUrl + "/calendar/cal_tomato_skin.png",
                 baseUrl + "/calendar/cal_tomato_prev.png"
         );
 
