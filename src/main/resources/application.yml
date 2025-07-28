@@ -17,8 +17,7 @@ spring:
           kakao:
             client-id: ${OAUTH2_KAKAO_CLIENT_ID}
             client-secret: ${OAUTH2_KAKAO_CLIENT_SECRET}
-#           TODO: baseURL 수정 - kakao developers와 맞추기
-            redirect-uri: http://localhost:8080/api/members/social/kakao
+            redirect-uri: https://picount.site/api/members/social/kakao
             client-authentication-method: client_secret_post
             client-name: Kakao
             authorization-grant-type: authorization_code
@@ -49,11 +48,6 @@ spring:
         format_sql: true
         highlight_sql: true
         use_sql_comments: true
-
-#logging:
-#    level:
-#        org.hibernate.SQL: DEBUG
-#        org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 management:
   endpoints:
