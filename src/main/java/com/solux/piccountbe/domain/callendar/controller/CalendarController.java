@@ -51,15 +51,9 @@ public class CalendarController {
     @GetMapping("/record")
     public ResponseEntity<Response<CalendarRecordDetailResponseDto>> getCalendarRecordDetail(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam Long ownerId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Member loginMember = userDetails.getMember();
-
-        if (!loginMember.getMemberId().equals(ownerId)) {
-            throw new CustomException(ErrorCode.CALENDAR_FORBIDDEN);
-        }
-
         CalendarRecordDetailResponseDto responseDto = calendarService.getCalendarDetail(loginMember, date);
         return ResponseEntity.ok(Response.success("달력 상세 조회 성공", responseDto));
     }
@@ -69,15 +63,9 @@ public class CalendarController {
     public ResponseEntity<Response<CalendarMonthlySummaryResponseDto>> getMonthlySummary(
             @RequestParam int year,
             @RequestParam int month,
-            @RequestParam Long ownerId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Member loginMember = userDetails.getMember();
-
-        if (!loginMember.getMemberId().equals(ownerId)) {
-            throw new CustomException(ErrorCode.CALENDAR_FORBIDDEN);
-        }
-
         CalendarMonthlySummaryResponseDto responseDto = calendarService.getMonthlySummary(loginMember, year, month);
         return ResponseEntity.ok(Response.success("달력 요약 조회 성공", responseDto));
     }

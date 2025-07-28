@@ -5,7 +5,6 @@ import com.solux.piccountbe.global.exception.ErrorCode;
 import com.solux.piccountbe.domain.friend.dto.FriendRequestDto;
 import com.solux.piccountbe.domain.friend.dto.FriendResponseDto;
 import com.solux.piccountbe.domain.friend.dto.FriendMainResponseDto;
-import com.solux.piccountbe.domain.friend.dto.FriendApiResponse;
 import com.solux.piccountbe.domain.friend.service.FriendService;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.config.security.UserDetailsImpl;
@@ -60,28 +59,27 @@ public class FriendController {
 
     // 친구 삭제
     @DeleteMapping("/{friendId}")
-    public ResponseEntity<FriendApiResponse> deleteFriend(
+    public ResponseEntity<Map<String, Object>> deleteFriend(
             @PathVariable Long friendId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
         Member loginMember = userDetails.getMember();
         friendService.deleteFriend(loginMember, friendId);
-        return ResponseEntity.ok(new FriendApiResponse(true, "친구 관계가 삭제되었습니다."));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "친구 관계가 삭제되었습니다.");
+        response.put("data", null);
+
+        return ResponseEntity.ok(response);
     }
 
     // 친구 조회 - 메인페이지
     @GetMapping("/main")
     public ResponseEntity<Map<String, Object>> getFriendsForMainPage(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam Long ownerId // 프론트에서 ownerId 전달받기
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Member loginMember = userDetails.getMember();
-
-        // 본인 확인
-        if (!loginMember.getMemberId().equals(ownerId)) {
-            throw new CustomException(ErrorCode.FRIEND_ACCESS_DENIED);
-        }
-
         List<FriendMainResponseDto> friendList = friendService.getFriendsForMain(loginMember);
 
         Map<String, Object> response = new HashMap<>();

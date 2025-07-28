@@ -9,13 +9,13 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Getter
 @Builder
-@AllArgsConstructor
+@Getter
 public class FriendMainPageResponseDto {
-    private String nickname; // 이름
-    private String profileImageUrl; // 프로필 이미지
-    private List<BudgetAllocationDto> budgetCategoryStats; // 예산 그래프에 활용
-    private List<GuestBookSummaryDto> guestBooks; // 방명록
-    private List<EmotionRequestDto> emotionStickers; // 감정 스티커
+    private String nickname;
+    private String profileImageUrl;
+    private List<BudgetAllocationDto> budgetCategoryStats;
+    private List<GuestBookSummaryDto> guestBooks; // 요약
+    private List<GuestBookDetailDto> guestBookDetails; // 상세
+    private List<EmotionRequestDto> emotionStickers;
 }

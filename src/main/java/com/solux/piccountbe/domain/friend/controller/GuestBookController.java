@@ -28,13 +28,18 @@ public class GuestBookController {
 
     // 방명록 작성
     @PostMapping("/api/guestbook")
-    public ResponseEntity<String> createGuestbook(
+    public ResponseEntity<Map<String, Object>> createGuestbook(
             @RequestBody GuestBookRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Member writer = userDetails.getMember(); // 로그인한 유저
+        Member writer = userDetails.getMember();
         guestBookService.createGuestbook(writer, requestDto);
-        return ResponseEntity.ok("방명록 작성 완료");
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "방명록 작성 완료");
+        response.put("data", null);
+        return ResponseEntity.ok(response);
     }
 
     // 방명록 요약 조회
@@ -91,31 +96,56 @@ public class GuestBookController {
 
     // 내가 남긴 방명록 조회
     @GetMapping("/api/guestbook/my")
-    public Page<GuestbookMyResponseDto> getMyGuestbooks(
+    public ResponseEntity<Map<String, Object>> getMyGuestbooks(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PageableDefault(size = 3) Pageable pageable
     ) {
         Member loginMember = userDetails.getMember();
-        return guestBookService.getMyGuestbookPosts(loginMember.getMemberId(), pageable);
+        Page<GuestbookMyResponseDto> pageResult = guestBookService.getMyGuestbookPosts(loginMember.getMemberId(), pageable);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("content", pageResult.getContent());
+        data.put("page", pageResult.getNumber());
+        data.put("size", pageResult.getSize());
+        data.put("totalElements", pageResult.getTotalElements());
+        data.put("totalPages", pageResult.getTotalPages());
+        data.put("hasNext", pageResult.hasNext());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "내가 남긴 방명록 조회 성공");
+        response.put("data", data);
+
+        return ResponseEntity.ok(response);
     }
 
     // 내가 남긴 방명록 개별 삭제
     @DeleteMapping("/api/guestbook/my/{guestbookId}")
-    public ResponseEntity<?> deleteMyGuestbook(
+    public ResponseEntity<Map<String, Object>> deleteMyGuestbook(
             @PathVariable Long guestbookId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         guestBookService.deleteMyGuestbook(guestbookId, userDetails.getMember().getMemberId());
-        return ResponseEntity.ok().body(Map.of("message", "방명록이 삭제되었습니다."));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "방명록이 삭제되었습니다.");
+        response.put("data", null);
+        return ResponseEntity.ok(response);
     }
 
     // 내가 남긴 방명록 전체 삭제
     @DeleteMapping("/api/guestbook/my")
-    public ResponseEntity<?> deleteAllMyGuestbooks(
+    public ResponseEntity<Map<String, Object>> deleteAllMyGuestbooks(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         guestBookService.deleteAllMyGuestbooks(userDetails.getMember().getMemberId());
-        return ResponseEntity.ok().body(Map.of("message", "내가 남긴 방명록이 모두 삭제되었습니다."));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "내가 남긴 방명록이 모두 삭제되었습니다.");
+        response.put("data", null);
+        return ResponseEntity.ok(response);
     }
 
 }

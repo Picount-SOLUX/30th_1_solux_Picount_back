@@ -1,5 +1,6 @@
 package com.solux.piccountbe.domain.friend.service;
 
+import com.solux.piccountbe.domain.friend.dto.GuestBookDetailDto;
 import com.solux.piccountbe.domain.callendar.service.EmotionService;
 import com.solux.piccountbe.domain.friend.dto.FriendRequestDto;
 import com.solux.piccountbe.domain.friend.dto.FriendResponseDto;
@@ -153,6 +154,10 @@ public class FriendService {
         Pageable top3 = PageRequest.of(0, 3);
         List<GuestBookSummaryDto> guestBooks = guestBookService.getGuestBooks(viewer, ownerId, top3).getContent();
 
+        // 방명록 상세 조회
+        Pageable all = PageRequest.of(0, Integer.MAX_VALUE); // 모든 항목 조회 (또는 적당히 큰 숫자)
+        List<GuestBookDetailDto> guestBookDetails = guestBookService.getGuestbookDetails(viewer, ownerId, all).getContent();
+
         // 감정 스티커
         LocalDate now = LocalDate.now();
         int year = now.getYear();
@@ -164,6 +169,7 @@ public class FriendService {
                 .profileImageUrl(owner.getProfileImageUrl())
                 .budgetCategoryStats(budgetStats)
                 .guestBooks(guestBooks)
+                .guestBookDetails(guestBookDetails)
                 .emotionStickers(emotions)
                 .build();
     }
