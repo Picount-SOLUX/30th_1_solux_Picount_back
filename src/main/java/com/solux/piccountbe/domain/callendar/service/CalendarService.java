@@ -1,20 +1,6 @@
 package com.solux.piccountbe.domain.callendar.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.solux.piccountbe.domain.callendar.entity.EmotionType;
-import com.solux.piccountbe.domain.callendar.entity.CalendarEmotion;
+import com.solux.piccountbe.config.S3.S3UploadService;
 import com.solux.piccountbe.domain.callendar.dto.*;
 import com.solux.piccountbe.domain.callendar.entity.*;
 import com.solux.piccountbe.domain.callendar.repository.*;
@@ -23,8 +9,15 @@ import com.solux.piccountbe.domain.category.repository.CategoryRepository;
 import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.global.exception.CustomException;
 import com.solux.piccountbe.global.exception.ErrorCode;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,12 +30,12 @@ public class CalendarService {
     private final CalendarPhotoRepository calendarPhotoRepository;
     private final CategoryRepository categoryRepository;
     private final CalendarEmotionRepository emotionRepository;
+    private final S3UploadService s3UploadService;
 
     // 달력 등록
     public void createEntry(CalendarRecordRequestDto request, MultipartFile[] photos, Member member) {
         LocalDate date = request.getEntryDate() != null ? request.getEntryDate() : LocalDate.now();
 
-        // 기존 엔트리 가져오거나 생성
         CalendarEntry entry = calendarEntryRepository.findByMemberAndEntryDate(member, date)
                 .orElseGet(() -> calendarEntryRepository.save(new CalendarEntry(member, date, null)));
 
@@ -89,50 +82,29 @@ public class CalendarService {
         calendarPhotoRepository.deleteByCalendarEntry(entry);
 
         if (photos != null && photos.length > 0) {
-            if (photos.length > 1) {
-                throw new CustomException(ErrorCode.CALENDAR_TOO_MANY_PHOTOS);
-            }
-
+            if (photos.length > 1) throw new CustomException(ErrorCode.CALENDAR_TOO_MANY_PHOTOS);
             MultipartFile file = photos[0];
-            if (file.getSize() > 5 * 1024 * 1024) {
-                throw new CustomException(ErrorCode.CALENDAR_PHOTO_TOO_LARGE);
-            }
+            if (file.getSize() > 5 * 1024 * 1024) throw new CustomException(ErrorCode.CALENDAR_PHOTO_TOO_LARGE);
 
-            String path = saveFile(file);
-            CalendarPhoto photo = new CalendarPhoto(entry, path, file.getSize() / (1024f * 1024f));
-            calendarPhotoRepository.save(photo);
+            try {
+                String imageUrl = s3UploadService.saveFile(file);
+                calendarPhotoRepository.save(new CalendarPhoto(entry, imageUrl, file.getSize() / (1024f * 1024f)));
+            } catch (IOException e) {
+                throw new CustomException(ErrorCode.CALENDAR_FILE_UPLOAD_FAIL, e.getMessage());
+            }
         }
     }
 
-    private String saveFile(MultipartFile photo) {
-        String uploadDir = System.getProperty("user.dir") + "/uploads/";
-        File dir = new File(uploadDir);
-        if (!dir.exists()) {
-            boolean created = dir.mkdirs(); // 폴더 생성
-            if (!created) {
-                throw new CustomException(ErrorCode.CALENDAR_FILE_UPLOAD_FAIL, "업로드 폴더 생성 실패");
-            }
-        }
-
-        String uniqueFilename = UUID.randomUUID() + "_" + photo.getOriginalFilename();
-        File destination = new File(uploadDir + uniqueFilename);
-
-        try {
-            photo.transferTo(destination);
-            return uploadDir + uniqueFilename;
-        } catch (IOException e) {
-            throw new CustomException(ErrorCode.CALENDAR_FILE_UPLOAD_FAIL, "파일 저장 중 오류: " + e.getMessage());
-        }
+    private void validateAmountAndCategory(Integer amount, Long categoryId) {
+        if (categoryId == null) throw new CustomException(ErrorCode.CATEGORY_NOT_FOUND);
+        if (amount == null || amount <= 0) throw new CustomException(ErrorCode.CALENDAR_INVALID_AMOUNT);
     }
 
     private Category validateCategory(Member member, Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
-
-        if (!category.getMember().getMemberId().equals(member.getMemberId())) {
+        if (!category.getMember().getMemberId().equals(member.getMemberId()))
             throw new CustomException(ErrorCode.CATEGORY_NOT_MATCH_MEMBER);
-        }
-
         return category;
     }
 
@@ -165,11 +137,7 @@ public class CalendarService {
                                         e.getAmount()
                                 )).toList()
                 )
-                .imageUrls(
-                        photos.stream()
-                                .map(CalendarPhoto::getFilePath)
-                                .toList()
-                )
+                .imageUrls(photos.stream().map(CalendarPhoto::getUrl).toList())
                 .build();
     }
 
@@ -267,19 +235,19 @@ public class CalendarService {
 
         // 사진 수정 (덮어쓰기)
         if (photo != null && photo.length > 0) {
-            if (photo.length > 1) {
-                throw new CustomException(ErrorCode.CALENDAR_TOO_MANY_PHOTOS);
-            }
-
+            if (photo.length > 1) throw new CustomException(ErrorCode.CALENDAR_TOO_MANY_PHOTOS);
             calendarPhotoRepository.deleteByCalendarEntry(entry);
 
             MultipartFile file = photo[0];
-            if (file.getSize() > 5 * 1024 * 1024) {
-                throw new CustomException(ErrorCode.CALENDAR_PHOTO_TOO_LARGE);
+            if (file.getSize() > 5 * 1024 * 1024) throw new CustomException(ErrorCode.CALENDAR_PHOTO_TOO_LARGE);
+
+            try {
+                String imageUrl = s3UploadService.saveFile(file);
+                CalendarPhoto newPhoto = new CalendarPhoto(entry, imageUrl, file.getSize() / (1024f * 1024f));
+                calendarPhotoRepository.save(newPhoto);
+            } catch (IOException e) {
+                throw new CustomException(ErrorCode.CALENDAR_FILE_UPLOAD_FAIL, e.getMessage());
             }
-            String path = saveFile(file);
-            CalendarPhoto newPhoto = new CalendarPhoto(entry, path, file.getSize() / (1024f * 1024f));
-            calendarPhotoRepository.save(newPhoto);
         }
     }
 

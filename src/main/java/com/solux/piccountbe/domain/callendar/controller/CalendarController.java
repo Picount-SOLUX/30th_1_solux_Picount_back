@@ -1,31 +1,21 @@
 package com.solux.piccountbe.domain.callendar.controller;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import com.solux.piccountbe.global.exception.CustomException;
-import com.solux.piccountbe.global.exception.ErrorCode;
-import com.solux.piccountbe.domain.member.entity.Member;
-import com.solux.piccountbe.domain.callendar.dto.CalendarRecordUpdateRequestDto;
-import com.solux.piccountbe.domain.callendar.dto.CalendarRecordRequestDto;
-import com.solux.piccountbe.domain.callendar.service.CalendarService;
 import com.solux.piccountbe.config.security.UserDetailsImpl;
+import com.solux.piccountbe.domain.callendar.dto.*;
+import com.solux.piccountbe.domain.callendar.service.CalendarService;
+import com.solux.piccountbe.domain.member.entity.Member;
 import com.solux.piccountbe.global.Response;
-import com.solux.piccountbe.domain.callendar.dto.CalendarRecordDetailResponseDto;
-import com.solux.piccountbe.domain.callendar.dto.CalendarMonthlySummaryResponseDto;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,51 +26,65 @@ public class CalendarController {
     private final CalendarService calendarService;
 
     // 달력 등록
-    @PostMapping("/record")
-    public ResponseEntity<Response<Void>> createCalendarEntry(
+    @PostMapping(value = "/record", consumes = {"multipart/form-data"})
+    public ResponseEntity<Map<String, Object>> createCalendarEntry(
             @RequestPart("request") CalendarRecordRequestDto request,
             @RequestPart(value = "photos", required = false) MultipartFile[] photos,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         calendarService.createEntry(request, photos, userDetails.getMember());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Response.success("가계부 등록 성공", null));
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "가계부 등록 성공");
+        response.put("data", null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // 상세 조회
     @GetMapping("/record")
-    public ResponseEntity<Response<CalendarRecordDetailResponseDto>> getCalendarRecordDetail(
+    public ResponseEntity<Map<String, Object>> getCalendarRecordDetail(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Member loginMember = userDetails.getMember();
         CalendarRecordDetailResponseDto responseDto = calendarService.getCalendarDetail(loginMember, date);
-        return ResponseEntity.ok(Response.success("달력 상세 조회 성공", responseDto));
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "달력 상세 조회 성공");
+        response.put("data", responseDto);
+        return ResponseEntity.ok(response);
     }
 
     // 요약 조회
     @GetMapping("/summary")
-    public ResponseEntity<Response<CalendarMonthlySummaryResponseDto>> getMonthlySummary(
+    public ResponseEntity<Map<String, Object>> getMonthlySummary(
             @RequestParam int year,
             @RequestParam int month,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Member loginMember = userDetails.getMember();
         CalendarMonthlySummaryResponseDto responseDto = calendarService.getMonthlySummary(loginMember, year, month);
-        return ResponseEntity.ok(Response.success("달력 요약 조회 성공", responseDto));
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "달력 요약 조회 성공");
+        response.put("data", responseDto);
+        return ResponseEntity.ok(response);
     }
 
     // 수정하기
-    @PatchMapping("/record")
-    public ResponseEntity<Response<Void>> updateCalendarEntry(
+    @PatchMapping(value = "/record", consumes = {"multipart/form-data"})
+    public ResponseEntity<Map<String, Object>> updateCalendarEntry(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestPart("request") CalendarRecordUpdateRequestDto request,
-            @RequestPart(value = "photo", required = false) MultipartFile[] photo,
+            @RequestPart(value = "photos", required = false) MultipartFile[] photos,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        calendarService.updateEntry(request, photo, userDetails.getMember(), date);
-        return ResponseEntity.ok(Response.success("가계부 수정 성공", null));
+        calendarService.updateEntry(request, photos, userDetails.getMember(), date);
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "가계부 수정 성공");
+        response.put("data", null);
+        return ResponseEntity.ok(response);
     }
-
 
 }
