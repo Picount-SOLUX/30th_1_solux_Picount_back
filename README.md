@@ -1,32 +1,24 @@
-# PICOUNT
+<h1 align="center">PICOUNT</h1>
 
-2025 SOLUX 30기 1학기 프로젝트
+<p align="center">📌 2025년 1학기 숙명여자대학교 중앙 동아리 SOLUX 웹4팀 📌</p>
+<p align="center">💻 기간: 2025.03.14 ~ 2025.08.04 💻</p>
 
+<img width="1668" height="933" alt="Image" src="https://github.com/user-attachments/assets/7eda948f-4c9e-4a03-a454-9bb4b4911b23" />
 
-## **💻** 서비스 소개
+<br/>
 
-### PICOUNT : Piece + Count
+## **💻** Introduction
+
+### [PICOUNT : Piece + Count](https://github.com/Picount-SOLUX)
 
 예산을 ‘**조각내어(Piece)**’ ‘**관리하는(Count)**’ 가계부 웹 서비스
 
+<br/>
 
-## **📍 기획 의도**
+## **💙** PICOUNT-backend
+| 이름 | GitHub 프로필 | 작업내용 |
+|------|----------------|------------------------------|
+| 문수정 | [@sujeongmoon](https://github.com/sujeongmoon) | - |
+| 정선우 | [@jsssun](https://github.com/jsssun) | - |
+| 홍세민 | [@semsemin](https://github.com/semsemin) | - |
 
-**PICOUNT는 예산을 카테고리별로 조각내어 시각적으로 관리하고, 감성적인 기록 경험을 통해 소비 습관을 지속할 수 있도록 돕는 웹 기반 가계부입니다. 가계부의 진입장벽을 낮추고, 꾸미는 재미로 사용자가 자발적으로 소비를 돌아보게 만드는 것이 핵심 목표입니다.**
-
-
-## 🛠️ 기술 스택
-
-| 분류 | 기술 |
-|------|------|
-| Frontend | ![React Native](https://img.shields.io/badge/React%20Native-61DAFB?style=for-the-badge&logo=react&logoColor=white) |
-| Backend | ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white) |
-| DB | ![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white) |
-| Cloud | ![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white) |
-
-
-## 💙 SOLUX 30기 웹4팀
-- **PM** : 장유진  
-- **DESIGN** : 조예율  
-- **FE** : 김다은 | 조시은  
-- **BE** : 문수정 | 정선우 | 홍세민
