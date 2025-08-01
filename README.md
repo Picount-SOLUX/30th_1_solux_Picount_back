@@ -22,3 +22,18 @@
 | 정선우 | [@jsssun](https://github.com/jsssun) | - |
 | 홍세민 | [@semsemin](https://github.com/semsemin) | - |
 
+## 🛠️ Tech Stack
+
+| 구분                  | 기술                           |
+|-----------------------|--------------------------------|
+| **Language / Framework** | Java 21, Spring Boot            |
+| **Build System / JDK**   | Gradle, Amazon Corretto         |
+| **Database**             | MySQL, H2 (테스트용)             |
+| **Infra / DevOps**       | AWS EC2, CI/CD                  |
+| **API 문서화**           | Postman                         |
+
+
+<br/>
+
+## ✨ System Architecture
+<img src="https://github.com/user-attachments/assets/f642edc9-2901-48cc-977a-be72231a84a3" width="500px" />
