@@ -4,6 +4,7 @@ import com.solux.piccountbe.config.jwt.JwtTokenAuthenticationFilter;
 import com.solux.piccountbe.config.oauth.OAuth2LoginFailureHandler;
 import com.solux.piccountbe.config.oauth.OAuth2LoginSuccessHandler;
 import com.solux.piccountbe.domain.member.service.CustomOAuth2UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.web.multipart.support.MultipartFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +38,6 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final SecurityProperties securityProperties;
     private final JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
-
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
@@ -61,32 +63,26 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
-                .sessionManagement(
-                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> //인증/인가 설정
+                .authorizeHttpRequests(auth ->
                         auth.requestMatchers(securityProperties.getWhitelist().toArray(new String[0])).permitAll()
                                 .anyRequest().authenticated()
                 )
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint((req, res, ex) -> {
+                            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            res.setContentType("application/json");
+                            res.getWriter().write("{\"success\":false,\"message\":\"인증 실패\",\"data\":null}");
+                        })
+                )
                 .oauth2Login(oauth -> oauth
-                        // TODO: 프론트 연동 확인 후 삭제
                         .loginPage("/login.html")
-                        // 카카오 인가 요청 URL
-                        .authorizationEndpoint(ae -> ae
-                                .baseUri("/api/login/oauth2/authorization")
-                        )
-                        // 카카오가 보내준 code 받을 API
-                        .redirectionEndpoint(re -> re
-                                .baseUri("/api/members/social/*")
-                        )
-                        // 토큰 받은 뒤 사용자 정보 로드
-                        .userInfoEndpoint(ui -> ui
-                                .userService(customOAuth2UserService)
-                        )
-                        // 로그인 성공 뒤 JWT 만들어서 프론트로 리다이렉트
+                        .authorizationEndpoint(ae -> ae.baseUri("/api/login/oauth2/authorization"))
+                        .redirectionEndpoint(re -> re.baseUri("/api/members/social/*"))
+                        .userInfoEndpoint(ui -> ui.userService(customOAuth2UserService))
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler)
                 )
@@ -109,4 +105,11 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public FilterRegistrationBean<MultipartFilter> multipartFilter() {
+        FilterRegistrationBean<MultipartFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new MultipartFilter());
+        registration.setOrder(0); // Jwt 필터보다 먼저 작동
+        return registration;
+    }
 }

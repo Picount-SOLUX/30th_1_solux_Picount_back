@@ -55,7 +55,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String accessToken = resolveToken(request);
-        // log.info("* [JwtTokenAuthFilter] accessToken : " + accessToken);
+        log.info("* [JwtTokenAuthFilter] accessToken : " + accessToken);
 
         // log.info("* 토큰이 없거나 유효하지 않은지 확인");
         if (accessToken == null || !jwtTokenProvider.validToken(accessToken)) {
