@@ -19,9 +19,9 @@
 ## **💙** PICOUNT-backend
 | 이름 | GitHub 프로필 | 작업내용 |
 |------|----------------|------------------------------|
-| 문수정 | [@sujeongmoon](https://github.com/sujeongmoon) | - |
-| 정선우 | [@jsssun](https://github.com/jsssun) | - |
-| 홍세민 | [@semsemin](https://github.com/semsemin) | - |
+| 문수정 | [@sujeongmoon](https://github.com/sujeongmoon) | 사용자 인증/인가, 소셜로그인, 예산 및 세부예산 기능, 카테고리 기능 |
+| 정선우 | [@jsssun](https://github.com/jsssun) | 친구, 방명록, 달력 가계부 기능 |
+| 홍세민 | [@semsemin](https://github.com/semsemin) | 인프라, 상점 및 챌린지 기능 |
 
 ## 🛠️ Tech Stack
 
