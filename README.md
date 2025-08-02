@@ -3,9 +3,10 @@
 <p align="center">📌 2025년 1학기 숙명여자대학교 중앙 동아리 SOLUX 웹4팀 📌</p>
 <p align="center">💻 기간: 2025.03.14 ~ 2025.08.04 💻</p>
 
-<img width="1668" height="933" alt="Image" src="https://github.com/user-attachments/assets/7eda948f-4c9e-4a03-a454-9bb4b4911b23" />
+<img width="1668" height="933" alt="p1" src="https://github.com/user-attachments/assets/a9912ee5-26d9-4be1-9843-b436a006b33a" />
 
 <br/>
+
 
 ## **💻** Introduction
 
@@ -36,4 +37,6 @@
 <br/>
 
 ## ✨ System Architecture
-<img src="https://github.com/user-attachments/assets/f642edc9-2901-48cc-977a-be72231a84a3" width="500px" />
+<img width="1510" height="1049" alt="PICOUNT 아키텍처 다이어그램" src="https://github.com/user-attachments/assets/96c6428c-6b34-454b-8acc-31e08b9190fd" />
+
+
