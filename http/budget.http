@@ -1,0 +1,60 @@
+### 예산생성
+POST http://localhost:8080/api/budgets
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "startDate": "2025-06-01",
+  "endDate": "2025-06-22",
+  "totalAmount": 630000
+}
+
+
+### 예산삭제
+DELETE http://localhost:8080/api/budgets/1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 사용자의 예산 전체 조회
+GET http://localhost:8080/api/budgets
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 예산 개별조회 & 세부예산 전체조회
+GET http://localhost:8080/api/budgets/2
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 현재 활성화된 예산 개별조회 & 세부예산 전체조회
+GET http://localhost:8080/api/budgets/active
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 예산&세부예산계획 수정
+PUT http://localhost:8080/api/budgets/2
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "startDate": "2025-07-13",
+  "endDate": "2025-07-31",
+  "totalAmount": 333300,
+  "budgetAllocationList": [
+    {
+      "categoryId": 1,
+      "amount": 1500
+    },
+    {
+      "categoryId": 2,
+      "amount": 30000
+    },
+    {
+      "categoryId": 3,
+      "amount": 100000
+    }
+  ]
+}

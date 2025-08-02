@@ -1,0 +1,151 @@
+package com.solux.piccountbe.domain.friend.controller;
+
+import com.solux.piccountbe.domain.friend.dto.GuestBookRequestDto;
+import com.solux.piccountbe.domain.friend.dto.GuestBookSummaryDto;
+import com.solux.piccountbe.domain.friend.dto.GuestBookDetailDto;
+import com.solux.piccountbe.domain.friend.dto.GuestbookMyResponseDto;
+import com.solux.piccountbe.domain.friend.service.GuestBookService;
+import com.solux.piccountbe.domain.member.entity.Member;
+import com.solux.piccountbe.config.security.UserDetailsImpl;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+
+import java.util.Map;
+import java.util.HashMap;
+
+@RestController
+@RequiredArgsConstructor
+public class GuestBookController {
+
+    private final GuestBookService guestBookService;
+
+    // 방명록 작성
+    @PostMapping("/api/guestbook")
+    public ResponseEntity<Map<String, Object>> createGuestbook(
+            @RequestBody GuestBookRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        Member writer = userDetails.getMember();
+        guestBookService.createGuestbook(writer, requestDto);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "방명록 작성 완료");
+        response.put("data", null);
+        return ResponseEntity.ok(response);
+    }
+
+    // 방명록 요약 조회
+    @GetMapping("/api/guestbook/summary")
+    public ResponseEntity<Map<String, Object>> getGuestBookSummary(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long ownerId,
+            @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Member loginMember = userDetails.getMember();
+        Page<GuestBookSummaryDto> pageResult = guestBookService.getGuestBooks(loginMember, ownerId, pageable);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("content", pageResult.getContent());
+        data.put("page", pageResult.getNumber());
+        data.put("size", pageResult.getSize());
+        data.put("totalElements", pageResult.getTotalElements());
+        data.put("totalPages", pageResult.getTotalPages());
+        data.put("hasNext", pageResult.hasNext());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "방명록 요약 조회 성공");
+        response.put("data", data);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 방명록 상세 조회
+    @GetMapping("/api/guestbook/details")
+    public ResponseEntity<Map<String, Object>> getGuestbookDetails(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long ownerId,
+            @PageableDefault(size = 15, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Member viewer = userDetails.getMember();
+        Page<GuestBookDetailDto> pageResult = guestBookService.getGuestbookDetails(viewer, ownerId, pageable);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("content", pageResult.getContent());
+        data.put("page", pageResult.getNumber());
+        data.put("size", pageResult.getSize());
+        data.put("totalElements", pageResult.getTotalElements());
+        data.put("totalPages", pageResult.getTotalPages());
+        data.put("hasNext", pageResult.hasNext());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "방명록 상세 조회 성공");
+        response.put("data", data);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 내가 남긴 방명록 조회
+    @GetMapping("/api/guestbook/my")
+    public ResponseEntity<Map<String, Object>> getMyGuestbooks(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PageableDefault(size = 3) Pageable pageable
+    ) {
+        Member loginMember = userDetails.getMember();
+        Page<GuestbookMyResponseDto> pageResult = guestBookService.getMyGuestbookPosts(loginMember.getMemberId(), pageable);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("content", pageResult.getContent());
+        data.put("page", pageResult.getNumber());
+        data.put("size", pageResult.getSize());
+        data.put("totalElements", pageResult.getTotalElements());
+        data.put("totalPages", pageResult.getTotalPages());
+        data.put("hasNext", pageResult.hasNext());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "내가 남긴 방명록 조회 성공");
+        response.put("data", data);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 내가 남긴 방명록 개별 삭제
+    @DeleteMapping("/api/guestbook/my/{guestbookId}")
+    public ResponseEntity<Map<String, Object>> deleteMyGuestbook(
+            @PathVariable Long guestbookId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        guestBookService.deleteMyGuestbook(guestbookId, userDetails.getMember().getMemberId());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "방명록이 삭제되었습니다.");
+        response.put("data", null);
+        return ResponseEntity.ok(response);
+    }
+
+    // 내가 남긴 방명록 전체 삭제
+    @DeleteMapping("/api/guestbook/my")
+    public ResponseEntity<Map<String, Object>> deleteAllMyGuestbooks(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        guestBookService.deleteAllMyGuestbooks(userDetails.getMember().getMemberId());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "내가 남긴 방명록이 모두 삭제되었습니다.");
+        response.put("data", null);
+        return ResponseEntity.ok(response);
+    }
+
+}

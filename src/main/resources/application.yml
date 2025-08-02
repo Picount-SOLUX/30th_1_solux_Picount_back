@@ -1,24 +1,99 @@
 spring:
-    application:
-        name: piccount-BE
+  application:
+    name: piccount-BE
+  config:
+    import: optional:file:.env[.properties]
 
-    datasource:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/piccount
-        username: ${MYSQL_USER}
-        password: ${MYSQL_PASSWORD}
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
 
-    jpa:
-        show-sql: true
-        hibernate:
-            ddl-auto: update
-        properties:
-            hibernate:
-                format_sql: true
-                highlight_sql: true
-                use_sql_comments: true
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${OAUTH2_KAKAO_CLIENT_ID}
+            client-secret: ${OAUTH2_KAKAO_CLIENT_SECRET}
+            redirect-uri: https://picount.site/api/members/social/kakao
+            client-authentication-method: client_secret_post
+            client-name: Kakao
+            authorization-grant-type: authorization_code
+            scope:
+              - profile_nickname
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-info-authentication-method: header
+            user-name-attribute: id
 
-#logging:
-#    level:
-#        org.hibernate.SQL: DEBUG
-#        org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET_NAME}
+      base-url: https://${S3_BUCKET_NAME}.s3.ap-northeast-2.amazonaws.com
+    credentials:
+      access-key: ${ACCESS_KEY}
+      secret-key: ${SECRET_ACCESS_KEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  access-expired: 1800000
+  refresh-expired: 1209600000
+
+custom-security:
+  whitelist:
+    - /actuator/health
+    - /api/members/signup
+    - /api/members/login
+    - /api/members/refresh
+    - /api/members/findAccount
+    - /api/members/findAccount/**
+    - /login/oauth2/authorization/**
+    - /api/members/social/**
+    - /api/s3/**
+#   TODO: 프론트와 연동 확인 이후 삭제
+    - /login.html
+
+callback-oauth:
+  frontend-redirect-uri: http://localhost:5179/callback
+
+upload:
+  dir: ./uploads/profileImages
+  default_profile_image: /images/profile/default-member-profile.png

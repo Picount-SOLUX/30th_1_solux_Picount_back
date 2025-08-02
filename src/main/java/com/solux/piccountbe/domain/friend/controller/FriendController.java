@@ -1,0 +1,120 @@
+package com.solux.piccountbe.domain.friend.controller;
+
+import com.solux.piccountbe.global.exception.CustomException;
+import com.solux.piccountbe.global.exception.ErrorCode;
+import com.solux.piccountbe.domain.friend.dto.FriendRequestDto;
+import com.solux.piccountbe.domain.friend.dto.FriendResponseDto;
+import com.solux.piccountbe.domain.friend.dto.FriendMainResponseDto;
+import com.solux.piccountbe.domain.friend.service.FriendService;
+import com.solux.piccountbe.domain.member.entity.Member;
+import com.solux.piccountbe.config.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/friends")
+public class FriendController {
+
+    private final FriendService friendService;
+
+    // 친구 요청
+    @PostMapping("/request")
+    public ResponseEntity<Map<String, Object>> requestFriend(
+            @RequestBody FriendRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        Member loginMember = userDetails.getMember();
+        friendService.requestFriend(loginMember, requestDto);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "친구 요청이 성공적으로 처리되었습니다.");
+        response.put("data", null);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 친구 조회 - 마이페이지
+    @GetMapping("/my")
+    public ResponseEntity<Map<String, Object>> getMyFriends(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        Member loginMember = userDetails.getMember();
+        List<FriendResponseDto> friendList = friendService.getMyFriends(loginMember);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "친구 목록을 성공적으로 조회했습니다.");
+        response.put("data", friendList);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 친구 삭제
+    @DeleteMapping("/{friendId}")
+    public ResponseEntity<Map<String, Object>> deleteFriend(
+            @PathVariable Long friendId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) throws AccessDeniedException {
+        Member loginMember = userDetails.getMember();
+        friendService.deleteFriend(loginMember, friendId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "친구 관계가 삭제되었습니다.");
+        response.put("data", null);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 친구 조회 - 메인페이지
+    @GetMapping("/main")
+    public ResponseEntity<Map<String, Object>> getFriendsForMainPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        Member loginMember = userDetails.getMember();
+        List<FriendMainResponseDto> friendList = friendService.getFriendsForMain(loginMember);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "메인페이지 친구 목록을 성공적으로 조회했습니다.");
+        response.put("data", friendList);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 친구 페이지 조회
+    @GetMapping("/main-page")
+    public ResponseEntity<Map<String, Object>> getFriendMainPage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long ownerId // 친구의 userId
+    ) {
+        Member viewer = userDetails.getMember();
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            var friendMainPageDto = friendService.getFriendMainPage(viewer.getMemberId(), ownerId);
+
+            response.put("success", true);
+            response.put("message", "친구 메인 페이지 조회 성공");
+            response.put("data", friendMainPageDto);
+
+            return ResponseEntity.ok(response);
+
+        } catch (CustomException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            response.put("data", null);
+
+            return ResponseEntity.status(e.getErrorCode().getStatus()).body(response);
+        }
+    }
+
+}

@@ -1,8 +1,24 @@
 package com.solux.piccountbe.domain.friend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import com.solux.piccountbe.domain.friend.entity.GuestBook;
+import com.solux.piccountbe.domain.member.entity.Member;
+import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface GuestBookRepository extends JpaRepository<GuestBook, Long> {
+    @Query("SELECT g FROM GuestBook g WHERE g.writer.id = :writerId AND g.isDeleted = false ORDER BY g.createdAt DESC")
+    Page<GuestBook> findByWriterId(@Param("writerId") Long writerId, Pageable pageable);
+    List<GuestBook> findAllByWriter_MemberIdAndIsDeletedFalse(Long memberId);
+    Page<GuestBook> findByOwnerAndIsDeletedFalse(Member owner, Pageable pageable);
+    boolean existsByWriterAndIsDeletedFalseAndCreatedAtBetween(
+            Member writer, LocalDateTime start, LocalDateTime end
+    );
+    List<GuestBook> findTop3ByOwnerAndIsDeletedFalseOrderByCreatedAtDesc(Member owner);
+
 }

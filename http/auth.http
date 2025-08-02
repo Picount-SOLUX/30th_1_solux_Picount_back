@@ -1,0 +1,138 @@
+### 회원가입
+#POST http://localhost:8080/api/members/signup
+POST https://7ace74aa4830.ngrok-free.app/api/members/signup
+Content-Type: application/json
+
+{
+  "email": "email@naver.com",
+  "password": "Qwerty1234!",
+  "nickname": "nickname"
+}
+
+
+### 이메일로 회원정보 확인
+GET https://7ace74aa4830.ngrok-free.app/api/members/findAccount?email=email@naver.com
+Content-Type: application/json
+
+
+### 회원 찾기 및 비밀번호 재설정 완료
+PATCH https://7ace74aa4830.ngrok-free.app/api/members/findAccount/1
+Content-Type: application/json
+
+{
+  "password": "Qwerty11234!"
+}
+
+
+### 토큰 재발급
+#POST http://localhost:8080/api/members/refresh
+POST https://7ace74aa4830.ngrok-free.app/api/members/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": ""
+}
+
+
+### 로그아웃
+POST http://localhost:8080/api/members/logout
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 로그인
+POST http://localhost:8080/api/members/login
+Content-Type: application/json
+
+{
+  "email": "email@naver.com",
+  "password": "Qwerty1234!"
+}
+
+> {%
+    client.global.set("accessToken", response.body.data.accessToken);
+    client.global.set("refreshToken", response.body.data.refreshToken);
+
+    const accessToken = "Bearer " + client.global.get("accessToken");
+    console.log("Access Token:", accessToken);
+%}
+
+
+
+
+### 카카오 로그아웃
+POST http://localhost:8080/api/members/logout
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtc2o5MDAwQG5hdGUuY29tIiwibWVtYmVySWQiOjEsInRva2VuVmVyc2lvbiI6MSwiaWF0IjoxNzUzMTk0NTMwLCJleHAiOjE3NTMxOTYzMzB9.5Xir7mY-u--ZIMIVd-Q2x_du4gFhJNnCeCSq6uJSpFU
+
+
+
+### 탈퇴
+PATCH http://localhost:8080/api/members/withdraw
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+
+### 카카오 탈퇴
+PATCH http://localhost:8080/api/members/withdraw
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtc2o5MDAwQG5hdGUuY29tIiwibWVtYmVySWQiOjEsInRva2VuVmVyc2lvbiI6MiwiaWF0IjoxNzUzMTk0NjE4LCJleHAiOjE3NTMxOTY0MTh9.WEDLOqUmtxRIELjTvbX2Pi64JHGjVNofB2ZPhi51OuQ
+
+
+
+### 비밀번호 변경
+PATCH http://localhost:8080/api/members/password
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "prePassword": "Qwerty1234!",
+  "newPassword": "Qwerty1234!!"
+}
+
+
+### 회원가입2
+POST http://localhost:8080/api/members/signup
+Content-Type: application/json
+
+{
+  "email": "email2@naver.com",
+  "password": "Qwerty1234!",
+  "nickname": "nickname2"
+}
+
+### 로그인2
+POST http://localhost:8080/api/members/login
+Content-Type: application/json
+
+{
+  "email": "email2@naver.com",
+  "password": "Qwerty1234!"
+}
+
+> {%
+    client.global.set("accessToken", response.body.data.accessToken);
+    client.global.set("refreshToken", response.body.data.refreshToken);
+
+    const accessToken = "Bearer " + client.global.get("accessToken");
+    console.log("Access Token:", accessToken);
+%}
+
+
+### 마이프로필 조회
+GET http://localhost:8080/api/members/profile
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 직군 수정
+PUT http://localhost:8080/api/members/membergrouptype
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "memberGroupType": "YOUNGER"
+}
+
+

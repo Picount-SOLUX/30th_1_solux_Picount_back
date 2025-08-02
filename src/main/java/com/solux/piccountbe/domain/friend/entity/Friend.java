@@ -36,4 +36,10 @@ public class Friend extends Timestamped {
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private Status status;
+
+	public Friend(Member member, Member friendMember, Status status) {
+		this.member = member;
+		this.friendMember = friendMember;
+		this.status = status;
+	}
 }

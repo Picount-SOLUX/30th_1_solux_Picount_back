@@ -20,13 +20,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 public class CalendarEntry extends Timestamped {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column
 	private Long calenderEntryId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="memberId", nullable = false)
+	@JoinColumn(name = "memberId", nullable = false)
 	private Member member;
 
 	@Column(nullable = false)
@@ -37,4 +38,34 @@ public class CalendarEntry extends Timestamped {
 
 	@Column
 	private String memo;
+
+	@Column
+	private Long point; // 출석 포인트 추가
+
+	// 무지출 챌린지는 memo 입력이 없을때
+	public boolean isNoSpendingDay() {
+		return this.memo == null || this.memo.trim().isEmpty();
+	}
+
+	// 생성자
+	public CalendarEntry(Member member, LocalDate entryDate, String memo) {
+		this.member = member;
+		this.entryDate = entryDate;
+		this.memo = memo;
+	}
+
+	public CalendarEntry(Member member, LocalDate entryDate) {
+		this.member = member;
+		this.entryDate = entryDate;
+	}
+
+	// 메모 수정
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+
+	// 포인트 저장
+	public void setPoint(long point) {
+		this.point = point;
+	}
 }
